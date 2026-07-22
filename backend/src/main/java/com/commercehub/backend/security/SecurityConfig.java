@@ -15,6 +15,7 @@ public class SecurityConfig {
 
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 
     @Bean
@@ -24,9 +25,13 @@ public class SecurityConfig {
 
 
         http
-            .csrf(csrf -> csrf.disable())
+        .csrf(csrf -> csrf.disable())
 
-            .authorizeHttpRequests(auth -> auth
+        .exceptionHandling(exception ->
+                exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+        )
+
+        .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/api/auth/**",
                         "/api/test/public",
@@ -41,12 +46,12 @@ public class SecurityConfig {
                 ).permitAll()
 
                 .anyRequest().authenticated()
-                )
+        )
 
-            .addFilterBefore(
+        .addFilterBefore(
                 jwtAuthenticationFilter,
                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
-            );
+        );
 
 
         return http.build();
