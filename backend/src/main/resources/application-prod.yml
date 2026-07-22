@@ -1,0 +1,60 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        generate_statistics: false
+        jdbc:
+          batch_size: 50
+          fetch_size: 100
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/commercehub}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+logging:
+  level:
+    root: WARN
+    com.commercehub: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+  file:
+    name: /var/log/commercehub/app.log
+    max-size: 100MB
+    max-history: 30
+
+jwt:
+  secret: ${JWT_SECRET:CHANGE_ME_IN_PRODUCTION_WITH_SECURE_KEY}
+  expiration: 86400000
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+    min-response-size: 2048
+  http2:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+app:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:https://example.com}

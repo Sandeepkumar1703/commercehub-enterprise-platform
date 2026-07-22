@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: commercehub-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/commercehub
+    username: postgres
+    password: Postgres@123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    schemas: public
+    default-schema: public
+    create-schemas: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+server:
+  port: 8080
+
+
+jwt:
+  secret: "1tVX2OW20OlyjoA7RYeIA230NY9LQo4TGo4Cr8Pr0PiH/Nuvi6Lpk45NWrp7XpSzBEIjdDNLq3MDNjFGpN6v0A=="
+
+  access-token-expiration: 86400000
+  refresh-token-expiration: 604800000
+
+
+logging:
+  level:
+    root: INFO
+    com.commercehub: DEBUG
