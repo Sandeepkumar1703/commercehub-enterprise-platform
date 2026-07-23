@@ -100,6 +100,17 @@
             <artifactId>spring-retry</artifactId>
         </dependency>
 
+        <!-- Spring Boot DevTools
+            - Automatically restarts the application when Java classes or resources change.
+            - Speeds up development by eliminating the need to manually stop and restart the server.
+            - Loaded only during development (runtime scope) and excluded from production builds. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
         <!-- ============================================ -->
         <!-- 2. DATABASE & ORM                           -->
         <!-- ============================================ -->
