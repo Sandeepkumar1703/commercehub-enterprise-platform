@@ -1,15 +1,15 @@
 package com.commercehub.backend.auth.controller;
 
-import com.commercehub.backend.auth.service.AuthService;
 
-
-import com.commercehub.backend.auth.dto.response.AuthResponse;
+import com.commercehub.backend.auth.dto.request.ChangePasswordRequest;
 import com.commercehub.backend.auth.dto.request.LoginRequest;
 import com.commercehub.backend.auth.dto.request.RegisterRequest;
+import com.commercehub.backend.auth.dto.response.AuthResponse;
 import com.commercehub.backend.auth.service.AuthService;
 
 
 import jakarta.validation.Valid;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,13 +28,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
 
-
     private final AuthService authService;
 
 
 
     /**
-     * Register New User
+     * Register new user
      */
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
@@ -46,26 +45,46 @@ public class AuthController {
                 .body(
                         authService.register(request)
                 );
-
     }
 
 
 
 
+
     /**
-     * Login User
+     * Login existing user
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request
     ){
 
-        return ResponseEntity
-                .ok(
-                        authService.login(request)
-                );
-
+        return ResponseEntity.ok(
+                authService.login(request)
+        );
     }
 
+
+
+
+
+    /**
+     * Change password of authenticated user
+     *
+     * Requires JWT authentication
+     */
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @Valid
+            @RequestBody ChangePasswordRequest request
+    ){
+
+        authService.changePassword(request);
+
+
+        return ResponseEntity.ok(
+                "Password changed successfully"
+        );
+    }
 
 }
