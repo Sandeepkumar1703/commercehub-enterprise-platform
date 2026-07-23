@@ -1,37 +1,37 @@
 package com.commercehub.backend.user.entity;
 
-
-import com.commercehub.backend.common.entity.BaseEntity;
-
 import jakarta.persistence.*;
-
 import lombok.*;
 
-
-
 @Entity
-@Table(name = "roles")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Role extends BaseEntity {
+@Table(name = "roles")
+public class Role {
 
-
-
+    /**
+     * Primary Key
+     */
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
-    @Column(
-            nullable = false,
-            unique = true
-    )
+    /**
+     * Role Name
+     * Examples:
+     * ROLE_ADMIN
+     * ROLE_USER
+     * ROLE_MANAGER
+     */
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    /**
+     * Optional Description
+     */
+    @Column(length = 255)
+    private String description;
 }
