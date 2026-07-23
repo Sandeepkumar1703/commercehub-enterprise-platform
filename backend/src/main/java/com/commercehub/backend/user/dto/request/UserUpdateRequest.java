@@ -1,4 +1,4 @@
-package com.commercehub.backend.user.dto;
+package com.commercehub.backend.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

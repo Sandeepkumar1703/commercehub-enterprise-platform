@@ -1,8 +1,8 @@
 package com.commercehub.backend.user.service;
 
 
-import com.commercehub.backend.user.dto.UserProfileResponse;
-import com.commercehub.backend.user.dto.UserUpdateRequest;
+import com.commercehub.backend.user.dto.response.UserProfileResponse;
+import com.commercehub.backend.user.dto.request.UserUpdateRequest;
 
 
 public interface UserService {

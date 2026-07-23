@@ -1,8 +1,8 @@
 package com.commercehub.backend.user.service.impl;
 
 import com.commercehub.backend.common.exception.ResourceNotFoundException;
-import com.commercehub.backend.user.dto.UserProfileResponse;
-import com.commercehub.backend.user.dto.UserUpdateRequest;
+import com.commercehub.backend.user.dto.response.UserProfileResponse;
+import com.commercehub.backend.user.dto.request.UserUpdateRequest;
 import com.commercehub.backend.user.entity.User;
 import com.commercehub.backend.user.repository.UserRepository;
 import com.commercehub.backend.user.service.UserService;

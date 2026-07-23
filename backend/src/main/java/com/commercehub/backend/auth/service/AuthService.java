@@ -1,9 +1,9 @@
 package com.commercehub.backend.auth.service;
 
 
-import com.commercehub.backend.auth.dto.AuthResponse;
-import com.commercehub.backend.auth.dto.LoginRequest;
-import com.commercehub.backend.auth.dto.RegisterRequest;
+import com.commercehub.backend.auth.dto.request.LoginRequest;
+import com.commercehub.backend.auth.dto.request.RegisterRequest;
+import com.commercehub.backend.auth.dto.response.AuthResponse;
 import com.commercehub.backend.security.JwtTokenProvider;
 
 import com.commercehub.backend.user.entity.Role;
