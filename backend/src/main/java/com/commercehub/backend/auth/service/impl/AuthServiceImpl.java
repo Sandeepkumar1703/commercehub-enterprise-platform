@@ -6,39 +6,23 @@ import com.commercehub.backend.auth.dto.request.ChangePasswordRequest;
 import com.commercehub.backend.auth.dto.request.LoginRequest;
 import com.commercehub.backend.auth.dto.request.RegisterRequest;
 import com.commercehub.backend.auth.dto.response.AuthResponse;
-
-
 import com.commercehub.backend.auth.service.AuthService;
-
-
 import com.commercehub.backend.common.exception.ResourceNotFoundException;
-
-
 import com.commercehub.backend.security.JwtTokenProvider;
-
 
 import com.commercehub.backend.user.entity.Role;
 import com.commercehub.backend.user.entity.User;
 
-
-import com.commercehub.backend.user.repository.RoleRepository;
 import com.commercehub.backend.user.repository.UserRepository;
-
+import com.commercehub.backend.role.repository.RoleRepository;
 
 import lombok.RequiredArgsConstructor;
 
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-
 import org.springframework.stereotype.Service;
 
 
