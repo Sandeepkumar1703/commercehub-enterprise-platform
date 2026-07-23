@@ -1,4 +1,4 @@
-package com.commercehub.backend.auth.dto;
+package com.commercehub.backend.auth.dto.response;
 
 
 import lombok.AllArgsConstructor;

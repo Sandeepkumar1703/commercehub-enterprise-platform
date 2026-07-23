@@ -1,4 +1,4 @@
-package com.commercehub.backend.user.dto;
+package com.commercehub.backend.user.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
