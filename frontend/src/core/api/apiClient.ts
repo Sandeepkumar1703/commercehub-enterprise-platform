@@ -93,27 +93,66 @@ export const api = {
 
   // Auth Controller
   auth: {
-    login: async (data: AuthLoginRequest): Promise<AuthTokenResponse> => {
-      const res = await request<AuthTokenResponse>('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-      if (res.accessToken) {
-        tokenStorage.setTokens(res.accessToken, res.refreshToken);
-      }
-      return res;
-    },
-    register: async (data: AuthRegisterRequest): Promise<AuthTokenResponse> => {
-      const res = await request<AuthTokenResponse>('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-      if (res.accessToken) {
-        tokenStorage.setTokens(res.accessToken, res.refreshToken);
-      }
-      return res;
+
+  /**
+   * Login
+   */
+  login: async (data: AuthLoginRequest): Promise<AuthTokenResponse> => {
+
+    const res = await request<AuthTokenResponse>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+
+    if (res.accessToken) {
+      tokenStorage.setTokens(
+        res.accessToken,
+        res.refreshToken
+      );
     }
+
+    return res;
+
   },
+
+  /**
+   * Register
+   */
+  register: async (
+    data: AuthRegisterRequest
+  ): Promise<AuthTokenResponse> => {
+
+    const res = await request<AuthTokenResponse>(
+      "/api/auth/register",
+      {
+        method: "POST",
+        body: JSON.stringify(data)
+      }
+    );
+
+    if (res.accessToken) {
+      tokenStorage.setTokens(
+        res.accessToken,
+        res.refreshToken
+      );
+    }
+
+    return res;
+
+  },
+
+  /**
+   * Logout
+   */
+  logout: async (): Promise<void> => {
+
+    await request<void>("/api/auth/logout", {
+      method: "POST"
+    });
+
+  }
+
+},
 
   // User Controller (This was missing!)
   users: {

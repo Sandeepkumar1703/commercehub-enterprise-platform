@@ -21,10 +21,10 @@ export const tokenStorage = {
   
   // This fixes the 'clearTokens' error
   clearTokens: () => {
-    localStorage.removeItem(STORAGE_KEYS.TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-  },
+    Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+    });
+},
 
   removeAuthToken: () => {
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
@@ -40,13 +40,17 @@ export const tokenStorage = {
 
   getRefreshToken: (): string | null => localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
 
-  getCurrentUser: (): User => {
-    const data = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-    if (data) {
-      try { return JSON.parse(data); } catch { }
-    }
-    return INITIAL_USERS[0];
-  },
+  getCurrentUser: (): User | null => {
+  const data = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch {}
+  }
+
+  return null;
+},
 
   setCurrentUser: (user: User) => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));

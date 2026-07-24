@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { User, Product, Order, CartItem, Seller, AuditLog } from '../../shared/types';
 import { tokenStorage } from '../../core/auth/tokenStorage';
 import { api } from '../../core/api/apiClient';
+import { authService } from "../../features/auth/services/authService";
 
 export type PortalType = 'marketing' | 'customer' | 'seller' | 'admin' | 'auth' | 'system';
 export type AuthView = 'login' | 'register' | 'forgot' | 'reset' | 'otp' | 'verify-email';
@@ -38,7 +39,7 @@ interface AppContextType {
   toggleTheme: () => void;
   currentUser: User;
   setCurrentUser: (u: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   cart: CartItem[];
   cartOpen: boolean;
   setCartOpen: (open: boolean) => void;
@@ -83,7 +84,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedOrderId, setSelectedOrderId] = useState<string>('ORD-9482');
 
   const [theme, setThemeState] = useState<'light' | 'dark'>(() => tokenStorage.getTheme());
-  const [currentUser, setCurrentUserState] = useState<User>(() => tokenStorage.getCurrentUser());
+  const [currentUser, setCurrentUserState] = useState<User | null>(() => tokenStorage.getCurrentUser());
   const [products, setProducts] = useState<Product[]>(() => tokenStorage.getProducts());
   const [orders, setOrders] = useState<Order[]>(() => tokenStorage.getOrders());
   const [sellers] = useState<Seller[]>(() => tokenStorage.getSellers());
@@ -152,12 +153,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     tokenStorage.setCurrentUser(user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+  try {
+    await authService.logout();
+  } catch (error) {
+    console.error("Logout failed:", error);
+  } finally {
     tokenStorage.clearTokens();
-    setPortal('auth');
-    setAuthView('login');
-    window.location.hash = 'login';
-  };
+    setCurrentUserState(tokenStorage.getCurrentUser());
+
+    setPortal("auth");
+    setAuthView("login");
+
+    window.location.hash = "login";
+  }
+};
 
   const showToast = (title: string, message?: string, type: ToastMessage['type'] = 'success') => {
     const id = Math.random().toString(36).substr(2, 9);

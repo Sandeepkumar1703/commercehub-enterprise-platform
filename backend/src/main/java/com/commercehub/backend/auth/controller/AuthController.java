@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 
 
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.commercehub.backend.common.response.ApiResponse;
 
 
 
@@ -86,5 +89,31 @@ public class AuthController {
                 "Password changed successfully"
         );
     }
+
+        @PostMapping("/logout")
+        public ResponseEntity<ApiResponse<String>> logout(
+                HttpServletRequest request
+        ) {
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+                return ResponseEntity.badRequest()
+                        .body(
+                                ApiResponse.failure("Authorization token missing")
+                        );
+
+        }
+
+        String token = authHeader.substring(7);
+
+        authService.logout(token);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("Logged out successfully")
+        );
+
+        }
 
 }

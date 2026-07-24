@@ -23,7 +23,6 @@ export const PLP: React.FC = () => {
 
   // Refresh products from API on PLP mount
   useEffect(() => {
-    console.log("PLP Mounted");
     if (products.length === 0) {
         refreshProducts();
     }

@@ -272,21 +272,32 @@ export const Header: React.FC = () => {
                 </div>
 
                 <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
-                  <button
-                    onClick={() => { setPortal('customer'); setCustomerView('account'); setUserDropdownOpen(false); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                  >
-                    <UserIcon className="w-4 h-4" />
-                    <span>Account Settings</span>
-                  </button>
-                  <button
-                    onClick={() => { logout(); setUserDropdownOpen(false); }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setPortal("customer");
+                    setCustomerView("account");
+                    setUserDropdownOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <UserIcon className="w-4 h-4" />
+                  <span>Account Settings</span>
+                </button>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      await logout();
+                    } finally {
+                      setUserDropdownOpen(false);
+                    }
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
               </div>
             )}
           </div>
