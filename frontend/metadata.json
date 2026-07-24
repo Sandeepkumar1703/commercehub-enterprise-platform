@@ -1,0 +1,6 @@
+{
+  "name": "CommerceHub",
+  "description": "Enterprise Multi-Portal E-Commerce Platform featuring Auth, Customer Shopping CX, Seller Operations Portal, and Admin Governance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
