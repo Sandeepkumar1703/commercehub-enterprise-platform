@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Global Cross-Origin Resource Sharing (CORS) configuration.
  *
- * Allows the Angular frontend to communicate with the Spring Boot backend.
+ * Allows the React frontend to communicate with the Spring Boot backend.
  * This configuration should be updated for production to allow only trusted origins.
  */
 @Slf4j
@@ -31,7 +31,7 @@ public class CorsConfig {
 
         // Allowed Frontend Origins
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200"
+                "http://localhost:5173"
         ));
 
         // Allowed HTTP Methods

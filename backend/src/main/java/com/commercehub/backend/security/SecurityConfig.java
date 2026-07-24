@@ -57,6 +57,7 @@ public class SecurityConfig {
                 /*
                  * Disable CSRF for Stateless REST APIs
                  */
+                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
 
                 /*
