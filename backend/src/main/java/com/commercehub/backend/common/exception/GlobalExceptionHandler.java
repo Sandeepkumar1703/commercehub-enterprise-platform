@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.commercehub.backend.common.response.ApiResponse;
 
 import java.util.List;
 
@@ -150,4 +151,19 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(response);
     }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+        public ResponseEntity<ApiResponse<String>> handleInvalidCredentials(
+                InvalidCredentialsException ex
+        ){
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        ApiResponse.failure(
+                        ex.getMessage()
+                        )
+                );
+
+        }
 }

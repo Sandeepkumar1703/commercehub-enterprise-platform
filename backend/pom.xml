@@ -31,7 +31,7 @@
 
         <!-- Key Dependency Versions -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <lomboka.version>1.18.30</lomboka.version>
+        <lombok.version>1.18.30</lombok.version>
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-collections4.version>4.4</commons-collections4.version>
@@ -50,6 +50,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Mail: Email sending support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- Spring Boot Data JPA: ORM with Hibernate -->
@@ -184,7 +190,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -239,17 +245,6 @@
         <!-- Jackson: JSON serialization/deserialization -->
         <!-- Already included with spring-boot-starter-web -->
 
-        <!-- ============================================ -->
-        <!-- 11. DEVELOPMENT TOOLS                       -->
-        <!-- ============================================ -->
-
-        <!-- Spring Boot DevTools: Hot reload during development -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
 
         <!-- ============================================ -->
         <!-- 12. TESTING DEPENDENCIES                    -->
@@ -297,12 +292,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Swagger / OpenAPI -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
-        </dependency>
 
     </dependencies>
 
@@ -329,14 +318,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <annotationProcessorPaths>
                         <!-- Lombok processor for annotations -->
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lomboka.version}</version>
+                            <version>${lombok.version}</version>
                         </path>
                         <!-- MapStruct processor for compile-time code generation -->
                         <path>

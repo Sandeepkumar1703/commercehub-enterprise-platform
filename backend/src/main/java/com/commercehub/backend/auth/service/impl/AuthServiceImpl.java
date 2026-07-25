@@ -3,12 +3,23 @@ package com.commercehub.backend.auth.service.impl;
 import com.commercehub.backend.auth.dto.request.ChangePasswordRequest;
 import com.commercehub.backend.auth.dto.request.LoginRequest;
 import com.commercehub.backend.auth.dto.request.RegisterRequest;
+
 import com.commercehub.backend.auth.dto.response.AuthResponse;
+import com.commercehub.backend.auth.dto.response.RegisterResponse;
+
+import com.commercehub.backend.auth.entity.EmailVerificationToken;
+import com.commercehub.backend.auth.repository.EmailVerificationTokenRepository;
+
 import com.commercehub.backend.auth.service.AuthService;
+import com.commercehub.backend.auth.service.EmailService;
+
 import com.commercehub.backend.common.exception.ResourceNotFoundException;
+
 import com.commercehub.backend.role.repository.RoleRepository;
+
 import com.commercehub.backend.security.JwtTokenProvider;
 import com.commercehub.backend.security.TokenBlacklist;
+
 import com.commercehub.backend.user.entity.Role;
 import com.commercehub.backend.user.entity.User;
 import com.commercehub.backend.user.repository.UserRepository;
@@ -17,77 +28,128 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
+
+import org.springframework.transaction.annotation.Transactional;
+import com.commercehub.backend.common.exception.InvalidCredentialsException;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import com.commercehub.backend.user.entity.PasswordResetToken;
+import com.commercehub.backend.user.repository.PasswordResetTokenRepository;
+
+import com.commercehub.backend.user.dto.request.ForgotPasswordRequest;
+import com.commercehub.backend.user.dto.request.ResetPasswordRequest;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    /**
-     * User Repository
-     */
     private final UserRepository userRepository;
 
-    /**
-     * Role Repository
-     */
     private final RoleRepository roleRepository;
 
-    /**
-     * Password Encoder
-     */
-    private final PasswordEncoder passwordEncoder;
-
-    /**
-     * Spring Security Authentication Manager
-     */
     private final AuthenticationManager authenticationManager;
 
-    /**
-     * JWT Provider
-     */
     private final JwtTokenProvider jwtTokenProvider;
 
-    /**
-     * JWT Blacklist
-     */
     private final TokenBlacklist tokenBlacklist;
+
+    // Email Verification dependencies
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+
+    private final EmailService emailService;
+
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Register new user.
      */
     @Override
-    public AuthResponse register(RegisterRequest request) {
+    @Transactional
+    public RegisterResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
+
+            throw new RuntimeException(
+                    "Email already registered"
+            );
         }
 
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() ->
-                        new RuntimeException("ROLE_USER not found"));
+        Role userRole
+                = roleRepository.findByName("ROLE_USER")
+                        .orElseThrow(()
+                                -> new RuntimeException(
+                                "ROLE_USER not found"
+                        ));
 
-        User user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .build();
+        User user
+                = User.builder()
+                        .firstName(
+                                request.getFirstName()
+                        )
+                        .lastName(
+                                request.getLastName()
+                        )
+                        .email(
+                                request.getEmail()
+                        )
+                        .password(
+                                passwordEncoder.encode(
+                                        request.getPassword()
+                                )
+                        )
+                        // Email not verified yet
+                        .enabled(false)
+                        .build();
 
-        user.getRoles().add(userRole);
+        user.getRoles()
+                .add(userRole);
 
         userRepository.save(user);
 
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(
-                        user.getEmail(),
-                        null
-                );
+        /*
+         * Create Email Verification Token
+         */
+        EmailVerificationToken verificationToken
+                = EmailVerificationToken.builder()
+                        .user(user)
+                        .token(
+                                UUID.randomUUID()
+                                        .toString()
+                        )
+                        .expiryDate(
+                                LocalDateTime.now()
+                                        .plusHours(24)
+                        )
+                        .build();
 
-        return generateTokenResponse(authentication);
+        emailVerificationTokenRepository.save(
+                verificationToken
+        );
+
+        /*
+         * Send verification email
+         */
+        emailService.sendVerificationEmail(
+                user.getEmail(),
+                verificationToken.getToken()
+        );
+
+        return RegisterResponse.builder()
+                .message(
+                        "Registration successful. Please verify your email."
+                )
+                .build();
+
     }
 
     /**
@@ -96,20 +158,48 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+        User user
+                = userRepository.findByEmail(
+                        request.getEmail()
                 )
-        );
+                        .orElseThrow(()
+                                -> new InvalidCredentialsException(
+                                "Invalid email or password"
+                        )
+                        );
 
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(
+        if (!user.isEnabled()) {
+
+            throw new RuntimeException(
+                    "Please verify your email before login"
+            );
+        }
+
+        try {
+
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+
+        } catch (Exception e) {
+
+            throw new InvalidCredentialsException(
+                    "Invalid email or password"
+            );
+
+        }
+
+        Authentication authentication
+                = new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         null
                 );
 
         return generateTokenResponse(authentication);
+
     }
 
     /**
@@ -152,6 +242,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         userRepository.save(user);
+
     }
 
     /**
@@ -169,16 +260,20 @@ public class AuthServiceImpl implements AuthService {
      */
     private User getAuthenticatedUser() {
 
-        Authentication authentication =
-                SecurityContextHolder
+        Authentication authentication
+                = SecurityContextHolder
                         .getContext()
                         .getAuthentication();
 
-        String email = authentication.getName();
+        String email
+                = authentication.getName();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found"));
+                .orElseThrow(()
+                        -> new ResourceNotFoundException(
+                        "User not found"
+                ));
+
     }
 
     /**
@@ -189,13 +284,104 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthResponse.builder()
                 .accessToken(
-                        jwtTokenProvider.generateAccessToken(authentication)
+                        jwtTokenProvider.generateAccessToken(
+                                authentication
+                        )
                 )
                 .refreshToken(
-                        jwtTokenProvider.generateRefreshToken(authentication)
+                        jwtTokenProvider.generateRefreshToken(
+                                authentication
+                        )
                 )
                 .tokenType("Bearer")
                 .expiresIn(900000)
                 .build();
     }
+
+    @Override
+    public void forgotPassword(
+            ForgotPasswordRequest request
+    ) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+        .orElse(null);
+
+        if (user == null) {
+        return;
+        }
+
+        // Remove old reset tokens
+        passwordResetTokenRepository.deleteByUser(user);
+
+        // Generate new token
+        String token = UUID.randomUUID().toString();
+
+        PasswordResetToken resetToken
+                = PasswordResetToken.builder()
+                        .token(token)
+                        .user(user)
+                        .expiryDate(
+                                LocalDateTime.now()
+                                        .plusMinutes(15)
+                        )
+                        .used(false)
+                        .build();
+
+        passwordResetTokenRepository.save(resetToken);
+
+        emailService.sendPasswordResetEmail(
+                user.getEmail(),
+                token
+        );
+    }
+
+    @Override
+    public void resetPassword(
+            ResetPasswordRequest request
+    ) {
+
+        PasswordResetToken resetToken
+                = passwordResetTokenRepository
+                        .findByToken(request.getToken())
+                        .orElseThrow(()
+                                -> new RuntimeException(
+                                "Invalid password reset token"
+                        )
+                        );
+
+        // Check token already used
+        if (resetToken.isUsed()) {
+
+            throw new RuntimeException(
+                    "Password reset token already used"
+            );
+        }
+
+        // Check token expiry
+        if (resetToken.getExpiryDate()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "Password reset token expired"
+            );
+        }
+
+        User user = resetToken.getUser();
+
+        // Encrypt and update password
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getNewPassword()
+                )
+        );
+
+        userRepository.save(user);
+
+        // Mark token as used
+        resetToken.setUsed(true);
+
+        passwordResetTokenRepository.save(resetToken);
+
+    }
+
 }

@@ -25,17 +25,22 @@ public class User {
     /**
      * User First Name
      */
+    @Column(nullable = false)
     private String firstName;
 
     /**
      * User Last Name
      */
+    @Column(nullable = false)
     private String lastName;
 
     /**
      * User Email
      */
-    @Column(unique = true, nullable = false)
+    @Column(
+            unique = true,
+            nullable = false
+    )
     private String email;
 
     /**
@@ -45,18 +50,28 @@ public class User {
     private String password;
 
     /**
+     * Account activation status.
+     *
+     * false = Email not verified true = Email verified
+     */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean enabled = false;
+
+    /**
      * Roles assigned to the user.
      *
-     * Examples:
-     * ROLE_USER
-     * ROLE_ADMIN
-     * ROLE_SELLER
+     * Examples: ROLE_USER ROLE_ADMIN ROLE_SELLER
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            joinColumns = @JoinColumn(
+                    name = "user_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id"
+            )
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();

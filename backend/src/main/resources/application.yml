@@ -29,17 +29,33 @@ spring:
       host: localhost
       port: 6379
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 server:
   port: 8080
 
+app:
+  frontend-url: http://localhost:5173
 
 jwt:
   secret: "1tVX2OW20OlyjoA7RYeIA230NY9LQo4TGo4Cr8Pr0PiH/Nuvi6Lpk45NWrp7XpSzBEIjdDNLq3MDNjFGpN6v0A=="
 
   access-token-expiration: 86400000
   refresh-token-expiration: 604800000
-
 
 logging:
   level:
