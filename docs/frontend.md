@@ -6,11 +6,11 @@ Documentation for the React 19 single-page application (SPA).
 
 ## 🛠️ Tech Stack & Dependencies
 
-- **React**: `19.0.1`
-- **Vite**: `6.2.3`
+- **React**: `18.3.1`
+- **Vite**: `6.2.0`
 - **TypeScript**: `5.8.2`
-- **Tailwind CSS**: `4.1.14`
-- **Lucide Icons**: `0.546.0`
+- **Tailwind CSS**: `4.0.0`
+- **Lucide Icons**: `0.475.0`
 
 ---
 

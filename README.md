@@ -7,7 +7,6 @@
 [![Java](https://img.shields.io/badge/Java-17_LTS-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-Apache_2.0-D22128?style=for-the-badge)](LICENSE)
 
 CommerceHub is an enterprise-inspired modular monolith e-commerce platform built with React, Spring Boot, PostgreSQL, JWT authentication, and Flyway database migrations. The project follows software engineering best practices and is being developed incrementally with a focus on modularity, scalability, and maintainability.
 
@@ -38,7 +37,7 @@ CommerceHub is an enterprise-inspired modular monolith e-commerce platform built
 - [🚀 Quick Start & Local Setup](#-quick-start--local-setup)
 - [📚 Extended Documentation](#-extended-documentation)
 - [👤 Author & Portfolio](#-author--portfolio)
-- [📄 License](#-license)
+- [📌 Project Status](#-project-status)
 
 ---
 
@@ -231,6 +230,6 @@ npm run dev
 
 ---
 
-## 📄 License
+## 📌 Project Status
 
-This project is licensed under the **Apache License 2.0** — see the [LICENSE](LICENSE) file for details.
+CommerceHub is currently under active development. Features, architecture, APIs, and documentation are subject to continuous refinement as domain modules are integrated. All rights reserved by the author.

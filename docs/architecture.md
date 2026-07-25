@@ -11,7 +11,7 @@ Every REST API request follows a strict layered pattern:
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                      CLIENT LAYER                       │
-│    React 19 SPA / Axios HTTP Client with Interceptors   │
+│    React 18 SPA / Axios HTTP Client with Interceptors   │
 └────────────────────────────┬────────────────────────────┘
                              │ HTTP / JSON
                              ▼
