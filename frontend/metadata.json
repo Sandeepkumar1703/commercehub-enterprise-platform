@@ -1,6 +1,6 @@
 {
-  "name": "CommerceHub",
-  "description": "Enterprise Multi-Portal E-Commerce Platform featuring Auth, Customer Shopping CX, Seller Operations Portal, and Admin Governance.",
+  "name": "Design System & Component Studio",
+  "description": "Interactive Design System, Token Architecture Explorer, and Core Component Matrix with live theme switching, token inspection, and code exports.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

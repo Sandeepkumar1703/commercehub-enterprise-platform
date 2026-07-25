@@ -1,113 +1,103 @@
 import React from 'react';
-import { AppProvider, useApp } from './app/store/store';
-import { MainLayout } from './layouts/MainLayout';
-import { SellerLayout } from './layouts/SellerLayout';
-import { AdminLayout } from './layouts/AdminLayout';
+import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { RouterProvider, useRouter } from './core/router/Router';
+import { ROUTES } from './theme/routes';
 
-// Pages
-import { PLP } from './features/products/pages/PLP';
-import { PDP } from './features/products/pages/PDP';
-import { CustomerAccount } from './features/profile/pages/CustomerAccount';
+import { Header } from './components/common/Header';
+import { Footer } from './components/common/Footer';
+import { CartDrawer } from './components/cart/CartDrawer';
 
-import { SellerDashboard } from './features/seller/pages/SellerDashboard';
-import { AddProductWorkflow } from './features/seller/pages/AddProductWorkflow';
-import { InventoryOrdersTable } from './features/seller/pages/InventoryOrdersTable';
-import { SellerWallet } from './features/seller/pages/SellerWallet';
+import { HomePage } from './pages/HomePage';
+import { ProductsPage } from './pages/ProductsPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
 
-import { AdminDashboard } from './features/admin/pages/AdminDashboard';
-import { UserManagement } from './features/admin/pages/UserManagement';
-import { AuditLogs } from './features/admin/pages/AuditLogs';
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { VerifyEmailPage } from './pages/auth/VerifyEmailPage';
+import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
 
-import { Login } from './features/auth/pages/Login';
-import { Register } from './features/auth/pages/Register';
-import { ForgotPassword } from './features/auth/pages/ForgotPassword';
-import { ResetPassword } from './features/auth/pages/ResetPassword';
-import { VerifyOTP } from './features/auth/pages/VerifyOTP';
-import { VerifyEmail } from './features/auth/pages/VerifyEmail';
+import { CustomerDashboardPage } from './pages/customer/CustomerDashboardPage';
+import { CheckoutPage } from './pages/customer/CheckoutPage';
+import { OrderSuccessPage } from './pages/customer/OrderSuccessPage';
+import { OrdersPage } from './pages/customer/OrdersPage';
+import { AccountPage } from './pages/customer/AccountPage';
+import { WishlistPage } from './pages/customer/WishlistPage';
 
-import { MarketingLanding } from './pages/MarketingLanding';
-import { PrintableInvoice } from './pages/PrintableInvoice';
-import { SystemErrorPages } from './pages/SystemErrorPages';
-import PageNavigator from '@/shared/components/PageNavigator';
+import { ApiDocsPage } from './pages/ApiDocsPage';
+import { DesignSystemPage } from './pages/DesignSystemPage';
+import { OrderTrackingPage } from './pages/customer/OrderTrackingPage';
+import { AdminDashboardPage } from './pages/admin/adminDashboardPage';
 
+const RouteSwitcher: React.FC = () => {
+  const { currentPath } = useRouter();
 
-const AppContent: React.FC = () => {
-  const {
-    portal,
-    customerView,
-    sellerView,
-    adminView,
-    authView,
-    systemView
-  } = useApp();
-
-  // 1. Customer Shopping Portal
-  if (portal === 'customer') {
-    return (
-      <MainLayout>
-        {customerView === 'plp' && <PLP />}
-        {customerView === 'pdp' && <PDP />}
-        {customerView === 'account' && <CustomerAccount />}
-      </MainLayout>
-    );
+  switch (currentPath) {
+    case ROUTES.HOME:
+      return <HomePage />;
+    case ROUTES.PRODUCTS:
+      return <ProductsPage />;
+    case ROUTES.PRODUCT_DETAIL:
+      return <ProductDetailPage />;
+    case ROUTES.LOGIN:
+      return <LoginPage />;
+    case ROUTES.REGISTER:
+      return <RegisterPage />;
+    case ROUTES.VERIFY_EMAIL:
+      return <VerifyEmailPage />;
+    case ROUTES.FORGOT_PASSWORD:
+      return <ForgotPasswordPage />;
+    case ROUTES.RESET_PASSWORD:
+      return <ResetPasswordPage />;
+    case ROUTES.CUSTOMER_DASHBOARD:
+      return <CustomerDashboardPage />;
+    case ROUTES.CHECKOUT:
+      return <CheckoutPage />;
+    case ROUTES.ORDER_SUCCESS:
+      return <OrderSuccessPage />;
+    case ROUTES.ORDERS:
+      return <OrdersPage />;
+    case ROUTES.ORDER_TRACKING:
+      return <OrderTrackingPage />;
+    case ROUTES.ADMIN_DASHBOARD:
+      return <AdminDashboardPage />;
+    case ROUTES.ACCOUNT:
+      return <AccountPage />;
+    case ROUTES.WISHLIST:
+      return <WishlistPage />;
+    case ROUTES.API_DOCS:
+      return <ApiDocsPage />;
+    case ROUTES.DESIGN_SYSTEM:
+      return <DesignSystemPage />;
+    default:
+      return <HomePage />;
   }
-
-  // 2. Seller Operations Portal
-  if (portal === 'seller') {
-    return (
-      <SellerLayout>
-        {sellerView === 'dashboard' && <SellerDashboard />}
-        {sellerView === 'add-product' && <AddProductWorkflow />}
-        {sellerView === 'inventory' && <InventoryOrdersTable />}
-        {sellerView === 'wallet' && <SellerWallet />}
-      </SellerLayout>
-    );
-  }
-
-  // 3. Admin Governance Portal
-  if (portal === 'admin') {
-    return (
-      <AdminLayout>
-        {adminView === 'dashboard' && <AdminDashboard />}
-        {adminView === 'users' && <UserManagement />}
-        {adminView === 'audit' && <AuditLogs />}
-      </AdminLayout>
-    );
-  }
-
-  // 4. Authentication Flow Pages
-  if (portal === 'auth') {
-    return (
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex items-center justify-center p-4">
-        {authView === 'login' && <Login />}
-        {authView === 'register' && <Register />}
-        {authView === 'forgot' && <ForgotPassword />}
-        {authView === 'reset' && <ResetPassword />}
-        {authView === 'otp' && <VerifyOTP />}
-        {authView === 'verify-email' && <VerifyEmail />}
-      </div>
-    );
-  }
-
-  // 5. Public Marketing Landing Page
-  if (portal === 'marketing') {
-    return <MarketingLanding />;
-  }
-
-  // 6. System Utility Pages (Invoice, Errors)
-  if (portal === 'system') {
-    if (systemView === 'invoice') return <PrintableInvoice />;
-    return <SystemErrorPages />;
-  }
-
-  return <MarketingLanding />;
 };
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppContent />
-      <PageNavigator />
-    </AppProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <CartProvider>
+          <RouterProvider>
+            <ThemeProvider>
+              <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+                <div>
+                  <Header />
+                  <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+                    <RouteSwitcher />
+                  </main>
+                </div>
+                <CartDrawer />
+                <Footer />
+              </div>
+            </ThemeProvider>
+          </RouterProvider>
+        </CartProvider>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

@@ -1,0 +1,48 @@
+export const DESIGN_TOKENS = {
+  colors: {
+    brandPrimary: 'var(--brand-primary)',
+    brandHover: 'var(--brand-hover)',
+    bgSurface: 'var(--bg-surface)',
+    bgSurfaceRaised: 'var(--bg-surface-raised)',
+    borderDefault: 'var(--border-default)',
+    textPrimary: 'var(--text-primary)',
+    textSecondary: 'var(--text-secondary)',
+    statusSuccess: 'var(--status-success)',
+    statusDanger: 'var(--status-danger)',
+    statusWarning: 'var(--status-warning)',
+    statusInfo: 'var(--status-info)',
+  },
+  borderRadius: {
+    sm: 'rounded-md',
+    md: 'rounded-lg',
+    lg: 'rounded-xl',
+    xl: 'rounded-2xl',
+    full: 'rounded-full',
+  },
+  typography: {
+    h1: 'text-3xl sm:text-4xl font-extrabold tracking-tight',
+    h2: 'text-2xl sm:text-3xl font-bold tracking-tight',
+    h3: 'text-xl font-semibold',
+    subtitle: 'text-base sm:text-lg text-[var(--text-secondary)]',
+    body: 'text-sm sm:text-base leading-relaxed text-[var(--text-primary)]',
+    bodyMuted: 'text-sm text-[var(--text-secondary)]',
+    caption: 'text-xs text-[var(--text-secondary)]',
+    badge: 'text-xs font-semibold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1',
+  },
+  inputs: {
+    base: 'w-full px-3.5 py-2.5 text-sm rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] transition-all duration-150',
+    invalid: 'border-[var(--status-danger)] focus:ring-[var(--status-danger)]',
+    disabled: 'opacity-50 cursor-not-allowed bg-[var(--bg-surface-raised)]',
+  },
+  buttons: {
+    primary: 'px-4 py-2.5 bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-hover)] rounded-lg font-medium text-sm transition-all duration-150 shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer',
+    secondary: 'px-4 py-2.5 bg-[var(--bg-surface-raised)] text-[var(--text-primary)] hover:bg-[var(--border-default)] border border-[var(--border-default)] rounded-lg font-medium text-sm transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer',
+    outline: 'px-4 py-2.5 border border-[var(--border-default)] text-[var(--text-primary)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] rounded-lg font-medium text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer',
+    ghost: 'px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)] rounded-lg font-medium text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer',
+    danger: 'px-4 py-2.5 bg-[var(--status-danger)] text-white hover:opacity-90 rounded-lg font-medium text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer',
+  },
+  cards: {
+    base: 'bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-5 sm:p-6 shadow-sm transition-colors duration-200',
+    interactive: 'bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-[var(--brand-primary)] transition-all duration-200 cursor-pointer',
+  },
+} as const;
