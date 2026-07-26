@@ -664,8 +664,3 @@ Contributions, suggestions, and issue reports are welcome. Please open an issue 
 - **Email**: sandeepkumarprasad01@gmail.com
 - **Project Repository**: [CommerceHub Enterprise Platform](https://github.com/Sandeepkumar1703/commercehub-enterprise-platform)
 
----
-
-## 📄 License
-
-This project is licensed under the **Apache License 2.0** — see the [LICENSE](LICENSE) file for details.
