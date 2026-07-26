@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useLanguage } from '../../context/LanguageContext';
-import { useAppConfig } from '../../context/ConfigContext';
-import { useRouter } from '../../core/router/Router';
-import { ROUTES } from '../../theme/routes';
+import { Button } from '../design-system/components/Button';
+import { Input } from '../design-system/components/Input';
+import { Card } from '../design-system/components/Card';
+import { ROUTES } from '../theme/routes';
+import { useRouter } from '../core/router/Router';
+import { useAppConfig } from '../context/ConfigContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { Lock, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
-import { Button, Input, Card } from '../../theme/design-system';
-
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const { t } = useLanguage();
@@ -39,8 +40,8 @@ export const LoginPage: React.FC = () => {
         
         {/* Auth Header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-[#6A89A7] text-[#BDDDFC] mx-auto flex items-center justify-center shadow-lg border border-[#88BDF2]/30">
-            <Lock className="w-6 h-6 text-[#BDDDFC]" />
+          <div className="w-12 h-12 rounded-2xl bg-[#4A4A4A] text-[#FFFFE3] mx-auto flex items-center justify-center shadow-lg border border-[#CBCBCB]/30">
+            <Lock className="w-6 h-6 text-[#FFFFE3]" />
           </div>
           <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">
             {t('auth.login.title')}
@@ -51,9 +52,9 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Demo Credentials Box */}
-        <div className="p-3.5 bg-[#6A89A7]/10 border border-[#6A89A7]/30 rounded-2xl text-xs space-y-1">
-          <p className="font-bold text-[#6A89A7] dark:text-[#88BDF2] flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#6A89A7] dark:text-[#88BDF2]" />
+        <div className="p-3.5 bg-[#6D8196]/10 border border-[#6D8196]/30 rounded-2xl text-xs space-y-1">
+          <p className="font-bold text-[#6D8196] flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-[#6D8196]" />
             <span>Pre-filled Demo Credentials</span>
           </p>
           <p className="text-[var(--text-secondary)] font-mono text-[11px]">
@@ -85,7 +86,7 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate(ROUTES.FORGOT_PASSWORD)}
-                className="text-xs font-semibold text-[#6A89A7] dark:text-[#88BDF2] hover:underline cursor-pointer"
+                className="text-xs font-semibold text-[#6D8196] hover:underline cursor-pointer"
               >
                 {t('auth.login.forgotPasswordLink')}
               </button>
@@ -101,7 +102,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           {errorMsg && (
-            <p className="text-xs font-semibold text-[#384959] dark:text-[#BDDDFC] bg-[#88BDF2]/20 p-3 rounded-xl border border-[#88BDF2]/40">
+            <p className="text-xs font-semibold text-[#4A4A4A] dark:text-[#FFFFE3] bg-[#CBCBCB]/20 p-3 rounded-xl border border-[#CBCBCB]/40">
               {errorMsg}
             </p>
           )}
@@ -123,7 +124,7 @@ export const LoginPage: React.FC = () => {
             {t('auth.login.noAccount')}{' '}
             <button
               onClick={() => navigate(ROUTES.REGISTER)}
-              className="font-bold text-[#6A89A7] dark:text-[#88BDF2] hover:underline cursor-pointer ml-1"
+              className="font-bold text-[#6D8196] hover:underline cursor-pointer ml-1"
             >
               {t('auth.login.signUpLink')}
             </button>
@@ -132,7 +133,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Security Badge */}
         <div className="flex items-center justify-center gap-1.5 text-[11px] text-[var(--text-secondary)] pt-2 font-mono">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#6A89A7] dark:text-[#88BDF2]" />
+          <ShieldCheck className="w-3.5 h-3.5 text-[#6D8196]" />
           <span>Spring Security Stateless Dual-Token Authorization</span>
         </div>
 

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Soft Slate Blue Rounded Background -->
+  <rect x="0" y="0" width="512" height="512" rx="110" fill="#6B8CAE"/>
+  
+  <!-- Inner White Rounded Frame -->
+  <rect x="72" y="72" width="368" height="368" rx="44" fill="none" stroke="#FFFFFF" stroke-width="18"/>
+  
+  <!-- Top-Right 2x2 Grid Windows (Ivory) -->
+  <rect x="332" y="98" width="22" height="22" fill="#FFFDE8" rx="2"/>
+  <rect x="362" y="98" width="22" height="22" fill="#FFFDE8" rx="2"/>
+  <rect x="332" y="128" width="22" height="22" fill="#FFFDE8" rx="2"/>
+  <rect x="362" y="128" width="22" height="22" fill="#FFFDE8" rx="2"/>
+  
+  <!-- Stylized F (Ivory #FFFDE8) -->
+  <!-- Top bar of F -->
+  <rect x="110" y="110" width="200" height="42" fill="#FFFDE8"/>
+  <!-- Middle bar of F -->
+  <rect x="110" y="210" width="160" height="42" fill="#FFFDE8"/>
+  <!-- Left vertical stem of F -->
+  <rect x="110" y="110" width="42" height="290" fill="#FFFDE8"/>
+
+  <!-- Stylized C (Dark Charcoal / Navy #232F3D) -->
+  <!-- C Top Bar -->
+  <path d="M 180 232 H 340 C 370 232 390 252 390 282 V 290 H 348 V 282 C 348 274 340 268 330 268 H 180 Z" fill="#2D3A4B"/>
+  <!-- C Curved Main Body -->
+  <path d="M 390 282 V 370 C 390 410 350 420 300 420 H 180 V 378 H 300 C 330 378 348 368 348 350 V 282 Z" fill="#2D3A4B"/>
+  <!-- C Lower Inner Extension -->
+  <rect x="180" y="324" width="168" height="42" fill="#FFFDE8"/>
+</svg>

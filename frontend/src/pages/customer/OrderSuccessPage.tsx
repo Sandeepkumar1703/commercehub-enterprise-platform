@@ -17,8 +17,8 @@ export const OrderSuccessPage: React.FC = () => {
   const { orders } = useCart();
   const { t } = useLanguage();
 
-  const orderId = pathParam || orders[0]?.id || 'ORD-98421';
-  const order = orders.find((o) => o.id === orderId) || orders[0];
+  const orderId = pathParam || orders?.[0]?.id || 'ORD-98421';
+  const order = orders?.find((o) => o.id === orderId) || orders?.[0];
 
   return (
     <div className="max-w-2xl mx-auto py-12 space-y-8">

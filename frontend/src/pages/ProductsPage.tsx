@@ -163,7 +163,25 @@ export const ProductsPage: React.FC = () => {
       </div>
 
       {/* Product Grid Listing */}
-      {filteredProducts.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((idx) => (
+            <div
+              key={idx}
+              className="bg-[var(--bg-surface-raised)] border border-[var(--border-default)] rounded-2xl p-5 space-y-4 animate-skeleton"
+            >
+              <div className="w-full h-48 bg-[var(--border-default)] rounded-xl"></div>
+              <div className="h-4 w-1/3 bg-[var(--border-default)] rounded"></div>
+              <div className="h-5 w-3/4 bg-[var(--border-default)] rounded"></div>
+              <div className="h-3 w-full bg-[var(--border-default)] rounded"></div>
+              <div className="flex justify-between items-center pt-2">
+                <div className="h-6 w-20 bg-[var(--border-default)] rounded"></div>
+                <div className="h-9 w-28 bg-[var(--border-default)] rounded-xl"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <div className="text-center py-20 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl">
           <Filter className="w-10 h-10 text-[var(--text-secondary)] mx-auto mb-3 stroke-1" />
           <h3 className="text-base font-bold text-[var(--text-primary)]">
@@ -178,7 +196,7 @@ export const ProductsPage: React.FC = () => {
               setSelectedCategory('ALL');
               setMaxPrice(1000);
             }}
-            className="mt-4 px-4 py-2 bg-[var(--brand-primary)] text-white text-xs font-semibold rounded-xl hover:bg-[var(--brand-hover)] transition-all cursor-pointer"
+            className="mt-4 px-4 py-2 bg-[#4F6D8C] hover:bg-[#3E5973] text-white dark:bg-[#88BDF2] dark:text-[#111827] dark:hover:bg-[#6EA8DF] text-xs font-semibold rounded-xl transition-all cursor-pointer border border-[#4F6D8C] dark:border-[#88BDF2]"
           >
             {t('btn.clear')}
           </button>
@@ -190,7 +208,7 @@ export const ProductsPage: React.FC = () => {
             return (
               <div
                 key={product.id}
-                className="group bg-[var(--bg-surface)] border border-[var(--border-default)] hover:border-[var(--brand-primary)] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
+                className="group bg-[var(--bg-surface)] border border-[var(--border-default)] hover:border-[#6D8196] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
                   <div className="relative aspect-4/3 bg-[var(--bg-surface-raised)] overflow-hidden">
@@ -203,20 +221,20 @@ export const ProductsPage: React.FC = () => {
                       onClick={() => toggleWishlist(product)}
                       className={`absolute top-3 right-3 p-2 rounded-full border backdrop-blur-md transition-all cursor-pointer ${
                         isWish
-                          ? 'bg-rose-500 text-white border-rose-500 shadow-md'
-                          : 'bg-[var(--bg-surface)]/80 text-[var(--text-secondary)] border-[var(--border-default)] hover:text-rose-500'
+                          ? 'bg-rose-600 text-white border-rose-600 shadow-md'
+                          : 'bg-[var(--bg-surface)]/80 text-[var(--text-secondary)] border-[var(--border-default)] hover:text-rose-600'
                       }`}
                     >
                       <Heart className="w-4 h-4 fill-current" />
                     </button>
-                    <span className="absolute bottom-3 left-3 px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg bg-black/70 text-white backdrop-blur-sm">
+                    <span className="absolute bottom-3 left-3 px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg bg-[#1A1A1A]/80 text-[#FFFFE3] backdrop-blur-sm border border-[#4A4A4A]">
                       SKU: {product.sku}
                     </span>
                   </div>
 
                   <div className="p-5 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-full">
+                      <span className="text-[11px] font-semibold text-[#6D8196] bg-[#6D8196]/15 px-2.5 py-0.5 rounded-full border border-[#6D8196]/30">
                         {product.category}
                       </span>
                       <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
@@ -227,7 +245,7 @@ export const ProductsPage: React.FC = () => {
 
                     <h3
                       onClick={() => navigate(`${ROUTES.PRODUCT_DETAIL}/${product.id}`)}
-                      className="text-base font-bold text-[var(--text-primary)] hover:text-[var(--brand-primary)] transition-colors line-clamp-1 cursor-pointer"
+                      className="text-base font-bold text-[var(--text-primary)] hover:text-[#6D8196] transition-colors line-clamp-1 cursor-pointer"
                     >
                       {product.name}
                     </h3>
@@ -247,7 +265,7 @@ export const ProductsPage: React.FC = () => {
 
                   <button
                     onClick={() => addToCart(product)}
-                    className="px-4 py-2 bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-hover)] rounded-xl text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2 bg-[#4A4A4A] text-[#FFFFE3] hover:bg-[#1A1A1A] rounded-xl text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer border border-[#4A4A4A]"
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     <span>{t('btn.addCart')}</span>

@@ -3,6 +3,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useAppConfig } from '../../context/ConfigContext';
 import { useRouter } from '../../core/router/Router';
 import { ROUTES } from '../../theme/routes';
 import {
@@ -18,7 +19,6 @@ import {
   ChevronDown,
   Layers,
   Heart,
-  Search,
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -27,6 +27,7 @@ export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { itemCount, setIsCartOpen, wishlist } = useCart();
   const { currentPath, navigate } = useRouter();
+  const { config } = useAppConfig();
 
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -43,20 +44,20 @@ export const Header: React.FC = () => {
             onClick={() => navigate(ROUTES.HOME)}
             className="flex items-center gap-3 group text-left cursor-pointer"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform border border-[#4F6D8C]/20">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-extrabold tracking-tight text-[var(--text-primary)]">
-                  {t('brand.name')}
+                  {config?.applicationName || t('brand.name')}
                 </span>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                  v1.1.0
+                <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded-full bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] border border-[#D6DEE6] dark:border-[#374151]">
+                  {config?.version || 'v1.2.0'}
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)] hidden sm:block">
-                {t('brand.tagline')}
+                {config?.brandTagline || t('brand.tagline')}
               </p>
             </div>
           </button>
@@ -67,7 +68,7 @@ export const Header: React.FC = () => {
               onClick={() => navigate(ROUTES.HOME)}
               className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer ${
                 currentPath === ROUTES.HOME
-                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold border border-[var(--border-default)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)]'
               }`}
             >
@@ -77,7 +78,7 @@ export const Header: React.FC = () => {
               onClick={() => navigate(ROUTES.PRODUCTS)}
               className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer ${
                 currentPath === ROUTES.PRODUCTS
-                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold border border-[var(--border-default)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)]'
               }`}
             >
@@ -87,33 +88,33 @@ export const Header: React.FC = () => {
               onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
               className={`px-3 py-2 text-sm font-medium rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer ${
                 currentPath === ROUTES.ADMIN_DASHBOARD
-                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold'
-                  : 'text-indigo-600 dark:text-indigo-400 font-bold hover:bg-[var(--bg-surface-raised)]'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold border border-[var(--border-default)]'
+                  : 'text-[var(--text-secondary)] font-medium hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)]'
               }`}
             >
-              <Layers className="w-4 h-4 text-indigo-500" />
+              <Layers className="w-4 h-4 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>Admin Console</span>
             </button>
             <button
               onClick={() => navigate(ROUTES.API_DOCS)}
               className={`px-3 py-2 text-sm font-medium rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer ${
                 currentPath === ROUTES.API_DOCS
-                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold border border-[var(--border-default)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)]'
               }`}
             >
-              <Code2 className="w-4 h-4 text-emerald-500" />
+              <Code2 className="w-4 h-4 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>{t('nav.apiDocs')}</span>
             </button>
             <button
               onClick={() => navigate(ROUTES.DESIGN_SYSTEM)}
               className={`px-3 py-2 text-sm font-medium rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer ${
                 currentPath === ROUTES.DESIGN_SYSTEM
-                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold'
+                  ? 'bg-[var(--bg-surface-raised)] text-[var(--brand-primary)] font-semibold border border-[var(--border-default)]'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)]'
               }`}
             >
-              <Palette className="w-4 h-4 text-purple-500" />
+              <Palette className="w-4 h-4 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>{t('nav.designSystem')}</span>
             </button>
           </nav>
@@ -130,7 +131,7 @@ export const Header: React.FC = () => {
           >
             <Heart className="w-4 h-4" />
             {wishlist.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
+              <span className="absolute -top-1.5 -right-1.5 bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
                 {wishlist.length}
               </span>
             )}
@@ -144,7 +145,7 @@ export const Header: React.FC = () => {
           >
             <ShoppingCart className="w-4 h-4" />
             {itemCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-[var(--brand-primary)] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-pulse">
+              <span className="absolute -top-1.5 -right-1.5 bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-pulse">
                 {itemCount}
               </span>
             )}
@@ -157,7 +158,7 @@ export const Header: React.FC = () => {
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-raised)] text-[var(--text-primary)] text-xs font-semibold hover:border-[var(--brand-primary)] transition-all cursor-pointer"
               title={t('language.select')}
             >
-              <Globe className="w-3.5 h-3.5 text-indigo-500" />
+              <Globe className="w-3.5 h-3.5 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>{currentLangObj.flag} {currentLangObj.code.toUpperCase()}</span>
               <ChevronDown className="w-3 h-3 text-[var(--text-secondary)]" />
             </button>
@@ -201,9 +202,9 @@ export const Header: React.FC = () => {
             title={themeMode === 'dark' ? t('theme.light') : t('theme.dark')}
           >
             {themeMode === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-4 h-4 text-[#FFFFE3]" />
             ) : (
-              <Moon className="w-4 h-4 text-slate-700" />
+              <Moon className="w-4 h-4 text-[#4A4A4A]" />
             )}
           </button>
 
@@ -214,7 +215,7 @@ export const Header: React.FC = () => {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-raised)] hover:border-[var(--brand-primary)] transition-all cursor-pointer"
               >
-                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-[#4A4A4A] text-[#FFFFE3] font-bold text-xs flex items-center justify-center">
                   {user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <span className="text-xs font-semibold text-[var(--text-primary)] hidden md:block">
@@ -242,9 +243,9 @@ export const Header: React.FC = () => {
                       setIsUserMenuOpen(false);
                       navigate(ROUTES.ADMIN_DASHBOARD);
                     }}
-                    className="w-full text-left px-3 py-2 text-xs text-indigo-600 dark:text-indigo-400 font-bold hover:bg-[var(--bg-surface-raised)] rounded-lg flex items-center gap-2 cursor-pointer"
+                    className="w-full text-left px-3 py-2 text-xs text-[#6D8196] font-bold hover:bg-[var(--bg-surface-raised)] rounded-lg flex items-center gap-2 cursor-pointer"
                   >
-                    <Layers className="w-4 h-4 text-indigo-500" />
+                    <Layers className="w-4 h-4 text-[#6D8196]" />
                     <span>Admin Operations Console</span>
                   </button>
 
@@ -255,7 +256,7 @@ export const Header: React.FC = () => {
                     }}
                     className="w-full text-left px-3 py-2 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)] rounded-lg font-medium flex items-center gap-2 cursor-pointer"
                   >
-                    <Layers className="w-4 h-4 text-indigo-500" />
+                    <Layers className="w-4 h-4 text-[#6D8196]" />
                     <span>{t('nav.dashboard')}</span>
                   </button>
 
@@ -266,7 +267,7 @@ export const Header: React.FC = () => {
                     }}
                     className="w-full text-left px-3 py-2 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)] rounded-lg font-medium flex items-center gap-2 cursor-pointer"
                   >
-                    <User className="w-4 h-4 text-blue-500" />
+                    <User className="w-4 h-4 text-[#6D8196]" />
                     <span>{t('nav.account')}</span>
                   </button>
 
@@ -277,7 +278,7 @@ export const Header: React.FC = () => {
                     }}
                     className="w-full text-left px-3 py-2 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-surface-raised)] rounded-lg font-medium flex items-center gap-2 cursor-pointer"
                   >
-                    <ShoppingBag className="w-4 h-4 text-emerald-500" />
+                    <ShoppingBag className="w-4 h-4 text-[#6D8196]" />
                     <span>{t('nav.orders')}</span>
                   </button>
 

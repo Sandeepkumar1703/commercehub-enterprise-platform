@@ -295,21 +295,20 @@ export const AdminDashboardPage: React.FC = () => {
     <div className="py-8 space-y-8 animate-in fade-in duration-300">
       
       {/* Enterprise Admin Banner Header */}
-      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-8 text-white shadow-2xl relative overflow-hidden border border-indigo-500/20">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
+      <div className="rounded-3xl bg-[var(--bg-surface-raised)] border border-[var(--border-default)] p-8 text-[var(--text-primary)] shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-mono font-bold tracking-wider uppercase border border-indigo-500/30 flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="px-3 py-1 rounded-full bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] text-xs font-mono font-bold tracking-wider uppercase border border-[#D6DEE6] dark:border-[#374151] flex items-center gap-1.5">
+                <Shield className="w-3.5 h-3.5 text-[#4F6D8C] dark:text-[#88BDF2]" />
                 Enterprise Operations Portal
               </span>
-              <span className="text-xs text-slate-400">Spring Boot Microservices Connected</span>
+              <span className="text-xs text-[var(--text-secondary)] font-mono">Spring Boot Microservices Connected</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-white">
+            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
               CommerceHub Platform Console
             </h1>
-            <p className="text-sm text-slate-300 mt-1 max-w-xl">
+            <p className="text-sm text-[var(--text-secondary)] mt-1 max-w-xl">
               Monitor multi-tenant metrics, fulfill order queues, manage catalogs, configure promotional campaigns, and manage RBAC user privileges.
             </p>
           </div>
@@ -317,23 +316,23 @@ export const AdminDashboardPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsAddProductOpen(true)}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 bg-[#4F6D8C] hover:bg-[#3E5973] text-white dark:bg-[#88BDF2] dark:text-[#111827] dark:hover:bg-[#6EA8DF] rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 cursor-pointer border border-[#4F6D8C] dark:border-[#88BDF2]"
             >
               <Plus className="w-4 h-4" />
               <span>Add Product Item</span>
             </button>
             <button
               onClick={() => navigate(ROUTES.API_DOCS)}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 bg-[#EEF4F8] dark:bg-[#2B3645] hover:bg-[#D6DEE6] dark:hover:bg-[#374151] text-[#24313D] dark:text-[#F8FAFC] border border-[#D6DEE6] dark:border-[#374151] rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer"
             >
-              <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+              <ArrowUpRight className="w-4 h-4 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>Open OpenAPI Specs</span>
             </button>
           </div>
         </div>
 
         {/* Tab Navigation Menu */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-6 border-t border-slate-800 mt-6 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pt-6 border-t border-[var(--border-default)] mt-6 scrollbar-none">
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: BarChart3 },
             { id: 'products', label: 'Products Catalog', icon: Package },
@@ -352,16 +351,16 @@ export const AdminDashboardPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as AdminTab)}
                 className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-white text-slate-900 shadow-md font-extrabold'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] shadow-xs font-extrabold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[#EEF4F8] dark:hover:bg-[#2B3645]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-[#111827]' : 'text-[var(--text-secondary)]'}`} />
                 <span>{tab.label}</span>
                 {tab.badge !== undefined && tab.badge > 0 && (
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      isActive ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-800 text-indigo-300'
+                      isActive ? 'bg-white/20 text-white dark:bg-[#111827]/20 dark:text-[#111827]' : 'bg-[#EEF4F8] text-[#4F6D8C] dark:bg-[#2B3645] dark:text-[#88BDF2]'
                     }`}
                   >
                     {tab.badge}
@@ -382,14 +381,14 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Total Sales Revenue</p>
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#22C55E]/15 text-[#22C55E] flex items-center justify-center">
                   <DollarSign className="w-5 h-5" />
                 </div>
               </div>
               <p className="text-2xl font-extrabold text-[var(--text-primary)] mt-3">
                 ${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </p>
-              <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600 font-semibold">
+              <div className="flex items-center gap-1 mt-2 text-xs text-[#22C55E] font-semibold">
                 <TrendingUp className="w-3.5 h-3.5" />
                 <span>+14.2% from last month</span>
               </div>
@@ -398,14 +397,14 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Total Orders Processed</p>
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] flex items-center justify-center">
                   <ShoppingBag className="w-5 h-5" />
                 </div>
               </div>
               <p className="text-2xl font-extrabold text-[var(--text-primary)] mt-3">
                 {totalOrdersCount}
               </p>
-              <div className="flex items-center gap-1 mt-2 text-xs text-indigo-600 font-semibold">
+              <div className="flex items-center gap-1 mt-2 text-xs text-[#4F6D8C] dark:text-[#88BDF2] font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>99.4% fulfillment rate</span>
               </div>
@@ -414,14 +413,14 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Active Catalog Products</p>
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] flex items-center justify-center">
                   <Package className="w-5 h-5" />
                 </div>
               </div>
               <p className="text-2xl font-extrabold text-[var(--text-primary)] mt-3">
                 {productList.length}
               </p>
-              <div className="flex items-center gap-1 mt-2 text-xs text-slate-500 font-medium">
+              <div className="flex items-center gap-1 mt-2 text-xs text-[var(--text-secondary)] font-medium">
                 <span>Across {categories.length} store categories</span>
               </div>
             </div>
@@ -429,14 +428,14 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="p-6 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)] shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">Low Stock Inventory Alerts</p>
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/15 text-[#F59E0B] flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
               </div>
               <p className="text-2xl font-extrabold text-[var(--text-primary)] mt-3">
                 {lowStockCount} Items
               </p>
-              <div className="flex items-center gap-1 mt-2 text-xs text-amber-600 font-semibold">
+              <div className="flex items-center gap-1 mt-2 text-xs text-[#F59E0B] font-semibold">
                 <span>Requires restock attention</span>
               </div>
             </div>

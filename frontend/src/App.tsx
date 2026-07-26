@@ -1,4 +1,5 @@
 import React from 'react';
+import { ConfigProvider } from './context/ConfigContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
@@ -7,6 +8,7 @@ import { RouterProvider, useRouter } from './core/router/Router';
 import { ROUTES } from './theme/routes';
 
 import { Header } from './components/common/Header';
+import { AuthHeader } from './components/common/AuthHeader';
 import { Footer } from './components/common/Footer';
 import { CartDrawer } from './components/cart/CartDrawer';
 
@@ -29,8 +31,50 @@ import { WishlistPage } from './pages/customer/WishlistPage';
 
 import { ApiDocsPage } from './pages/ApiDocsPage';
 import { DesignSystemPage } from './pages/DesignSystemPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { OrderTrackingPage } from './pages/customer/OrderTrackingPage';
-import { AdminDashboardPage } from './pages/admin/adminDashboardPage';
+
+const AUTH_ROUTES = [
+  ROUTES.LOGIN,
+  ROUTES.REGISTER,
+  ROUTES.VERIFY_EMAIL,
+  ROUTES.FORGOT_PASSWORD,
+  ROUTES.RESET_PASSWORD,
+];
+
+const MainLayout: React.FC = () => {
+  const { currentPath } = useRouter();
+  const isAuthPage = AUTH_ROUTES.includes(currentPath as any);
+
+  if (isAuthPage) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200">
+        <div>
+          <AuthHeader />
+          <main className="max-w-md w-full mx-auto px-4 pb-12">
+            <RouteSwitcher />
+          </main>
+        </div>
+        <footer className="py-6 text-center text-xs text-[var(--text-secondary)] border-t border-[var(--border-default)]">
+          <p>© {new Date().getFullYear()} CommerceHub Platform. All rights reserved.</p>
+        </footer>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200">
+      <div>
+        <Header />
+        <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <RouteSwitcher />
+        </main>
+      </div>
+      <CartDrawer />
+      <Footer />
+    </div>
+  );
+};
 
 const RouteSwitcher: React.FC = () => {
   const { currentPath } = useRouter();
@@ -79,25 +123,18 @@ const RouteSwitcher: React.FC = () => {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <CartProvider>
-          <RouterProvider>
-            <ThemeProvider>
-              <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
-                <div>
-                  <Header />
-                  <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-                    <RouteSwitcher />
-                  </main>
-                </div>
-                <CartDrawer />
-                <Footer />
-              </div>
-            </ThemeProvider>
-          </RouterProvider>
-        </CartProvider>
-      </AuthProvider>
-    </LanguageProvider>
+    <ConfigProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <CartProvider>
+            <RouterProvider>
+              <ThemeProvider>
+                <MainLayout />
+              </ThemeProvider>
+            </RouterProvider>
+          </CartProvider>
+        </AuthProvider>
+      </LanguageProvider>
+    </ConfigProvider>
   );
 }

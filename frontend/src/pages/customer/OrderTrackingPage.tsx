@@ -26,7 +26,7 @@ export const OrderTrackingPage: React.FC = () => {
 
   // Find order by path param ID or fallback to first available order
   const orderId = pathParam || 'ORD-98421';
-  const order = orders.find((o) => o.id === orderId) || orders[0];
+  const order = orders?.find((o) => o.id === orderId) || orders?.[0];
 
   if (!order) {
     return (

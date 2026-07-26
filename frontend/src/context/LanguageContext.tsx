@@ -21,10 +21,12 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLanguageState(lang);
     localStorage.setItem('app_language', lang);
     document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   };
 
   useEffect(() => {
     document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
   }, [language]);
 
   const t = (key: string, fallback?: string): string => {

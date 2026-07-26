@@ -143,27 +143,27 @@ export const ApiDocsPage: React.FC = () => {
     <div className="space-y-8 py-6 animate-in fade-in duration-300">
       
       {/* Platform Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-8 rounded-3xl border border-indigo-500/20 shadow-2xl relative overflow-hidden">
+      <div className="bg-[var(--bg-surface-raised)] text-[var(--text-primary)] p-8 rounded-3xl border border-[var(--border-default)] shadow-sm relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-mono font-bold tracking-wider uppercase border border-indigo-500/30 flex items-center gap-1.5">
-                <Workflow className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="px-3 py-1 rounded-full bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] text-xs font-mono font-bold tracking-wider uppercase border border-[#D6DEE6] dark:border-[#374151] flex items-center gap-1.5">
+                <Workflow className="w-3.5 h-3.5 text-[#4F6D8C] dark:text-[#88BDF2]" />
                 CommerceHub Platform Blueprints
               </span>
-              <span className="text-xs text-slate-400 font-mono">v2.4 Enterprise Edition</span>
+              <span className="text-xs text-[var(--text-secondary)] font-mono">v2.4 Enterprise Edition</span>
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-white">
+            <h1 className="text-3xl font-black tracking-tight text-[var(--text-primary)]">
               Complete System Documentation & Architecture Guide
             </h1>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl leading-relaxed">
               Comprehensive reference covering RBAC user roles, end-to-end execution flowcharts, PostgreSQL database schema ER diagrams, Spring Boot 3 microservice backend flow, React context frontend state pipeline, and interactive REST APIs.
             </p>
           </div>
         </div>
 
         {/* Documentation Tab Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pt-6 border-t border-slate-800 mt-6 scrollbar-none">
+        <div className="flex items-center gap-2 overflow-x-auto pt-6 border-t border-[var(--border-default)] mt-6 scrollbar-none">
           {[
             { id: 'overview', label: '1. Overview', icon: Layers },
             { id: 'roles', label: '2. User Roles & RBAC', icon: Users },
@@ -181,11 +181,11 @@ export const ApiDocsPage: React.FC = () => {
                 onClick={() => setDocTab(tab.id as DocTab)}
                 className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-white text-slate-900 shadow-md font-extrabold'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] shadow-xs font-extrabold'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[#EEF4F8] dark:hover:bg-[#2B3645]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-[#111827]' : 'text-[var(--text-secondary)]'}`} />
                 <span>{tab.label}</span>
               </button>
             );

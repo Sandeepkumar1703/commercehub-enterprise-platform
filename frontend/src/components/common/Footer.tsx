@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold">
+              <div className="w-8 h-8 rounded-lg bg-[#4F6D8C] text-white dark:bg-[#88BDF2] dark:text-[#111827] flex items-center justify-center font-bold border border-[#4F6D8C]/20">
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <span className="text-base font-extrabold tracking-tight">
@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               {t('brand.tagline')}. Built with Java 17, Spring Boot 3.3, and React 18 with Vite.
             </p>
             <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)] font-mono">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#4F6D8C] dark:text-[#88BDF2]" />
               <span>Spring Security & JWT Activated</span>
             </div>
           </div>
@@ -125,7 +125,7 @@ export const Footer: React.FC = () => {
                   onClick={() => navigate(ROUTES.API_DOCS)}
                   className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Code2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <Code2 className="w-3.5 h-3.5 text-[#6D8196]" />
                   <span>{t('nav.apiDocs')}</span>
                 </button>
               </li>
@@ -134,7 +134,7 @@ export const Footer: React.FC = () => {
                   onClick={() => navigate(ROUTES.DESIGN_SYSTEM)}
                   className="hover:text-[var(--text-primary)] transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Cpu className="w-3.5 h-3.5 text-purple-500" />
+                  <Cpu className="w-3.5 h-3.5 text-[#6D8196]" />
                   <span>{t('nav.designSystem')}</span>
                 </button>
               </li>
@@ -153,7 +153,7 @@ export const Footer: React.FC = () => {
           <p>© {new Date().getFullYear()} CommerceHub Platform. All enterprise rights reserved.</p>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              Engineered with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" /> for portfolio excellence
+              Engineered with <Heart className="w-3.5 h-3.5 text-[#6D8196] fill-[#6D8196] inline" /> for portfolio excellence
             </span>
           </div>
         </div>

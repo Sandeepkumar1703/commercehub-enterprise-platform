@@ -23,23 +23,23 @@ export const CustomerDashboardPage: React.FC = () => {
     <div className="space-y-8 py-6">
       
       {/* Welcome Hero Banner */}
-      <div className="p-8 rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-950 text-white border border-indigo-800/40 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+      <div className="p-8 rounded-3xl bg-[var(--bg-surface-raised)] border border-[var(--border-default)] text-[var(--text-primary)] shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-400/30">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEF4F8] dark:bg-[#2B3645] text-[#4F6D8C] dark:text-[#88BDF2] text-xs font-semibold border border-[#D6DEE6] dark:border-[#374151]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#22C55E]" />
             <span>Customer Portal Authenticated</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
             Welcome back, {user?.firstName} {user?.lastName}!
           </h1>
-          <p className="text-xs text-slate-300">
+          <p className="text-xs text-[var(--text-secondary)]">
             Account Email: <span className="font-mono">{user?.email}</span> | Active Roles: [{user?.roles.join(', ')}]
           </p>
         </div>
 
         <button
           onClick={() => navigate(ROUTES.PRODUCTS)}
-          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+          className="px-5 py-2.5 bg-[#4F6D8C] hover:bg-[#3E5973] text-white dark:bg-[#88BDF2] dark:text-[#111827] dark:hover:bg-[#6EA8DF] font-bold text-xs rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap border border-[#4F6D8C] dark:border-[#88BDF2]"
         >
           <ShoppingBag className="w-4 h-4" />
           <span>Browse Store Catalog</span>
@@ -51,7 +51,7 @@ export const CustomerDashboardPage: React.FC = () => {
         <div className="p-6 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-xs space-y-2">
           <div className="flex items-center justify-between text-[var(--text-secondary)]">
             <span className="text-xs font-bold uppercase tracking-wider">Total Orders</span>
-            <Package className="w-5 h-5 text-indigo-500" />
+            <Package className="w-5 h-5 text-[#4F6D8C] dark:text-[#88BDF2]" />
           </div>
           <p className="text-3xl font-black text-[var(--text-primary)]">
             {orders.length}
