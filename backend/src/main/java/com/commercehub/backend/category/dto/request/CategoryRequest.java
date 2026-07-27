@@ -9,17 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Request DTO for creating a new product category.
- *
- * This DTO is used by the Category Management API to receive
- * category information from the client.
- *
- * Example Request:
- *
- * {
- *   "name": "Electronics",
- *   "description": "Electronic gadgets and accessories"
- * }
+ * Request DTO for Category APIs.
  */
 @Getter
 @Setter
@@ -30,32 +20,29 @@ public class CategoryRequest {
 
     /**
      * Category name.
-     *
-     * <p>Validation Rules:</p>
-     * <ul>
-     *     <li>Must not be blank.</li>
-     *     <li>Maximum length: 100 characters.</li>
-     * </ul>
      */
     @NotBlank(message = "Category name is required.")
-    @Size(
-            max = 100,
-            message = "Category name must not exceed 100 characters."
-    )
+    @Size(max = 100, message = "Category name must not exceed 100 characters.")
     private String name;
 
     /**
-     * Optional category description.
-     *
-     * <p>Validation Rules:</p>
-     * <ul>
-     *     <li>Maximum length: 500 characters.</li>
-     * </ul>
+     * Category description.
      */
-    @Size(
-            max = 500,
-            message = "Description must not exceed 500 characters."
-    )
+    @Size(max = 500, message = "Description must not exceed 500 characters.")
     private String description;
 
+    /**
+     * Category image URL.
+     */
+    @Size(max = 500, message = "Image URL must not exceed 500 characters.")
+    private String imageUrl;
+
+    /**
+     * Category active status.
+     *
+     * Optional.
+     * Defaults to true if omitted.
+     */
+    @Builder.Default
+    private Boolean active = true;
 }
