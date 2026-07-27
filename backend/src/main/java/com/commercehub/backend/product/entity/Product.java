@@ -1,6 +1,7 @@
 package com.commercehub.backend.product.entity;
 
 import com.commercehub.backend.common.entity.BaseEntity;
+import com.commercehub.backend.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

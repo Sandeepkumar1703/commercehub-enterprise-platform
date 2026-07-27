@@ -1,4 +1,4 @@
-package com.commercehub.backend.product.entity;
+package com.commercehub.backend.category.entity;
 
 import com.commercehub.backend.common.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -15,6 +15,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.commercehub.backend.product.entity.Product;
 
 /**
  * Category entity.

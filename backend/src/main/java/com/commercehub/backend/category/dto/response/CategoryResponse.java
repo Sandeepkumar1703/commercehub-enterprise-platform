@@ -1,4 +1,4 @@
-package com.commercehub.backend.product.dto.response;
+package com.commercehub.backend.category.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

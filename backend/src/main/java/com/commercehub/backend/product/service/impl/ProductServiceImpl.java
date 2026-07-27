@@ -1,7 +1,7 @@
 package com.commercehub.backend.product.service.impl;
 
-import com.commercehub.backend.product.entity.Category;
-import com.commercehub.backend.product.repository.CategoryRepository;
+import com.commercehub.backend.category.entity.Category;
+import com.commercehub.backend.category.repository.CategoryRepository;
 import com.commercehub.backend.product.dto.request.ProductRequest;
 import com.commercehub.backend.product.dto.response.ProductResponse;
 import com.commercehub.backend.product.entity.Product;

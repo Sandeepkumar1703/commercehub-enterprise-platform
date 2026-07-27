@@ -1,4 +1,4 @@
-package com.commercehub.backend.test.controller;
+package com.commercehub.test.controller;
 
 
 import org.springframework.web.bind.annotation.*;
