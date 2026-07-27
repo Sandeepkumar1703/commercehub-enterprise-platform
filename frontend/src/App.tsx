@@ -31,8 +31,8 @@ import { WishlistPage } from './pages/customer/WishlistPage';
 
 import { ApiDocsPage } from './pages/ApiDocsPage';
 import { DesignSystemPage } from './pages/DesignSystemPage';
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { OrderTrackingPage } from './pages/customer/OrderTrackingPage';
+import { AdminDashboardPage } from './pages/admin/adminDashboardPage';
 
 const AUTH_ROUTES = [
   ROUTES.LOGIN,

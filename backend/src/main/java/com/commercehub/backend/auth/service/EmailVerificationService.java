@@ -68,13 +68,13 @@ public class EmailVerificationService {
     public VerifyEmailResponse verifyEmail(
             String token
     ) {
-
+        
         EmailVerificationToken verificationToken =
                 tokenRepository.findByToken(token)
                         .orElseThrow(() ->
                                 new IllegalArgumentException(
-                                        "Invalid verification token."
-                                )
+                                "Invalid verification token."
+                        )
                         );
 
         if (verificationToken.getVerifiedAt() != null) {

@@ -30,6 +30,7 @@ import {
   XCircle,
   RefreshCw,
 } from 'lucide-react';
+import { createProductApi } from '@/src/features/products/api/productApi';
 
 type AdminTab =
   | 'overview'
@@ -175,37 +176,58 @@ export const AdminDashboardPage: React.FC = () => {
   const lowStockCount = productList.filter((p) => p.stockQuantity < 15).length;
 
   // Handlers
-  const handleAddProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProduct.name || !newProduct.price) return;
+ const handleCreateProduct = async (
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
 
-    const created: ProductItem = {
-      id: Date.now(),
-      name: newProduct.name,
-      description: newProduct.description || 'Enterprise catalog entry',
-      price: parseFloat(newProduct.price),
-      sku: newProduct.sku || `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
-      stockQuantity: parseInt(newProduct.stockQuantity) || 20,
+  try {
+    const payload = {
+      name: newProduct.name.trim(),
+      description: newProduct.description.trim(),
+      price: Number(newProduct.price),
+      stockQuantity: Number(newProduct.stockQuantity),
+      sku: newProduct.sku.trim(),
       imageUrl: newProduct.imageUrl,
-      category: newProduct.categoryName,
       categoryId: 1,
-      rating: 5.0,
-      reviewCount: 1,
-      specifications: { Category: newProduct.categoryName },
     };
 
-    setProductList([created, ...productList]);
+    console.log("Creating product...");
+    console.log(payload);
+
+    const response = await createProductApi(payload);
+
+    console.log("API Response");
+    console.log(response);
+
+    const savedProduct = response.data ?? response;
+
+    setProductList((prev) => [savedProduct, ...prev]);
+
     setNewProduct({
-      name: '',
-      description: '',
-      price: '',
-      sku: '',
-      stockQuantity: '25',
-      imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30',
-      categoryName: 'Audio & Electronics',
+      name: "",
+      description: "",
+      price: "",
+      sku: "",
+      stockQuantity: "25",
+      imageUrl:
+        "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+      categoryName: "Audio & Electronics",
     });
+
     setIsAddProductOpen(false);
-  };
+
+    alert("Product Created Successfully");
+  } catch (error: any) {
+    console.error(error);
+
+    if (error.response?.status === 401) {
+      alert("Unauthorized. Please login again.");
+    } else {
+      alert(error.response?.data?.message || "Failed to create product");
+    }
+  }
+};
 
   const handleStockUpdate = (productId: number, delta: number) => {
     setProductList((prev) =>
@@ -553,7 +575,7 @@ export const AdminDashboardPage: React.FC = () => {
           {/* Modal / Inline Add Product Form */}
           {isAddProductOpen && (
             <form
-              onSubmit={handleAddProduct}
+              onSubmit={ handleCreateProduct }
               className="p-6 rounded-3xl bg-[var(--bg-surface)] border border-indigo-500/30 shadow-xl space-y-4 animate-in slide-in-from-top duration-200"
             >
               <div className="flex items-center justify-between border-b border-[var(--border-default)] pb-3">
@@ -1123,3 +1145,4 @@ export const AdminDashboardPage: React.FC = () => {
     </div>
   );
 };
+

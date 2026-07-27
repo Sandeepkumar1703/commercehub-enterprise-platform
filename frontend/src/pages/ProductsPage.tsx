@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useCart } from '../context/CartContext';
 import { useRouter } from '../core/router/Router';
-import { PRODUCT_CATALOG, ProductItem } from '../data/products';
+import { ProductItem } from '../data/products';
 import { productService } from '../core/api/productService';
 import { ROUTES } from '../theme/routes';
 import {
@@ -20,49 +20,71 @@ export const ProductsPage: React.FC = () => {
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
   const { navigate } = useRouter();
 
-  const [products, setProducts] = useState<ProductItem[]>(PRODUCT_CATALOG);
+  const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<string>('NEWEST');
-  const [maxPrice, setMaxPrice] = useState<number>(1000);
+  const maxProductPrice = useMemo(() => {
+  return products.length > 0
+    ? Math.max(...products.map(p => p.price))
+    : 0;
+}, [products]);
+  const [maxPrice, setMaxPrice] = useState<number>(Infinity);
 
   // Fetch from live /api/products on mount if available
-  useEffect(() => {
-    let isMounted = true;
-    const fetchLiveProducts = async () => {
-      setLoading(true);
-      try {
-        const liveItems = await productService.getAllProducts();
-        if (isMounted && Array.isArray(liveItems) && liveItems.length > 0) {
-          const mapped: ProductItem[] = liveItems.map((item) => ({
-            id: item.id,
-            name: item.name,
-            sku: item.sku || `SKU-${item.id}`,
-            category: item.categoryName || 'General',
-            categoryId: item.categoryId || 1,
-            price: item.price || 0,
-            rating: 4.8,
-            reviewCount: 25,
-            stockQuantity: item.stockQuantity || 10,
-            imageUrl: item.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e',
-            description: item.description || '',
-            specifications: {},
-          }));
-          setProducts(mapped);
-        }
-      } catch (e) {
-        console.info('Live /api/products backend endpoint unreachable. Using default catalog.', e);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
+ useEffect(() => {
+  let isMounted = true;
 
-    fetchLiveProducts();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const fetchProducts = async () => {
+    setLoading(true);
+
+    try {
+      const liveItems = await productService.getAllProducts();
+
+      if (isMounted && Array.isArray(liveItems)) {
+        const mappedProducts: ProductItem[] = liveItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          sku: item.sku,
+          stockQuantity: item.stockQuantity,
+          imageUrl: item.imageUrl,
+          categoryId: item.categoryId,
+          category: item.categoryName,
+
+          // Backend does not provide these yet
+          rating: 0,
+          reviewCount: 0,
+
+          specifications: {},
+        }));
+
+        setProducts(mappedProducts);
+
+        setMaxPrice(
+          Math.max(...mappedProducts.map(product => product.price))
+        );
+      }
+
+    } catch (error) {
+      console.error('Failed to load products:', error);
+
+    } finally {
+      if (isMounted) {
+        setLoading(false);
+      }
+    }
+  };
+
+  fetchProducts();
+
+  return () => {
+    isMounted = false;
+  };
+
+}, []);
 
   const categories = useMemo(() => {
     const set = new Set(products.map((p) => p.category));

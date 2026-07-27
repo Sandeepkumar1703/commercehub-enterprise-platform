@@ -73,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Attempt real Spring Boot auth endpoint POST /api/auth/login
       const res = await authService.login({ email, password });
       if (res && res.accessToken) {
+        localStorage.setItem("auth_access_token", res.accessToken);
         setToken(res.accessToken);
         
         // Try fetching user profile from GET /api/users/profile
