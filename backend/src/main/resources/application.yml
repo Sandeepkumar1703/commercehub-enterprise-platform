@@ -45,6 +45,10 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+storage:
+  location: uploads
+  product-images: products
+
 server:
   port: 8080
 

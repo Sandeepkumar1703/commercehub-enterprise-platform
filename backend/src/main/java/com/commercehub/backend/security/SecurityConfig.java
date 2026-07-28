@@ -89,7 +89,9 @@ public class SecurityConfig {
 
                                 "/v3/api-docs",
 
-                                "/webjars/**"
+                                "/webjars/**",
+
+                                "/uploads/**"
 
                         ).permitAll()
 

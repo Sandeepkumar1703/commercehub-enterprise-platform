@@ -30,4 +30,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         BigDecimal max,
         Pageable pageable
 );
+
+Page<Product> findByStockQuantityGreaterThan(
+        Integer quantity,
+        Pageable pageable
+);
+
+Page<Product> findByStockQuantityEquals(
+        Integer quantity,
+        Pageable pageable
+);
 }

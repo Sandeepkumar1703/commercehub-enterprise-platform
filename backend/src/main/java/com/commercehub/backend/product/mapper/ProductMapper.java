@@ -17,11 +17,9 @@ public class ProductMapper {
         product.setPrice(request.getPrice());
         product.setSku(request.getSku());
         product.setStockQuantity(request.getStockQuantity());
-        product.setImageUrl(request.getImageUrl());
 
         return product;
     }
-
 
     public ProductResponse toResponse(Product product) {
 

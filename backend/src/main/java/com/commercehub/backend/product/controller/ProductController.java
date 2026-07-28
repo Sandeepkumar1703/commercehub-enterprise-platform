@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/products")
@@ -122,6 +124,34 @@ public class ProductController {
         );
     }
 
+    @Operation(summary = "Filter in-stock products")
+    @GetMapping("/filter/in-stock")
+    public ResponseEntity<Page<ProductResponse>> getInStockProducts(
+            @PageableDefault(
+                    page = 0,
+                    size = 10,
+                    sort = "id"
+            ) Pageable pageable) {
+
+        return ResponseEntity.ok(
+                productService.getInStockProducts(pageable)
+        );
+    }
+
+    @Operation(summary = "Filter out-of-stock products")
+    @GetMapping("/filter/out-of-stock")
+    public ResponseEntity<Page<ProductResponse>> getOutOfStockProducts(
+            @PageableDefault(
+                    page = 0,
+                    size = 10,
+                    sort = "id"
+            ) Pageable pageable) {
+
+        return ResponseEntity.ok(
+                productService.getOutOfStockProducts(pageable)
+        );
+    }
+
     @Operation(summary = "Update product")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Product updated successfully"),
@@ -135,6 +165,19 @@ public class ProductController {
 
         return ResponseEntity.ok(
                 productService.updateProduct(id, request)
+        );
+    }
+
+    @PostMapping(
+            value = "/{productId}/image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ProductResponse> uploadProductImage(
+            @PathVariable Long productId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        return ResponseEntity.ok(
+                productService.uploadProductImage(productId, file)
         );
     }
 

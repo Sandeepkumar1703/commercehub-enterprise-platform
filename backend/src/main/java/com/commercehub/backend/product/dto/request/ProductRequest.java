@@ -27,9 +27,6 @@ public class ProductRequest {
     @NotNull(message = "Stock quantity is required")
     private Integer stockQuantity;
 
-    private String imageUrl;
-
-
     @NotBlank(message = "SKU is required")
     @Size(max = 100)
     private String sku;

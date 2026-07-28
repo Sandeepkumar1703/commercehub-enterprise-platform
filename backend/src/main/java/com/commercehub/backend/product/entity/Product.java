@@ -25,11 +25,11 @@ public class Product extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String sku;
-    
+
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 500)
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
