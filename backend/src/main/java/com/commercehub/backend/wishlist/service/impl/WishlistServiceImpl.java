@@ -1,5 +1,6 @@
-package com.commercehub.backend.wishlist.service;
+package com.commercehub.backend.wishlist.service.impl;
 
+import com.commercehub.backend.wishlist.service.WishlistService;
 import com.commercehub.backend.common.exception.DuplicateResourceException;
 import com.commercehub.backend.common.exception.ResourceNotFoundException;
 import com.commercehub.backend.product.entity.Product;

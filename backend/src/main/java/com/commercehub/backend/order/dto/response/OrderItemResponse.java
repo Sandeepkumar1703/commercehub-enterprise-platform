@@ -1,0 +1,29 @@
+package com.commercehub.backend.order.dto.response;
+
+import lombok.*;
+
+import java.math.BigDecimal;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class OrderItemResponse {
+
+    private Long id;
+
+    private Long productId;
+
+    private Integer quantity;
+
+    private BigDecimal price;
+
+    private BigDecimal subtotal;
+
+    private BigDecimal discount;
+
+    private BigDecimal tax;
+
+    private BigDecimal total;
+}
