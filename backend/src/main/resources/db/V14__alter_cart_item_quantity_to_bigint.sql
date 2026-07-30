@@ -1,2 +1,0 @@
-ALTER TABLE cart_items
-ALTER COLUMN quantity TYPE BIGINT;

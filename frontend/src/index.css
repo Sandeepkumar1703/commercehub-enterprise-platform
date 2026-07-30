@@ -1,84 +1,77 @@
 @import "tailwindcss";
+@import "./styles/theme.css";
+@import "./styles/typography.css";
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-surface: hsl(var(--surface));
+  --color-surface-hover: hsl(var(--surface-hover));
+
+  --color-brand: hsl(var(--brand));
+  --color-brand-hover: hsl(var(--brand-hover));
+  --color-brand-foreground: hsl(var(--brand-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-hover: hsl(var(--secondary-hover));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-content-primary: hsl(var(--text-primary));
+  --color-content-secondary: hsl(var(--text-secondary));
+  --color-content-muted: hsl(var(--text-muted));
+
+  --color-status-success: hsl(var(--status-success));
+  --color-status-warning: hsl(var(--status-warning));
+  --color-status-danger: hsl(var(--status-danger));
+}
 
 @layer base {
-  :root {
-    /* Recommended Enterprise Theme Palette - Shopify / Stripe / Azure Style */
-    --bg-surface: #F8FAFC;            /* Background */
-    --bg-surface-raised: #FFFFFF;     /* Surface */
-    --bg-secondary: #EEF4F8;          /* Secondary BG */
-    --border-default: #D6DEE6;        /* Border */
-    --border-subtle: #EEF4F8;         /* Subtle Border */
-    --text-primary: #24313D;          /* Text Primary */
-    --text-secondary: #64748B;        /* Text Secondary */
-    --brand-primary: #4F6D8C;         /* Primary Brand Color */
-    --brand-hover: #3E5973;           /* Primary Hover */
-    --brand-accent: #88BDF2;          /* Accent Blue */
-    --brand-accent-hover: #6EA8DF;    /* Accent Hover */
-    --status-danger: #EF4444;         /* Error */
-    --status-success: #22C55E;        /* Success */
-    --status-warning: #F59E0B;        /* Warning */
-    --status-info: #4F6D8C;           /* Info */
-  }
-
-  .dark {
-    /* Dark Mode Enterprise Theme */
-    --bg-surface: #111827;            /* Background */
-    --bg-surface-raised: #1F2937;     /* Surface */
-    --bg-secondary: #2B3645;          /* Secondary BG */
-    --border-default: #374151;        /* Border */
-    --border-subtle: #2B3645;         /* Subtle Border */
-    --text-primary: #F8FAFC;          /* Text Primary */
-    --text-secondary: #CBD5E1;        /* Text Secondary */
-    --brand-primary: #88BDF2;         /* Primary Brand Color */
-    --brand-hover: #6EA8DF;           /* Primary Hover */
-    --brand-accent: #88BDF2;          /* Accent Blue */
-    --brand-accent-hover: #4F6D8C;    /* Accent Hover */
-    --status-danger: #EF4444;
-    --status-success: #22C55E;
-    --status-warning: #F59E0B;
-    --status-info: #88BDF2;
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--text-primary));
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
   }
 }
 
-body {
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  transition: background-color 0.25s ease, color 0.25s ease;
-  min-height: 100vh;
+@keyframes flyToCartKeyframes {
+  0% {
+    transform: translate(var(--start-x), var(--start-y)) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(calc((var(--start-x) + var(--end-x)) / 2), calc(min(var(--start-y), var(--end-y)) - 80px)) scale(0.6) rotate(180deg);
+  }
+  100% {
+    transform: translate(var(--end-x), var(--end-y)) scale(0.15) rotate(360deg);
+    opacity: 0;
+  }
 }
 
-/* Palette Utility Classes */
-.bg-enterprise-primary { background-color: #4F6D8C; }
-.bg-enterprise-surface { background-color: #FFFFFF; }
-.bg-enterprise-secondary { background-color: #EEF4F8; }
-.bg-enterprise-dark { background-color: #1F2937; }
-
-.text-enterprise-primary { color: #24313D; }
-.text-enterprise-secondary { color: #64748B; }
-.text-enterprise-brand { color: #4F6D8C; }
-
-.border-enterprise-default { border-color: #D6DEE6; }
-
-/* Focus ring custom offset utility */
-.focus-ring {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--brand-accent);
+.animate-fly-to-cart {
+  animation: flyToCartKeyframes 750ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-.focus-ring-danger {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--status-danger);
+@keyframes cartPulseKeyframes {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35) rotate(-6deg); }
+  100% { transform: scale(1); }
 }
 
-/* Skeleton animation for placeholder loading */
-@keyframes ink-skeleton-pulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.75; }
-}
-
-.animate-skeleton {
-  animation: ink-skeleton-pulse 1.5s ease-in-out infinite;
-  background-color: var(--border-default);
+.animate-cart-pulse {
+  animation: cartPulseKeyframes 400ms ease-in-out;
 }
 

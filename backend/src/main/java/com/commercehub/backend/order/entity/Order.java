@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.commercehub.backend.payment.enums.PaymentStatus;
 
 @Entity
 @Table(name = "orders")

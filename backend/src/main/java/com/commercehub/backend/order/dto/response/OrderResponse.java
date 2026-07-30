@@ -1,7 +1,7 @@
 package com.commercehub.backend.order.dto.response;
 
 import com.commercehub.backend.order.entity.OrderStatus;
-import com.commercehub.backend.order.entity.PaymentStatus;
+import com.commercehub.backend.payment.enums.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;

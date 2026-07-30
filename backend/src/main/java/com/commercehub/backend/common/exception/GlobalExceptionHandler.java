@@ -121,17 +121,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
-        IllegalArgumentException ex,
-        HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentException ex,
+            HttpServletRequest request) {
 
-    return buildError(
-            HttpStatus.BAD_REQUEST,
-            ex.getMessage(),
-            request.getRequestURI(),
-            null
-    );
-}
+        return buildError(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(
@@ -166,17 +166,17 @@ public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-        public ResponseEntity<ApiResponse<String>> handleInvalidCredentials(
-                InvalidCredentialsException ex
-        ){
+    public ResponseEntity<ApiResponse<String>> handleInvalidCredentials(
+            InvalidCredentialsException ex
+    ) {
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(
                         ApiResponse.failure(
-                        ex.getMessage()
+                                ex.getMessage()
                         )
                 );
 
-        }
+    }
 }

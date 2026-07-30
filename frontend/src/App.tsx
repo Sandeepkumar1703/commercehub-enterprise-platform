@@ -1,140 +1,65 @@
-import React from 'react';
-import { ConfigProvider } from './context/ConfigContext';
-import { ThemeProvider } from './context/ThemeContext';
-import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-import { RouterProvider, useRouter } from './core/router/Router';
-import { ROUTES } from './theme/routes';
+import React, { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import { store } from './app/store/store';
+import { AppRouter } from './app/router/AppRouter';
+import { ToastProvider } from './shared/components/Toast';
+import { ThemeProvider } from './app/providers/ThemeProvider';
+import { useAppDispatch, useAppSelector } from './app/store/hooks';
+import { cartApi } from './features/cart/cart.api';
+import { setCart } from './features/cart/cartSlice';
+import { wishlistApi } from './features/wishlist/wishlist.api';
+import { setWishlist } from './features/wishlist/wishlistSlice';
+import { CompareProvider } from './features/product/compareContext';
+import { FlyToCartProvider } from './shared/components/FlyToCart';
+import { ProductCompareBar } from './features/product/components/ProductCompareModal';
+import { SupportChatDrawer } from './features/support/SupportChatDrawer';
+import { OfflineBanner } from './shared/components/OfflineBanner';
 
-import { Header } from './components/common/Header';
-import { AuthHeader } from './components/common/AuthHeader';
-import { Footer } from './components/common/Footer';
-import { CartDrawer } from './components/cart/CartDrawer';
+const AppInitializer: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-import { HomePage } from './pages/HomePage';
-import { ProductsPage } from './pages/ProductsPage';
-import { ProductDetailPage } from './pages/ProductDetailPage';
+  useEffect(() => {
+    // Initial cart load
+    cartApi
+      .getCart()
+      .then((c) => dispatch(setCart(c)))
+      .catch(() => {});
 
-import { LoginPage } from './pages/auth/LoginPage';
-import { RegisterPage } from './pages/auth/RegisterPage';
-import { VerifyEmailPage } from './pages/auth/VerifyEmailPage';
-import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
-import { ResetPasswordPage } from './pages/auth/ResetPasswordPage';
-
-import { CustomerDashboardPage } from './pages/customer/CustomerDashboardPage';
-import { CheckoutPage } from './pages/customer/CheckoutPage';
-import { OrderSuccessPage } from './pages/customer/OrderSuccessPage';
-import { OrdersPage } from './pages/customer/OrdersPage';
-import { AccountPage } from './pages/customer/AccountPage';
-import { WishlistPage } from './pages/customer/WishlistPage';
-
-import { ApiDocsPage } from './pages/ApiDocsPage';
-import { DesignSystemPage } from './pages/DesignSystemPage';
-import { OrderTrackingPage } from './pages/customer/OrderTrackingPage';
-import { AdminDashboardPage } from './pages/admin/adminDashboardPage';
-
-const AUTH_ROUTES = [
-  ROUTES.LOGIN,
-  ROUTES.REGISTER,
-  ROUTES.VERIFY_EMAIL,
-  ROUTES.FORGOT_PASSWORD,
-  ROUTES.RESET_PASSWORD,
-];
-
-const MainLayout: React.FC = () => {
-  const { currentPath } = useRouter();
-  const isAuthPage = AUTH_ROUTES.includes(currentPath as any);
-
-  if (isAuthPage) {
-    return (
-      <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200">
-        <div>
-          <AuthHeader />
-          <main className="max-w-md w-full mx-auto px-4 pb-12">
-            <RouteSwitcher />
-          </main>
-        </div>
-        <footer className="py-6 text-center text-xs text-[var(--text-secondary)] border-t border-[var(--border-default)]">
-          <p>© {new Date().getFullYear()} CommerceHub Platform. All rights reserved.</p>
-        </footer>
-      </div>
-    );
-  }
+    // Initial wishlist load if authenticated
+    if (isAuthenticated) {
+      wishlistApi
+        .getWishlist()
+        .then((w) => dispatch(setWishlist(w)))
+        .catch(() => {});
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-surface)] text-[var(--text-primary)] flex flex-col justify-between transition-colors duration-200">
-      <div>
-        <Header />
-        <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <RouteSwitcher />
-        </main>
-      </div>
-      <CartDrawer />
-      <Footer />
-    </div>
+    <>
+      <AppRouter />
+      <ProductCompareBar />
+      <SupportChatDrawer />
+      <OfflineBanner />
+    </>
   );
 };
 
-const RouteSwitcher: React.FC = () => {
-  const { currentPath } = useRouter();
-
-  switch (currentPath) {
-    case ROUTES.HOME:
-      return <HomePage />;
-    case ROUTES.PRODUCTS:
-      return <ProductsPage />;
-    case ROUTES.PRODUCT_DETAIL:
-      return <ProductDetailPage />;
-    case ROUTES.LOGIN:
-      return <LoginPage />;
-    case ROUTES.REGISTER:
-      return <RegisterPage />;
-    case ROUTES.VERIFY_EMAIL:
-      return <VerifyEmailPage />;
-    case ROUTES.FORGOT_PASSWORD:
-      return <ForgotPasswordPage />;
-    case ROUTES.RESET_PASSWORD:
-      return <ResetPasswordPage />;
-    case ROUTES.CUSTOMER_DASHBOARD:
-      return <CustomerDashboardPage />;
-    case ROUTES.CHECKOUT:
-      return <CheckoutPage />;
-    case ROUTES.ORDER_SUCCESS:
-      return <OrderSuccessPage />;
-    case ROUTES.ORDERS:
-      return <OrdersPage />;
-    case ROUTES.ORDER_TRACKING:
-      return <OrderTrackingPage />;
-    case ROUTES.ADMIN_DASHBOARD:
-      return <AdminDashboardPage />;
-    case ROUTES.ACCOUNT:
-      return <AccountPage />;
-    case ROUTES.WISHLIST:
-      return <WishlistPage />;
-    case ROUTES.API_DOCS:
-      return <ApiDocsPage />;
-    case ROUTES.DESIGN_SYSTEM:
-      return <DesignSystemPage />;
-    default:
-      return <HomePage />;
-  }
-};
-
-export default function App() {
+export function App() {
   return (
-    <ConfigProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <CartProvider>
-            <RouterProvider>
-              <ThemeProvider>
-                <MainLayout />
-              </ThemeProvider>
-            </RouterProvider>
-          </CartProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </ConfigProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <ToastProvider>
+          <CompareProvider>
+            <FlyToCartProvider>
+              <AppInitializer />
+            </FlyToCartProvider>
+          </CompareProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
+
+export default App;
+

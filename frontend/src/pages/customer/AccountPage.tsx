@@ -11,7 +11,7 @@ interface AddressItem {
   city: string;
   state: string;
   zip: string;
-  isDefault: boolean;
+  isDefaultLanguage: boolean;
 }
 
 export const AccountPage: React.FC = () => {
@@ -34,7 +34,7 @@ export const AccountPage: React.FC = () => {
       city: 'San Francisco',
       state: 'CA',
       zip: '94105',
-      isDefault: true,
+      isDefaultLanguage: true,
     },
     {
       id: 'addr-2',
@@ -44,7 +44,7 @@ export const AccountPage: React.FC = () => {
       city: 'San Jose',
       state: 'CA',
       zip: '95112',
-      isDefault: false,
+      isDefaultLanguage: false,
     },
   ]);
 
@@ -91,7 +91,7 @@ export const AccountPage: React.FC = () => {
       city: newAddress.city,
       state: newAddress.state || 'CA',
       zip: newAddress.zip || '90001',
-      isDefault: false,
+      isDefaultLanguage: false,
     };
 
     setAddresses([...addresses, created]);

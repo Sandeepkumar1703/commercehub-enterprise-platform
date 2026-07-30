@@ -1,0 +1,72 @@
+@layer base {
+  /* LIGHT MODE: Clean, Warm, Twilight Silk Aesthetic */
+  :root {
+    --background: 20 33% 92%;           /* #F2E9E4 Seashell */
+    --surface: 0 0% 100%;              /* Pure White for Cards */
+    --surface-hover: 10 24% 96%;        /* Soft Silk Hover */
+
+    --primary: 240 27% 18%;            /* #22223B Space Indigo */
+    --primary-hover: 231 18% 35%;      /* #4A4E69 Dusty Grape */
+    --primary-foreground: 20 33% 92%;  /* Seashell */
+
+    --brand: 240 27% 18%;              /* Space Indigo */
+    --brand-hover: 231 18% 35%;        /* Dusty Grape */
+    --brand-foreground: 20 33% 92%;    /* Seashell */
+
+    --secondary: 10 24% 72%;          /* #C9ADA7 Almond Silk */
+    --secondary-hover: 310 7% 57%;     /* #9A8C98 Lilac Ash */
+    --secondary-foreground: 240 27% 18%;
+
+    --accent: 310 7% 57%;             /* #9A8C98 Lilac Ash */
+    --accent-foreground: 0 0% 100%;
+
+    --border: 10 24% 82%;             /* Soft Almond Border */
+    --input: 10 24% 85%;
+    --ring: 240 27% 18%;
+
+    --text-primary: 240 27% 18%;       /* Space Indigo Text */
+    --text-secondary: 231 18% 35%;     /* Dusty Grape Subtext */
+    --text-muted: 310 7% 57%;          /* Lilac Ash Placeholder */
+    --text-inverted: 20 33% 92%;
+
+    --status-success: 160 84% 39%;
+    --status-warning: 38 92% 50%;
+    --status-danger: 346 84% 61%;
+
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+  }
+
+  /* DARK MODE: Enigmatic Night Sky Aesthetic */
+  .dark {
+    --background: 240 27% 12%;         /* Deep Space Indigo */
+    --surface: 240 27% 18%;            /* #22223B Space Indigo Card Surface */
+    --surface-hover: 231 18% 28%;      /* Darker Dusty Grape */
+
+    --primary: 10 24% 72%;             /* #C9ADA7 Almond Silk (Pops against dark background) */
+    --primary-hover: 20 33% 92%;       /* #F2E9E4 Seashell */
+    --primary-foreground: 240 27% 12%; /* Dark Indigo */
+
+    --brand: 10 24% 72%;               /* Almond Silk */
+    --brand-hover: 20 33% 92%;         /* Seashell */
+    --brand-foreground: 240 27% 12%;   /* Dark Indigo */
+
+    --secondary: 231 18% 35%;         /* #4A4E69 Dusty Grape */
+    --secondary-hover: 310 7% 57%;
+    --secondary-foreground: 20 33% 92%;
+
+    --accent: 310 7% 57%;             /* Lilac Ash Glow */
+    --accent-foreground: 20 33% 92%;
+
+    --border: 231 18% 28%;            /* Subtle Dark Border */
+    --input: 231 18% 28%;
+    --ring: 10 24% 72%;
+
+    --text-primary: 20 33% 92%;        /* #F2E9E4 Seashell Text */
+    --text-secondary: 310 7% 75%;      /* Light Lilac Ash Subtext */
+    --text-muted: 231 18% 55%;
+    --text-inverted: 240 27% 12%;
+  }
+}

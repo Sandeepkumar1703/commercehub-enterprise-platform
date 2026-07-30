@@ -9,7 +9,7 @@ import com.commercehub.backend.order.dto.response.OrderResponse;
 import com.commercehub.backend.order.entity.Order;
 import com.commercehub.backend.order.entity.OrderItem;
 import com.commercehub.backend.order.entity.OrderStatus;
-import com.commercehub.backend.order.entity.PaymentStatus;
+import com.commercehub.backend.payment.enums.PaymentStatus;
 import com.commercehub.backend.order.mapper.OrderMapper;
 import com.commercehub.backend.order.repository.OrderRepository;
 import com.commercehub.backend.order.service.OrderService;

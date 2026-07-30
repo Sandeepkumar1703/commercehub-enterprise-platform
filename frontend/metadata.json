@@ -1,6 +1,6 @@
 {
   "name": "CommerceHub Enterprise Platform",
-  "description": "Enterprise Spring Boot Monolith & React UI Engine with multi-tenant metrics, RBAC security, store catalog, order tracking, and OpenAPI specs.",
+  "description": "Enterprise-grade e-commerce application with dynamic product catalog, multi-stage checkout, order tracking, customer portal, and admin analytics dashboard.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
