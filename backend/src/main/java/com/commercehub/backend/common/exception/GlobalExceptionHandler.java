@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.commercehub.backend.common.response.ApiResponse;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -179,4 +180,17 @@ public class GlobalExceptionHandler {
                 );
 
     }
+
+    @ExceptionHandler(FileNotFoundException.class)
+public ResponseEntity<ErrorResponse> handleFileNotFound(
+        FileNotFoundException ex,
+        HttpServletRequest request) {
+
+    return buildError(
+            HttpStatus.NOT_FOUND,
+            ex.getMessage(),
+            request.getRequestURI(),
+            null
+    );
+}
 }
