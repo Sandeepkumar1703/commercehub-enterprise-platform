@@ -17,8 +17,15 @@ export const wishlistSlice = createSlice({
   name: 'wishlist',
   initialState,
   reducers: {
-    setWishlist: (state, action: PayloadAction<WishlistItem[]>) => {
-      state.items = action.payload;
+    setWishlist: (state, action: PayloadAction<any>) => {
+      const payload = action.payload;
+      if (Array.isArray(payload)) {
+        state.items = payload;
+      } else if (payload && Array.isArray(payload.data)) {
+        state.items = payload.data;
+      } else {
+        state.items = [];
+      }
       state.isLoading = false;
       state.error = null;
     },

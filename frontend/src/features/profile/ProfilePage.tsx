@@ -94,7 +94,7 @@ export const ProfilePage: React.FC = () => {
           zipCode: postalCode,
           postalCode,
           country,
-          isDefaultLanguage: addresses.length === 0,
+          isDefault: addresses.length === 0,
         });
         setAddresses([...addresses, created]);
         toast.success('Address created');

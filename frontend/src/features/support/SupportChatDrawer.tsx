@@ -10,12 +10,29 @@ interface Message {
 }
 
 interface SupportChatDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onToggle: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  onToggle?: () => void;
 }
 
-export const SupportChatDrawer: React.FC<SupportChatDrawerProps> = ({ isOpen, onClose, onToggle }) => {
+export const SupportChatDrawer: React.FC<SupportChatDrawerProps> = ({
+  isOpen: propIsOpen,
+  onClose: propOnClose,
+  onToggle: propOnToggle,
+}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = propIsOpen !== undefined ? propIsOpen : internalIsOpen;
+
+  const handleClose = () => {
+    if (propOnClose) propOnClose();
+    else setInternalIsOpen(false);
+  };
+
+  const handleToggle = () => {
+    if (propOnToggle) propOnToggle();
+    else setInternalIsOpen((prev) => !prev);
+  };
+
   const { user } = useAppSelector((state) => state.auth);
 
   const [messages, setMessages] = useState<Message[]>([
@@ -95,7 +112,7 @@ export const SupportChatDrawer: React.FC<SupportChatDrawerProps> = ({ isOpen, on
       {/* Floating Action Button */}
       {!isOpen && (
         <button
-          onClick={onToggle}
+          onClick={handleToggle}
           className="fixed bottom-6 right-6 z-40 p-3.5 bg-brand text-brand-foreground rounded-full shadow-2xl hover:scale-105 hover:bg-brand-hover transition-all cursor-pointer flex items-center gap-2 group border border-white/20"
           title="Open Customer Support Chat"
         >
@@ -123,7 +140,7 @@ export const SupportChatDrawer: React.FC<SupportChatDrawerProps> = ({ isOpen, on
               </div>
             </div>
 
-            <button onClick={onClose} className="p-1 rounded-lg text-content-muted hover:text-content-primary">
+            <button onClick={handleClose} className="p-1 rounded-lg text-content-muted hover:text-content-primary">
               <X className="w-4 h-4" />
             </button>
           </div>

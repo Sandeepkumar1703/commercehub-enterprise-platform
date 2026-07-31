@@ -1,0 +1,34 @@
+@layer utilities {
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .dark .glass-card {
+    background-color: rgba(34, 34, 59, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .card-hover-elevation {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .card-hover-elevation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  }
+
+  .focus-ring {
+    outline: none;
+  }
+
+  .focus-ring:focus-visible {
+    ring: 2px;
+    ring-color: hsl(var(--ring));
+    ring-offset: 2px;
+  }
+}

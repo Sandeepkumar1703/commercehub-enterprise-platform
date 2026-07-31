@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Heart, Search, User, LogOut, ShieldAlert, Store, X, Camera, Command, Sparkles } from 'lucide-react';
 import { ThemeToggle } from '../../shared/components/ThemeToggle';
+import { LanguageSelector } from '../../shared/components/LanguageSelector';
+import { useLanguage } from '../../core/i18n/LanguageContext';
 import { useAppDispatch, useAppSelector } from '../../app/store/hooks';
 import { toggleCartDrawer } from '../../features/cart/cartSlice';
 import { logout } from '../../features/auth/authSlice';
@@ -16,6 +18,7 @@ import { useFlyToCart } from '../components/FlyToCart';
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { t, getLocalizedPath } = useLanguage();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { cart } = useAppSelector((state) => state.cart);
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
@@ -57,7 +60,7 @@ export const Header: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     setShowUserDropdown(false);
-    navigate('/');
+    navigate(getLocalizedPath(''));
   };
 
   return (
@@ -65,12 +68,12 @@ export const Header: React.FC = () => {
       <header className="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-border/50 transition-all">
         {/* Top Banner Notice */}
         <div className="bg-gradient-to-r from-[#22223B] via-[#4A4E69] to-[#22223B] text-[#F2E9E4] text-xs font-semibold py-1.5 px-4 text-center shadow-sm border-b border-white/10">
-          ⚡ Enterprise Summer Sale: Use code <span className="underline font-extrabold text-[#C9ADA7]">WELCOME10</span> for 10% off orders over $50! Free worldwide shipping on orders over $100.
+          {t('banner.sale')}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 text-content-primary hover:opacity-90 transition-opacity">
+          <Link to={getLocalizedPath('')} className="flex items-center gap-2 text-content-primary hover:opacity-90 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-brand text-brand-foreground flex items-center justify-center font-black text-lg shadow-sm">
               C
             </div>
@@ -88,7 +91,7 @@ export const Header: React.FC = () => {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-content-muted" />
               <input
                 type="text"
-                placeholder="Search products, categories, specs..."
+                placeholder={t('header.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setShowSearchDropdown(true)}
@@ -101,7 +104,7 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={() => setIsVisualSearchOpen(true)}
                   className="p-1 rounded-full text-content-muted hover:text-brand hover:bg-surface transition-colors cursor-pointer"
-                  title="Search by uploading an image"
+                  title={t('header.visual_search')}
                 >
                   <Camera className="w-3.5 h-3.5" />
                 </button>
@@ -111,7 +114,7 @@ export const Header: React.FC = () => {
                   type="button"
                   onClick={() => setIsCommandPaletteOpen(true)}
                   className="hidden lg:flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono font-bold text-content-muted hover:border-brand/40 hover:text-brand transition-colors cursor-pointer"
-                  title="Open Command Center (Cmd + K)"
+                  title={t('header.cmd_k')}
                 >
                   <Command className="w-3 h-3" />
                   <span>K</span>
@@ -135,14 +138,14 @@ export const Header: React.FC = () => {
                 {isSearching ? (
                   <div className="p-4 text-xs text-content-muted text-center animate-pulse flex items-center justify-center gap-2">
                     <Sparkles className="w-4 h-4 text-brand animate-spin" />
-                    <span>Searching catalog...</span>
+                    <span>{t('common.loading')}</span>
                   </div>
                 ) : searchResults.length > 0 ? (
                   <div className="max-h-80 overflow-y-auto divide-y divide-border/50">
                     {searchResults.map((prod) => (
                       <Link
                         key={prod.id}
-                        to={`/products/${prod.id}`}
+                        to={getLocalizedPath(`products/${prod.id}`)}
                         onClick={() => setShowSearchDropdown(false)}
                         className="flex items-center gap-3 p-3 hover:bg-surface-hover transition-colors"
                       >
@@ -160,11 +163,11 @@ export const Header: React.FC = () => {
                     ))}
                   </div>
                 ) : searchQuery.trim().length > 1 ? (
-                  <div className="p-4 text-xs text-content-muted text-center">No products found for "{searchQuery}"</div>
+                  <div className="p-4 text-xs text-content-muted text-center">{t('product.no_products')}</div>
                 ) : (
                   <div className="p-3 space-y-2">
                     <div className="text-[10px] font-extrabold uppercase text-content-muted tracking-wider">
-                      Trending Searches
+                      {t('header.trending_searches')}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {trendingKeywords.map((kw) => (
@@ -185,19 +188,20 @@ export const Header: React.FC = () => {
 
           {/* Nav Links & Actions */}
           <div className="flex items-center gap-1 sm:gap-2">
+            <LanguageSelector />
             <ThemeToggle />
 
             <Link
-              to="/products"
+              to={getLocalizedPath('products')}
               className="hidden sm:flex items-center gap-1 px-3 py-2 text-xs font-semibold text-content-secondary hover:text-brand rounded-lg hover:bg-surface-hover transition-colors"
             >
               <Store className="w-4 h-4" />
-              <span>Catalog</span>
+              <span>{t('header.catalog')}</span>
             </Link>
 
             {/* Wishlist Link */}
             <Link
-              to="/wishlist"
+              to={getLocalizedPath('wishlist')}
               className="relative p-2 text-content-secondary hover:text-brand rounded-lg hover:bg-surface-hover transition-colors"
               title="Wishlist"
             >
@@ -258,33 +262,33 @@ export const Header: React.FC = () => {
 
                       <div className="py-1">
                         <Link
-                          to="/profile"
+                          to={getLocalizedPath('profile')}
                           onClick={() => setShowUserDropdown(false)}
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-content-primary hover:bg-surface-hover hover:text-brand transition-colors"
                         >
                           <User className="w-4 h-4 text-content-muted" />
-                          <span>My Dashboard & Addresses</span>
+                          <span>{t('header.my_dashboard')}</span>
                         </Link>
 
                         <Link
-                          to="/orders"
+                          to={getLocalizedPath('orders')}
                           onClick={() => setShowUserDropdown(false)}
                           className="flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-content-primary hover:bg-surface-hover hover:text-brand transition-colors"
                         >
                           <ShoppingBag className="w-4 h-4 text-content-muted" />
-                          <span>My Orders & History</span>
+                          <span>{t('header.my_orders')}</span>
                         </Link>
                       </div>
 
                       {isAdmin && (
                         <div className="py-1">
                           <Link
-                            to="/admin/dashboard"
+                            to={getLocalizedPath('admin/dashboard')}
                             onClick={() => setShowUserDropdown(false)}
                             className="flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
                           >
                             <ShieldAlert className="w-4 h-4 text-brand" />
-                            <span>Admin Management Suite</span>
+                            <span>{t('header.admin_suite')}</span>
                           </Link>
                         </div>
                       )}
@@ -295,7 +299,7 @@ export const Header: React.FC = () => {
                           className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-status-danger hover:bg-status-danger/10 transition-colors text-left cursor-pointer"
                         >
                           <LogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
+                          <span>{t('header.sign_out')}</span>
                         </button>
                       </div>
                     </div>
@@ -304,11 +308,11 @@ export const Header: React.FC = () => {
               </div>
             ) : (
               <Link
-                to="/login"
+                to={getLocalizedPath('login')}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 bg-brand text-brand-foreground font-semibold text-xs rounded-lg hover:bg-brand-hover transition-colors"
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Sign In</span>
+                <span>{t('header.sign_in')}</span>
               </Link>
             )}
           </div>

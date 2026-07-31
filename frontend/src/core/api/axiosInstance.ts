@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { tokenManager } from '../auth/tokenManager';
 
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+// Strip trailing /api if present because endpoints in the frontend include /api prefix
+export const API_BASE_URL = rawBaseUrl.replace(/\/api\/?$/, '');
+
 export const axiosInstance = axios.create({
-  baseURL: '', // Uses relative URLs, handled by Vite/Express proxy on same origin
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -41,11 +45,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Handle 401 Unauthorized token refresh
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes('/api/auth/login') &&
-      !originalRequest.url?.includes('/api/auth/refresh-token')
+      !originalRequest.url?.includes('/auth/login') &&
+      !originalRequest.url?.includes('/auth/refresh-token')
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -69,7 +74,7 @@ axiosInstance.interceptors.response.use(
       }
 
       try {
-        const { data } = await axios.post('/api/auth/refresh-token', {
+        const { data } = await axios.post(`${API_BASE_URL}/api/auth/refresh-token`, {
           refreshToken,
         });
 
@@ -92,6 +97,12 @@ axiosInstance.interceptors.response.use(
       }
     }
 
+    // Format Network Errors gracefully
+    if (!error.response && error.message === 'Network Error') {
+      console.warn(`[Axios Network Error] Connection refused to Spring Boot backend at ${API_BASE_URL}. Ensure your backend server is running.`);
+    }
+
     return Promise.reject(error);
   }
 );
+

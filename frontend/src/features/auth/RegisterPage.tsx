@@ -41,10 +41,11 @@ export const RegisterPage: React.FC = () => {
     try {
       const res = await authApi.register(values);
       dispatch(setCredentials(res));
-      toast.success('Account created!', `Welcome to CommerceHub, ${res.user.firstName}!`);
+      const firstName = res.user?.firstName || 'Valued Customer';
+      toast.success('Account created!', `Welcome to CommerceHub, ${firstName}!`);
       navigate('/profile');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to create account');
+      toast.error(err.response?.data?.message || err.message || 'Failed to create account');
     } finally {
       setIsLoading(false);
     }

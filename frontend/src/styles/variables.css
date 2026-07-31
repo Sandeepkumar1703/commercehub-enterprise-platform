@@ -1,0 +1,28 @@
+@layer base {
+  :root {
+    /* Color Tokens (HSL values for opacity support) */
+    --color-seashell: 20 33% 92%;
+    --color-space-indigo: 240 27% 18%;
+    --color-dusty-grape: 231 18% 35%;
+    --color-almond-silk: 10 24% 72%;
+    --color-lilac-ash: 310 7% 57%;
+    
+    /* Status Colors */
+    --color-success: 160 84% 39%;
+    --color-warning: 38 92% 50%;
+    --color-danger: 346 84% 61%;
+
+    /* Radius Tokens */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* Transition Speeds */
+    --transition-fast: 150ms ease-in-out;
+    --transition-normal: 250ms ease-in-out;
+    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

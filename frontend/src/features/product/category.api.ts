@@ -3,8 +3,10 @@ import { Category } from '../../types';
 
 export const categoryApi = {
   getCategories: async () => {
-    const { data } = await axiosInstance.get<Category[]>('/api/categories');
-    return data;
+    const { data } = await axiosInstance.get<any>('/api/categories');
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.data)) return data.data;
+    return [];
   },
 
   getCategoryById: async (id: string) => {

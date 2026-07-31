@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, Mail, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ShieldCheck, UserCheck, Store, Crown } from 'lucide-react';
 import { authApi } from './auth.api';
 import { useAppDispatch } from '../../app/store/hooks';
 import { setCredentials } from './authSlice';
@@ -11,6 +11,8 @@ import { Button } from '../../shared/components/Button';
 import { Input } from '../../shared/components/Input';
 import { Card } from '../../shared/components/Card';
 import { useToast } from '../../shared/components/Toast';
+import { getUserDefaultDashboard } from '../../core/auth/permissions';
+import { useLanguage } from '../../core/i18n/LanguageContext';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -24,6 +26,7 @@ export const LoginPage: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const { language } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,29 +39,46 @@ export const LoginPage: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const from = (location.state as any)?.from?.pathname || '/';
-
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
     try {
       const res = await authApi.login(values);
       dispatch(setCredentials(res));
-      toast.success('Welcome back!', `Logged in as ${res.user.firstName} ${res.user.lastName}`);
-      navigate(from, { replace: true });
+      const userName = res.user?.firstName
+        ? `${res.user.firstName} ${res.user.lastName || ''}`.trim()
+        : res.user?.email || 'User';
+      toast.success('Welcome back!', `Logged in as ${userName}`);
+
+      const redirectPath = (location.state as any)?.from?.pathname || getUserDefaultDashboard(res.user, language);
+      navigate(redirectPath, { replace: true });
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Invalid login credentials');
+      const errorMessage =
+        err.response?.data?.message || err.message || 'Invalid login credentials';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fillQuickDemo = (role: 'customer' | 'admin') => {
-    if (role === 'admin') {
-      setValue('email', 'admin@commercehub.com');
-      setValue('password', 'admin123');
-    } else {
-      setValue('email', 'alex.morgan@example.com');
-      setValue('password', 'customer123');
+  const fillQuickDemo = (role: 'customer' | 'seller' | 'admin' | 'superadmin') => {
+    switch (role) {
+      case 'superadmin':
+        setValue('email', 'superadmin@commercehub.com');
+        setValue('password', 'superadmin123');
+        break;
+      case 'admin':
+        setValue('email', 'admin@commercehub.com');
+        setValue('password', 'admin123');
+        break;
+      case 'seller':
+        setValue('email', 'seller@commercehub.com');
+        setValue('password', 'seller123');
+        break;
+      case 'customer':
+      default:
+        setValue('email', 'customer@commercehub.com');
+        setValue('password', 'customer123');
+        break;
     }
   };
 
@@ -78,7 +98,7 @@ export const LoginPage: React.FC = () => {
         {/* Demo Quick fill credentials bar */}
         <div className="p-3 bg-brand/5 border border-brand/20 rounded-xl space-y-2">
           <p className="text-[11px] font-bold text-brand uppercase tracking-wider flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5" /> One-Click Demo Credentials
+            <ShieldCheck className="w-3.5 h-3.5" /> Select Role Demo Login
           </p>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -86,16 +106,32 @@ export const LoginPage: React.FC = () => {
               onClick={() => fillQuickDemo('customer')}
               className="px-2.5 py-1.5 bg-surface border border-border rounded-lg text-xs font-semibold text-content-primary hover:border-brand hover:text-brand transition-colors text-left flex items-center gap-1.5 cursor-pointer"
             >
-              <UserCheck className="w-3.5 h-3.5 text-brand" />
-              <span>Customer Demo</span>
+              <UserCheck className="w-3.5 h-3.5 text-blue-500" />
+              <span>Customer</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillQuickDemo('seller')}
+              className="px-2.5 py-1.5 bg-surface border border-border rounded-lg text-xs font-semibold text-content-primary hover:border-emerald-500 hover:text-emerald-600 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+            >
+              <Store className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Seller</span>
             </button>
             <button
               type="button"
               onClick={() => fillQuickDemo('admin')}
-              className="px-2.5 py-1.5 bg-surface border border-border rounded-lg text-xs font-semibold text-content-primary hover:border-brand hover:text-brand transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 py-1.5 bg-surface border border-border rounded-lg text-xs font-semibold text-content-primary hover:border-indigo-500 hover:text-indigo-600 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-brand" />
-              <span>Admin Demo</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" />
+              <span>Admin</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillQuickDemo('superadmin')}
+              className="px-2.5 py-1.5 bg-surface border border-border rounded-lg text-xs font-semibold text-content-primary hover:border-rose-500 hover:text-rose-600 transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+            >
+              <Crown className="w-3.5 h-3.5 text-rose-500" />
+              <span>Super Admin</span>
             </button>
           </div>
         </div>

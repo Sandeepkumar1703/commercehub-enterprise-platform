@@ -40,7 +40,7 @@ let addresses = [
     state: 'CA',
     country: 'United States',
     zipCode: '94107',
-    isDefaultLanguage: true,
+    isDefault: true,
     createdAt: '2026-02-01T14:35:00Z',
   },
   {
@@ -51,7 +51,7 @@ let addresses = [
     state: 'CA',
     country: 'United States',
     zipCode: '94105',
-    isDefaultLanguage: false,
+    isDefault: false,
     createdAt: '2026-03-10T09:15:00Z',
   },
 ];
@@ -558,7 +558,7 @@ app.get('/api/users', (req, res) => {
 app.get('/api/addresses/default', (req, res) => {
   const user = getAuthUser(req);
   const userAddrs = addresses.filter((a) => a.userId === user.id);
-  const def = userAddrs.find((a) => a.isDefaultLanguage) || userAddrs[0];
+  const def = userAddrs.find((a) => a.isDefault) || userAddrs[0];
   if (!def) return res.status(404).json({ message: 'No default address found' });
   res.json(def);
 });
@@ -571,10 +571,10 @@ app.get('/api/addresses', (req, res) => {
 
 app.post('/api/addresses', (req, res) => {
   const user = getAuthUser(req);
-  const { street, city, state, country, zipCode, isDefaultLanguage } = req.body;
-  if (isDefaultLanguage) {
+  const { street, city, state, country, zipCode, isDefault } = req.body;
+  if (isDefault) {
     addresses.forEach((a) => {
-      if (a.userId === user.id) a.isDefaultLanguage = false;
+      if (a.userId === user.id) a.isDefault = false;
     });
   }
   const newAddr = {
@@ -585,7 +585,7 @@ app.post('/api/addresses', (req, res) => {
     state,
     country: country || 'United States',
     zipCode,
-    isDefaultLanguage: !!isDefaultLanguage || addresses.filter((a) => a.userId === user.id).length === 0,
+    isDefault: !!isDefault || addresses.filter((a) => a.userId === user.id).length === 0,
     createdAt: new Date().toISOString(),
   };
   addresses.push(newAddr);
@@ -603,19 +603,19 @@ app.put('/api/addresses/:addressId/default', (req, res) => {
   const addr = addresses.find((a) => a.id === req.params.addressId);
   if (!addr) return res.status(404).json({ message: 'Address not found' });
   addresses.forEach((a) => {
-    if (a.userId === user.id) a.isDefaultLanguage = false;
+    if (a.userId === user.id) a.isDefault = false;
   });
-  addr.isDefaultLanguage = true;
+  addr.isDefault = true;
   res.json(addr);
 });
 
 app.put('/api/addresses/:id', (req, res) => {
   const addr = addresses.find((a) => a.id === req.params.id);
   if (!addr) return res.status(404).json({ message: 'Address not found' });
-  const { street, city, state, country, zipCode, isDefaultLanguage } = req.body;
-  if (isDefaultLanguage) {
+  const { street, city, state, country, zipCode, isDefault } = req.body;
+  if (isDefault) {
     addresses.forEach((a) => {
-      if (a.userId === addr.userId) a.isDefaultLanguage = false;
+      if (a.userId === addr.userId) a.isDefault = false;
     });
   }
   if (street) addr.street = street;
@@ -623,7 +623,7 @@ app.put('/api/addresses/:id', (req, res) => {
   if (state) addr.state = state;
   if (country) addr.country = country;
   if (zipCode) addr.zipCode = zipCode;
-  if (isDefaultLanguage !== undefined) addr.isDefaultLanguage = isDefaultLanguage;
+  if (isDefault !== undefined) addr.isDefault = isDefault;
   res.json(addr);
 });
 
@@ -1510,6 +1510,440 @@ app.get('/api/analytics/inventory', (req, res) => {
     outOfStock: products.filter((p) => p.stockQuantity === 0).length,
   });
 });
+
+/* =========================================================================
+   MULTILINGUAL & TRANSLATION ENGINE ENDPOINTS
+   ========================================================================= */
+let dbLanguages = [
+  { id: 'lang_1', code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸', isRtl: false, isDefault: true, enabled: true },
+  { id: 'lang_2', code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳', isRtl: false, isDefault: false, enabled: true },
+  { id: 'lang_3', code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', isRtl: true, isDefault: false, enabled: true },
+  { id: 'lang_4', code: 'ru', name: 'Russian', nativeName: 'Русский', flag: '🇷🇺', isRtl: false, isDefault: false, enabled: true },
+  { id: 'lang_5', code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', isRtl: false, isDefault: false, enabled: true },
+  { id: 'lang_6', code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', isRtl: false, isDefault: false, enabled: true },
+  { id: 'lang_7', code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', isRtl: false, isDefault: false, enabled: true },
+];
+
+let dbTranslationStore: Record<string, Record<string, string>> = {
+  en: {
+    'banner.sale': '⚡ Enterprise Summer Sale: Use code WELCOME10 for 10% off orders over $50! Free worldwide shipping.',
+    'header.search_placeholder': 'Search products, categories, specs...',
+    'header.trending_searches': 'Trending Searches',
+    'header.catalog': 'Catalog',
+    'header.wishlist': 'Wishlist',
+    'header.cart': 'Cart',
+    'header.sign_in': 'Sign In',
+    'header.sign_out': 'Sign Out',
+    'header.my_dashboard': 'My Dashboard & Addresses',
+    'header.my_orders': 'My Orders & History',
+    'header.admin_suite': 'Admin Management Suite',
+    'header.visual_search': 'Search by image',
+    'header.cmd_k': 'Command Center',
+    'hero.badge': 'CommerceHub Enterprise Release',
+    'hero.title_prefix': 'Next-Generation Commerce for',
+    'hero.title_highlight': 'Modern Enterprises',
+    'hero.description': 'Shop curated noise-canceling audio, fitness smartwatches, ergonomic workspace furniture, and all-weather apparel with instant global fulfillment.',
+    'hero.btn_catalog': 'Explore Full Catalog',
+    'hero.btn_electronics': 'Shop Electronics',
+    'hero.stat_products': 'Products in Stock',
+    'hero.stat_delivery': 'On-Time Delivery',
+    'hero.stat_rating': 'Customer Rating',
+    'hero.featured': 'Featured Product',
+    'hero.free_shipping': 'Free Worldwide Express Shipping',
+    'product.add_to_cart': 'Add to Cart',
+    'product.out_of_stock': 'Out of Stock',
+    'product.in_stock': 'In Stock',
+  },
+  hi: {
+    'banner.sale': '⚡ एंटरप्राइज समर सेल: $50 से अधिक के ऑर्डर पर 10% छूट के लिए कोड WELCOME10 का उपयोग करें!',
+    'header.search_placeholder': 'उत्पाद, श्रेणियां खोजें...',
+    'header.trending_searches': 'लोकप्रिय खोजें',
+    'header.catalog': 'कैटलॉग',
+    'header.wishlist': 'विशलिस्ट',
+    'header.cart': 'कार्ट',
+    'header.sign_in': 'साइन इन करें',
+    'header.sign_out': 'साइन आउट',
+    'header.my_dashboard': 'मेरा डैशबोर्ड',
+    'header.my_orders': 'मेरे ऑर्डर',
+    'header.admin_suite': 'एडमिन सुइट',
+    'hero.badge': 'कॉमर्सहब एंटरप्राइज रिलीज',
+    'hero.title_prefix': 'आधुनिक व्यवसायों के लिए',
+    'hero.title_highlight': 'अगली पीढ़ी का ई-कॉमर्स',
+    'hero.description': 'नॉइज़-कैंसलिंग ऑडियो, स्मार्टवॉच और एर्गोनॉमिक फर्नीचर खरीदें।',
+    'product.add_to_cart': 'कार्ट में जोड़ें',
+    'product.out_of_stock': 'स्टॉक में नहीं है',
+    'product.in_stock': 'स्टॉक में उपलब्ध',
+  },
+  ar: {
+    'banner.sale': '⚡ تخفيضات الصيف للمؤسسات: استخدم الكود WELCOME10 للحصول على خصم 10%!',
+    'header.search_placeholder': 'البحث عن المنتجات والفئات...',
+    'header.trending_searches': 'عمليات البحث الشائعة',
+    'header.catalog': 'الكتالوج',
+    'header.wishlist': 'قائمة الرغبات',
+    'header.cart': 'سلة التسوق',
+    'header.sign_in': 'تسجيل الدخول',
+    'header.sign_out': 'تسجيل الخروج',
+    'header.my_dashboard': 'لوحة التحكم والعناوين',
+    'header.my_orders': 'طلباتي وسجل الشراء',
+    'header.admin_suite': 'جناح إدارة المسؤول',
+    'hero.badge': 'إصدار التجارة للمؤسسات',
+    'hero.title_prefix': 'التجارة الإلكترونية الحديثة لـ',
+    'hero.title_highlight': 'المؤسسات المتقدمة',
+    'product.add_to_cart': 'أضف إلى السلة',
+    'product.out_of_stock': 'غير متوفر',
+    'product.in_stock': 'متوفر في المخزون',
+  },
+  ru: {
+    'banner.sale': '⚡ Летняя распродажа: используйте промокод WELCOME10 для скидки 10%!',
+    'header.search_placeholder': 'Поиск товаров и категорий...',
+    'header.catalog': 'Каталог',
+    'header.cart': 'Корзина',
+    'header.sign_in': 'Войти',
+    'product.add_to_cart': 'В корзину',
+  },
+  es: {
+    'banner.sale': '⚡ Oferta de Verano: ¡Usa el código WELCOME10 para un 10% de descuento!',
+    'header.search_placeholder': 'Buscar productos, categorías...',
+    'header.catalog': 'Catálogo',
+    'header.cart': 'Carrito',
+    'header.sign_in': 'Iniciar sesión',
+    'product.add_to_cart': 'Añadir al carrito',
+  },
+  fr: {
+    'banner.sale': '⚡ Ventes d’été Enterprise : Utilisez le code WELCOME10 pour 10% de réduction !',
+    'header.search_placeholder': 'Rechercher des produits...',
+    'header.catalog': 'Catalogue',
+    'header.cart': 'Panier',
+    'header.sign_in': 'Se connecter',
+    'product.add_to_cart': 'Ajouter au panier',
+  },
+  de: {
+    'banner.sale': '⚡ Sommer-Angebote: Nutzen Sie den Code WELCOME10 für 10% Rabatt!',
+    'header.search_placeholder': 'Produkte suchen...',
+    'header.catalog': 'Katalog',
+    'header.cart': 'Warenkorb',
+    'header.sign_in': 'Anmelden',
+    'product.add_to_cart': 'In den Warenkorb',
+  },
+};
+
+app.get(['/api/v1/languages', '/api/languages'], (req, res) => {
+  res.json(dbLanguages.filter((l) => l.enabled));
+});
+
+// GET /api/translations/language/{languageCode} - Returns list of translation objects
+app.get(['/api/translations/language/:languageCode', '/api/v1/translations/language/:languageCode'], (req, res) => {
+  const code = req.params.languageCode.toLowerCase();
+  const langTranslations = dbTranslationStore[code] || dbTranslationStore['en'];
+
+  const items = Object.entries(langTranslations).map(([key, value], idx) => ({
+    id: `tr_${code}_${idx + 1}`,
+    key,
+    language: code,
+    value,
+    module: key.split('.')[0]?.toUpperCase() || 'GENERAL',
+  }));
+
+  res.json({
+    language: code,
+    totalKeys: items.length,
+    translations: items,
+  });
+});
+
+// GET /api/translations/map/{languageCode} - Returns translations as a key-value map for fast lookup
+app.get(['/api/translations/map/:languageCode', '/api/v1/translations/map/:languageCode'], (req, res) => {
+  const code = req.params.languageCode.toLowerCase();
+  const langTranslations = dbTranslationStore[code] || dbTranslationStore['en'];
+  res.json(langTranslations);
+});
+
+app.get(['/api/v1/translations', '/api/translations'], (req, res) => {
+  const lang = (req.query.lang as string) || 'en';
+  res.json({
+    language: lang,
+    map: dbTranslationStore[lang] || dbTranslationStore['en'],
+    system_code: 'SUCCESS',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get(['/api/v1/admin/translations/all', '/api/admin/translations/all'], (req, res) => {
+  const allKeysSet = new Set<string>();
+  Object.values(dbTranslationStore).forEach((langMap) => {
+    Object.keys(langMap).forEach((k) => allKeysSet.add(k));
+  });
+
+  const result = Array.from(allKeysSet).map((key) => {
+    const translations: Record<string, string> = {};
+    Object.keys(dbTranslationStore).forEach((lang) => {
+      if (dbTranslationStore[lang][key]) {
+        translations[lang] = dbTranslationStore[lang][key];
+      }
+    });
+    return {
+      key,
+      module: key.split('.')[0]?.toUpperCase() || 'GENERAL',
+      translations,
+    };
+  });
+
+  res.json({ totalKeys: result.length, keys: result });
+});
+
+app.post(['/api/v1/admin/translations', '/api/admin/translations'], (req, res) => {
+  const { key, module, translations } = req.body;
+  if (key && translations && typeof translations === 'object') {
+    Object.entries(translations).forEach(([lang, val]) => {
+      if (!dbTranslationStore[lang]) dbTranslationStore[lang] = {};
+      dbTranslationStore[lang][key] = String(val);
+    });
+  }
+  res.status(201).json({ status: 'SUCCESS', key, message: 'Translation added to key-value maps' });
+});
+
+app.put(['/api/v1/admin/translations/:key', '/api/admin/translations/:key'], (req, res) => {
+  const oldKey = decodeURIComponent(req.params.key);
+  const { newKey, translations } = req.body;
+  const targetKey = newKey || oldKey;
+
+  // If key name changed, remove old key
+  if (oldKey !== targetKey) {
+    Object.keys(dbTranslationStore).forEach((lang) => {
+      delete dbTranslationStore[lang][oldKey];
+    });
+  }
+
+  if (translations && typeof translations === 'object') {
+    Object.entries(translations).forEach(([lang, val]) => {
+      if (!dbTranslationStore[lang]) dbTranslationStore[lang] = {};
+      dbTranslationStore[lang][targetKey] = String(val);
+    });
+  }
+
+  res.json({ status: 'SUCCESS', key: targetKey, message: 'Translation updated' });
+});
+
+app.delete(['/api/v1/admin/translations/:key', '/api/admin/translations/:key'], (req, res) => {
+  const keyToDelete = decodeURIComponent(req.params.key);
+  Object.keys(dbTranslationStore).forEach((lang) => {
+    delete dbTranslationStore[lang][keyToDelete];
+  });
+  res.json({ status: 'SUCCESS', message: `Key ${keyToDelete} deleted` });
+});
+
+app.get('/api/v1/product-translations', (req, res) => {
+  const lang = (req.query.lang as string) || 'en';
+  const localizedProducts = products.map((p) => ({
+    productId: p.id,
+    language: lang,
+    name: p.name,
+    description: p.description,
+  }));
+  res.json(localizedProducts);
+});
+
+/* =========================================================================
+   MEDIA CONTROLLER ENDPOINTS
+   ========================================================================= */
+let dbMediaStore: any[] = [
+  {
+    id: 'med_1',
+    fileName: 'headphone_banner.jpg',
+    url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+    fileType: 'image/jpeg',
+    fileSize: 245000,
+    userId: 'u_1',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'med_2',
+    fileName: 'smartwatch_banner.jpg',
+    url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+    fileType: 'image/jpeg',
+    fileSize: 312000,
+    userId: 'u_1',
+    createdAt: new Date().toISOString(),
+  },
+];
+
+app.get('/api/media', (req, res) => {
+  res.json(dbMediaStore);
+});
+
+app.get('/api/media/user/:userId', (req, res) => {
+  const userMedia = dbMediaStore.filter((m) => m.userId === req.params.userId);
+  res.json(userMedia);
+});
+
+app.get('/api/media/:id', (req, res) => {
+  const media = dbMediaStore.find((m) => m.id === req.params.id);
+  if (!media) return res.status(404).json({ message: 'Media not found' });
+  res.json(media);
+});
+
+app.post('/api/media/upload', (req, res) => {
+  const user = getAuthUser(req);
+  const newMedia = {
+    id: `med_${Date.now()}`,
+    fileName: req.body?.fileName || 'uploaded_image.png',
+    url: req.body?.url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80',
+    fileType: req.body?.fileType || 'image/png',
+    fileSize: req.body?.fileSize || 150000,
+    userId: user?.id || 'u_1',
+    createdAt: new Date().toISOString(),
+  };
+  dbMediaStore.unshift(newMedia);
+  res.status(201).json(newMedia);
+});
+
+app.delete('/api/media/:id', (req, res) => {
+  dbMediaStore = dbMediaStore.filter((m) => m.id !== req.params.id);
+  res.json({ message: 'Media item deleted' });
+});
+
+/* =========================================================================
+   LANGUAGE & TRANSLATION KEYS/VALUES CONTROLLER ENDPOINTS
+   ========================================================================= */
+app.get('/api/languages/enabled', (req, res) => {
+  res.json(dbLanguages.filter((l) => l.enabled));
+});
+
+app.get('/api/languages/code/:code', (req, res) => {
+  const lang = dbLanguages.find((l) => l.code.toLowerCase() === req.params.code.toLowerCase());
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  res.json(lang);
+});
+
+app.get('/api/languages/:id', (req, res) => {
+  const lang = dbLanguages.find((l) => l.id === req.params.id);
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  res.json(lang);
+});
+
+app.post('/api/languages', (req, res) => {
+  const { code, name, nativeName, flag, isRtl, isDefault } = req.body;
+  const newLang = {
+    id: `lang_${Date.now()}`,
+    code: code ? code.toLowerCase() : 'en',
+    name: name || 'Custom Language',
+    nativeName: nativeName || name || 'Custom Language',
+    flag: flag || '🌐',
+    isRtl: !!isRtl,
+    isDefault: !!isDefault,
+    enabled: true,
+  };
+  dbLanguages.push(newLang);
+  res.status(201).json(newLang);
+});
+
+app.put('/api/languages/:id', (req, res) => {
+  const lang = dbLanguages.find((l) => l.id === req.params.id);
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  Object.assign(lang, req.body);
+  res.json(lang);
+});
+
+app.delete('/api/languages/:id', (req, res) => {
+  dbLanguages = dbLanguages.filter((l) => l.id !== req.params.id);
+  res.json({ message: 'Language deleted' });
+});
+
+app.patch('/api/languages/:id/enable', (req, res) => {
+  const lang = dbLanguages.find((l) => l.id === req.params.id);
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  lang.enabled = true;
+  res.json(lang);
+});
+
+app.patch('/api/languages/:id/disable', (req, res) => {
+  const lang = dbLanguages.find((l) => l.id === req.params.id);
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  lang.enabled = false;
+  res.json(lang);
+});
+
+app.patch('/api/languages/:id/default', (req, res) => {
+  const lang = dbLanguages.find((l) => l.id === req.params.id);
+  if (!lang) return res.status(404).json({ message: 'Language not found' });
+  dbLanguages.forEach((l) => (l.isDefault = false));
+  lang.isDefault = true;
+  res.json(lang);
+});
+
+// Translation Keys & Values endpoints
+app.get('/api/translations/keys', (req, res) => {
+  const keysSet = new Set<string>();
+  Object.values(dbTranslationStore).forEach((store) => {
+    Object.keys(store).forEach((k) => keysSet.add(k));
+  });
+  const list = Array.from(keysSet).map((key, idx) => ({
+    id: `k_${idx + 1}`,
+    key,
+    module: key.split('.')[0]?.toUpperCase() || 'GENERAL',
+  }));
+  res.json(list);
+});
+
+app.post('/api/translations/keys', (req, res) => {
+  const { key, module: mod } = req.body;
+  if (!key) return res.status(400).json({ message: 'Key required' });
+  Object.keys(dbTranslationStore).forEach((lang) => {
+    if (!dbTranslationStore[lang][key]) {
+      dbTranslationStore[lang][key] = key;
+    }
+  });
+  res.status(201).json({ id: `k_${Date.now()}`, key, module: mod || 'GENERAL' });
+});
+
+app.get('/api/translations/keys/:id', (req, res) => {
+  res.json({ id: req.params.id, key: 'sample.key', module: 'UI' });
+});
+
+app.put('/api/translations/keys/:id', (req, res) => {
+  res.json({ id: req.params.id, ...req.body });
+});
+
+app.delete('/api/translations/keys/:id', (req, res) => {
+  res.json({ message: 'Key deleted' });
+});
+
+app.get('/api/translations/values', (req, res) => {
+  const values: any[] = [];
+  Object.entries(dbTranslationStore).forEach(([lang, store]) => {
+    Object.entries(store).forEach(([key, value], idx) => {
+      values.push({
+        id: `v_${lang}_${idx + 1}`,
+        key,
+        language: lang,
+        value,
+      });
+    });
+  });
+  res.json(values);
+});
+
+app.post('/api/translations/values', (req, res) => {
+  const { key, language, value } = req.body;
+  if (key && language && value) {
+    if (!dbTranslationStore[language]) dbTranslationStore[language] = {};
+    dbTranslationStore[language][key] = String(value);
+  }
+  res.status(201).json({ id: `v_${Date.now()}`, key, language, value });
+});
+
+app.get('/api/translations/values/:id', (req, res) => {
+  res.json({ id: req.params.id, key: 'sample.key', language: 'en', value: 'Sample' });
+});
+
+app.put('/api/translations/values/:id', (req, res) => {
+  res.json({ id: req.params.id, ...req.body });
+});
+
+app.delete('/api/translations/values/:id', (req, res) => {
+  res.json({ message: 'Translation value deleted' });
+});
+
 
 /* =========================================================================
    SERVER & VITE INTEGRATION

@@ -57,7 +57,7 @@ export const CheckoutPage: React.FC = () => {
         zipCode: newZip,
         postalCode: newZip,
         country: newCountry,
-        isDefaultLanguage: addresses.length === 0,
+        isDefault: addresses.length === 0,
       });
       setAddresses([...addresses, created]);
       setSelectedAddressId(created.id);

@@ -2,8 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Truck, RefreshCw, Headphones, Mail } from 'lucide-react';
 import { Button } from '../components/Button';
+import { useLanguage } from '../../core/i18n/LanguageContext';
 
 export const Footer: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-surface border-t border-border mt-20 transition-all">
       {/* Value Propositions Grid */}
@@ -14,8 +17,8 @@ export const Footer: React.FC = () => {
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-content-primary">Global Express Delivery</h4>
-              <p className="text-[11px] text-content-muted mt-0.5">Free shipping on orders over $100</p>
+              <h4 className="text-xs font-bold text-content-primary">{t('section.trust_1_title')}</h4>
+              <p className="text-[11px] text-content-muted mt-0.5">{t('hero.free_shipping')}</p>
             </div>
           </div>
 
@@ -24,8 +27,8 @@ export const Footer: React.FC = () => {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-content-primary">Secure Checkout</h4>
-              <p className="text-[11px] text-content-muted mt-0.5">256-bit SSL encrypted transactions</p>
+              <h4 className="text-xs font-bold text-content-primary">{t('section.trust_2_title')}</h4>
+              <p className="text-[11px] text-content-muted mt-0.5">{t('section.trust_2_desc')}</p>
             </div>
           </div>
 
@@ -34,8 +37,8 @@ export const Footer: React.FC = () => {
               <RefreshCw className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-content-primary">30-Day Money Back</h4>
-              <p className="text-[11px] text-content-muted mt-0.5">No-questions-asked return policy</p>
+              <h4 className="text-xs font-bold text-content-primary">{t('detail.warranty')}</h4>
+              <p className="text-[11px] text-content-muted mt-0.5">30-day money back guarantee</p>
             </div>
           </div>
 
@@ -44,8 +47,8 @@ export const Footer: React.FC = () => {
               <Headphones className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-content-primary">24/7 Enterprise Support</h4>
-              <p className="text-[11px] text-content-muted mt-0.5">Dedicated live agent assistance</p>
+              <h4 className="text-xs font-bold text-content-primary">{t('section.trust_3_title')}</h4>
+              <p className="text-[11px] text-content-muted mt-0.5">{t('section.trust_3_desc')}</p>
             </div>
           </div>
         </div>
@@ -63,16 +66,16 @@ export const Footer: React.FC = () => {
             </span>
           </div>
           <p className="text-xs text-content-secondary leading-relaxed max-w-sm">
-            Enterprise e-commerce platform delivering curated electronics, apparel, ergonomic furniture, and outdoor gear with real-time stock tracking and lightning-fast fulfillment.
+            {t('footer.about_desc')}
           </p>
           <div className="pt-2">
-            <h5 className="text-xs font-bold text-content-primary mb-2">Subscribe to Insider Deals</h5>
+            <h5 className="text-xs font-bold text-content-primary mb-2">Subscribe to Corporate Deals</h5>
             <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-2 max-w-sm">
               <div className="relative flex-1">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-content-muted" />
                 <input
                   type="email"
-                  placeholder="Enter your corporate email..."
+                  placeholder="Enter corporate email..."
                   className="w-full pl-9 pr-3 py-2 bg-surface-hover border border-border rounded-lg text-xs text-content-primary focus:outline-none focus:border-brand"
                 />
               </div>
@@ -84,7 +87,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div>
-          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">Shop Categories</h4>
+          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">{t('footer.categories')}</h4>
           <ul className="space-y-2.5 text-xs text-content-secondary">
             <li><Link to="/products" className="hover:text-brand transition-colors">Electronics & Gadgets</Link></li>
             <li><Link to="/products" className="hover:text-brand transition-colors">Apparel & Fashion</Link></li>
@@ -94,19 +97,19 @@ export const Footer: React.FC = () => {
         </div>
 
         <div>
-          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">Customer Care</h4>
+          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">{t('footer.support')}</h4>
           <ul className="space-y-2.5 text-xs text-content-secondary">
-            <li><Link to="/orders" className="hover:text-brand transition-colors">Order History</Link></li>
-            <li><Link to="/profile" className="hover:text-brand transition-colors">Address Book</Link></li>
-            <li><Link to="/cart" className="hover:text-brand transition-colors">Shopping Cart</Link></li>
-            <li><Link to="/wishlist" className="hover:text-brand transition-colors">Saved Wishlist</Link></li>
+            <li><Link to="/orders" className="hover:text-brand transition-colors">{t('header.my_orders')}</Link></li>
+            <li><Link to="/profile" className="hover:text-brand transition-colors">{t('header.my_dashboard')}</Link></li>
+            <li><Link to="/cart" className="hover:text-brand transition-colors">{t('header.cart')}</Link></li>
+            <li><Link to="/wishlist" className="hover:text-brand transition-colors">{t('header.wishlist')}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">Admin Suite</h4>
+          <h4 className="text-xs font-bold text-content-primary uppercase tracking-wider mb-4">{t('header.admin_suite')}</h4>
           <ul className="space-y-2.5 text-xs text-content-secondary">
-            <li><Link to="/admin/dashboard" className="hover:text-brand transition-colors">Executive Dashboard</Link></li>
+            <li><Link to="/admin/dashboard" className="hover:text-brand transition-colors">Dashboard</Link></li>
             <li><Link to="/admin/products" className="hover:text-brand transition-colors">Inventory Manager</Link></li>
             <li><Link to="/admin/orders" className="hover:text-brand transition-colors">Fulfillment Queue</Link></li>
             <li><Link to="/admin/coupons" className="hover:text-brand transition-colors">Promotions & Coupons</Link></li>
@@ -116,7 +119,7 @@ export const Footer: React.FC = () => {
 
       {/* Copyright */}
       <div className="border-t border-border py-6 text-center text-xs text-content-muted">
-        <p>© 2026 CommerceHub Enterprise Platform. All rights reserved. Powered by React 18, Vite & Tailwind CSS.</p>
+        <p>© 2026 CommerceHub Enterprise Platform. {t('footer.rights')}</p>
       </div>
     </footer>
   );

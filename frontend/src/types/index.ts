@@ -1,4 +1,13 @@
-export type RoleName = 'ROLE_USER' | 'ROLE_ADMIN';
+export type RoleName =
+  | 'ROLE_CUSTOMER'
+  | 'ROLE_SELLER'
+  | 'ROLE_ADMIN'
+  | 'ROLE_SUPER_ADMIN'
+  | 'ROLE_USER'
+  | 'CUSTOMER'
+  | 'SELLER'
+  | 'ADMIN'
+  | 'SUPER_ADMIN';
 
 export interface Role {
   id: string;
@@ -14,6 +23,7 @@ export interface User {
   enabled: boolean;
   emailVerified?: boolean;
   roles: Role[];
+  permissions?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -27,7 +37,7 @@ export interface Address {
   country: string;
   zipCode: string;
   postalCode?: string;
-  isDefaultLanguage: boolean;
+  isDefault: boolean;
   createdAt: string;
 }
 
@@ -258,3 +268,33 @@ export interface AnalyticsRevenueData {
   revenue: number;
   target: number;
 }
+
+export interface MediaItem {
+  id: string;
+  url: string;
+  fileName: string;
+  fileType?: string;
+  fileSize: number;
+  userId?: string;
+  createdAt?: string;
+}
+
+export interface Language {
+  id: string;
+  code: string;
+  name: string;
+  nativeName?: string;
+  flag?: string;
+  enabled: boolean;
+  isDefault: boolean;
+  createdAt?: string;
+}
+
+export interface TranslationKey {
+  id: string;
+  key: string;
+  module: string;
+  translations: Record<string, string>;
+  createdAt?: string;
+}
+

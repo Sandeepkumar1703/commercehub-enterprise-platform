@@ -8,8 +8,13 @@ export const cartApi = {
   },
 
   addItem: async (productId: string, quantity = 1) => {
-    const { data } = await axiosInstance.post<Cart>('/api/cart/items', { productId, quantity });
-    return data;
+    let lastData: any = null;
+    const count = Math.max(1, quantity);
+    for (let i = 0; i < count; i++) {
+      const { data } = await axiosInstance.post<Cart>(`/api/cart/${productId}`);
+      lastData = data;
+    }
+    return lastData;
   },
 
   updateItemQuantity: async (itemId: string, quantity: number) => {

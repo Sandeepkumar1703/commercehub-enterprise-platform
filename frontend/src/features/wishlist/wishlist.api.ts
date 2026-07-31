@@ -3,8 +3,10 @@ import { WishlistItem } from '../../types';
 
 export const wishlistApi = {
   getWishlist: async () => {
-    const { data } = await axiosInstance.get<WishlistItem[]>('/api/wishlist');
-    return data;
+    const { data } = await axiosInstance.get<any>('/api/wishlist');
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.data)) return data.data;
+    return [];
   },
 
   addToWishlist: async (productId: string) => {

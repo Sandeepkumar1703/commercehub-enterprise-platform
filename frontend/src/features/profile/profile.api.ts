@@ -3,13 +3,13 @@ import { User } from '../../types';
 
 export const userApi = {
   getProfile: async () => {
-    const { data } = await axiosInstance.get<User>('/api/users/profile');
-    return data;
+    const { data } = await axiosInstance.get<any>('/api/users/profile');
+    return data?.data || data;
   },
 
   updateProfile: async (userData: Partial<User>) => {
-    const { data } = await axiosInstance.put<User>('/api/users/profile', userData);
-    return data;
+    const { data } = await axiosInstance.put<any>('/api/users/profile', userData);
+    return data?.data || data;
   },
 
   deleteAccount: async () => {

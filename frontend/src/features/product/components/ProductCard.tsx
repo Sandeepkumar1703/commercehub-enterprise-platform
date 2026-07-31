@@ -12,10 +12,12 @@ import { setWishlist } from '../../wishlist/wishlistSlice';
 import { useToast } from '../../../shared/components/Toast';
 import { useFlyToCart } from '../../../shared/components/FlyToCart';
 import { useCompare } from '../compareContext';
+import { useLanguage } from '../../../core/i18n/LanguageContext';
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const { t } = useLanguage();
   const { triggerFlyToCart } = useFlyToCart();
   const { isComparing, addToCompare, removeFromCompare } = useCompare();
   const { items: wishlistItems } = useAppSelector((state) => state.wishlist);
@@ -27,13 +29,12 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Trigger Fly-to-Cart Animation
     triggerFlyToCart(e, product.imageUrl);
 
     try {
       const updatedCart = await cartApi.addItem(product.id, 1);
       dispatch(setCart(updatedCart));
-      toast.success('Added to Cart', `${product.name} is now in your cart.`);
+      toast.success(t('product.add_to_cart'), `${product.name}`);
     } catch {
       toast.error('Failed to add item to cart.');
     }
@@ -56,11 +57,11 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
       if (isWishlisted) {
         const updated = await wishlistApi.removeFromWishlist(product.id);
         dispatch(setWishlist(updated));
-        toast.info('Removed from Wishlist');
+        toast.info(t('product.wishlist_remove'));
       } else {
         const updated = await wishlistApi.addToWishlist(product.id);
         dispatch(setWishlist(updated));
-        toast.success('Saved to Wishlist');
+        toast.success(t('product.wishlist_add'));
       }
     } catch {
       toast.error('Failed to update wishlist');
@@ -82,11 +83,11 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
-          {product.isFlashSale && <Badge variant="accent">Flash Sale</Badge>}
+          {product.isFlashSale && <Badge variant="accent">{t('section.flash_sale')}</Badge>}
           {product.stockQuantity < 10 && product.stockQuantity > 0 && (
-            <Badge variant="warning">Only {product.stockQuantity} Left</Badge>
+            <Badge variant="warning">{product.stockQuantity} Left</Badge>
           )}
-          {product.stockQuantity === 0 && <Badge variant="danger">Out of Stock</Badge>}
+          {product.stockQuantity === 0 && <Badge variant="danger">{t('product.out_of_stock')}</Badge>}
         </div>
 
         {/* Top Right Action Controls */}
@@ -100,7 +101,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                 ? 'bg-brand text-brand-foreground border-brand'
                 : 'bg-surface/80 text-content-secondary border-border hover:bg-surface hover:text-brand'
             }`}
-            title={isSelectedForCompare ? 'Remove from comparison' : 'Compare product'}
+            title={isSelectedForCompare ? t('product.compare_remove') : t('product.compare')}
           >
             <Columns className="w-4 h-4" />
           </button>
@@ -114,13 +115,12 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
                 ? 'bg-status-danger text-white border-status-danger'
                 : 'bg-surface/80 text-content-secondary border-border hover:bg-surface hover:text-status-danger'
             }`}
-            title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+            title={isWishlisted ? t('product.wishlist_remove') : t('product.wishlist_add')}
           >
             <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-white' : ''}`} />
           </button>
         </div>
       </div>
-
 
       {/* Content */}
       <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
@@ -146,7 +146,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
               product.stockQuantity > 0 ? 'text-status-success' : 'text-status-danger'
             }`}
           >
-            {product.stockQuantity > 0 ? 'In Stock' : 'Unavailable'}
+            {product.stockQuantity > 0 ? t('product.in_stock') : t('product.out_of_stock')}
           </span>
         </div>
 
@@ -165,7 +165,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             onClick={handleAddToCart}
             disabled={product.stockQuantity === 0}
             className="p-2 bg-brand text-brand-foreground rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50 cursor-pointer"
-            title="Add to cart"
+            title={t('product.add_to_cart')}
           >
             <ShoppingBag className="w-4 h-4" />
           </button>

@@ -23,8 +23,51 @@ export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    setCart: (state, action: PayloadAction<Cart | null>) => {
-      state.cart = action.payload;
+    setCart: (state, action: PayloadAction<any>) => {
+      if (!action.payload) {
+        state.cart = null;
+        state.isLoading = false;
+        state.error = null;
+        return;
+      }
+      const raw = action.payload;
+      const rawItems = Array.isArray(raw.items) ? raw.items : [];
+      const items: CartItem[] = rawItems.map((item: any) => ({
+        id: String(item.cartItemId || item.id || `item-${item.productId}`),
+        cartId: String(raw.cartId || raw.id || '1'),
+        productId: String(item.productId),
+        productName: item.productName || item.product?.name,
+        imageUrl: item.imageUrl || item.product?.imageUrl,
+        quantity: Number(item.quantity || 1),
+        price: Number(item.unitPrice || item.price || item.product?.price || 0),
+        totalPrice: Number(item.totalPrice || (item.unitPrice || item.price || 0) * item.quantity),
+        product: item.product || {
+          id: String(item.productId),
+          name: item.productName || 'Product',
+          description: item.productDescription || '',
+          price: Number(item.unitPrice || item.price || 0),
+          imageUrl: item.imageUrl || '',
+          categoryId: '1',
+          categoryName: 'General',
+          stockQuantity: 10,
+          isActive: true,
+          sku: item.sku || 'SKU',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      }));
+      const subtotal = Number(raw.totalAmount || raw.subtotal || recalculateSubtotal(items));
+      state.cart = {
+        id: String(raw.cartId || raw.id || '1'),
+        userId: String(raw.userId || '1'),
+        items,
+        subtotal,
+        discount: Number(raw.discount || 0),
+        tax: Number(raw.tax || subtotal * 0.08),
+        shippingFee: Number(raw.shippingFee || 0),
+        total: Number(raw.totalAmount || raw.total || subtotal),
+        createdAt: raw.createdAt || new Date().toISOString(),
+      };
       state.isLoading = false;
       state.error = null;
     },
