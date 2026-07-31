@@ -58,6 +58,19 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BusinessException.class)
+        public ResponseEntity<ErrorResponse> handleBusinessException(
+                BusinessException ex,
+                HttpServletRequest request) {
+
+        return buildError(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+        }
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ErrorResponse> handleForbidden(
             ForbiddenException ex,
