@@ -1,0 +1,2 @@
+ALTER TABLE shipping
+ADD COLUMN IF NOT EXISTS tracking_url VARCHAR(500);

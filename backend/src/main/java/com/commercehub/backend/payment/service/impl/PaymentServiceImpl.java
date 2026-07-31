@@ -247,7 +247,7 @@ public PaymentResponse markPaymentSuccess(
     }
 
     order.setPaymentStatus(PaymentStatus.SUCCESS);
-
+    order.setStatus(OrderStatus.CONFIRMED);
     orderRepository.save(order);
 
     Payment updatedPayment = paymentRepository.save(payment);
@@ -316,32 +316,62 @@ public PaymentResponse markPaymentFailed(
          * Cancel payment
          */
         @Override
-        public PaymentResponse cancelPayment(Long paymentId) {
+@Transactional
+public PaymentResponse cancelPayment(Long paymentId) {
 
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Payment not found with id: " + paymentId
-                        ));
+    Payment payment = paymentRepository.findById(paymentId)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Payment not found with id: " + paymentId
+                    ));
 
-        if (payment.getStatus() != PaymentStatus.PENDING) {
-                throw new BusinessException(
-                        "Only pending payments can be cancelled."
-                );
-        }
 
-        payment.setStatus(PaymentStatus.CANCELLED);
-        payment.setCancelledAt(LocalDateTime.now());
-        payment.setGatewayResponse("Payment cancelled.");
+    if(payment.getStatus() == PaymentStatus.SUCCESS){
 
-        Order order = payment.getOrder();
-        order.setPaymentStatus(PaymentStatus.CANCELLED);
+        throw new BusinessException(
+                "Successful payment cannot be cancelled. Use refund."
+        );
+    }
 
-        orderRepository.save(order);
-        Payment updatedPayment = paymentRepository.save(payment);
 
-        return paymentMapper.toResponse(updatedPayment);
-        }
+    if(payment.getStatus() != PaymentStatus.PENDING){
+
+        throw new BusinessException(
+                "Only pending payments can be cancelled."
+        );
+    }
+
+
+    payment.setStatus(
+            PaymentStatus.CANCELLED
+    );
+
+
+    payment.setCancelledAt(
+            LocalDateTime.now()
+    );
+
+
+    payment.setGatewayResponse(
+            "Payment cancelled."
+    );
+
+
+    Order order = payment.getOrder();
+
+
+    order.setPaymentStatus(
+            PaymentStatus.CANCELLED
+    );
+
+
+    orderRepository.save(order);
+
+
+    return paymentMapper.toResponse(
+            paymentRepository.save(payment)
+    );
+}
 
 
 
@@ -364,13 +394,23 @@ public PaymentResponse markPaymentFailed(
 
 
 
-        if(payment.getStatus()
-                != PaymentStatus.SUCCESS){
+        if(payment.getStatus() != PaymentStatus.SUCCESS){
 
-            throw new BusinessException(
-                    "Only successful payments can be refunded."
-            );
-        }
+    throw new BusinessException(
+            "Only successful payments can be refunded."
+    );
+}
+
+
+Order order = payment.getOrder();
+
+if(order.getStatus() == OrderStatus.CANCELLED
+        && payment.getStatus() == PaymentStatus.SUCCESS){
+
+    throw new BusinessException(
+            "Cancelled order payment requires refund processing."
+    );
+}
 
 
 
