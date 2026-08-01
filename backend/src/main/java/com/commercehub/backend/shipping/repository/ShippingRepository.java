@@ -20,4 +20,8 @@ public interface ShippingRepository extends JpaRepository<Shipping, Long> {
 
     boolean existsByTrackingNumber(String trackingNumber);
 
+    boolean existsByTrackingNumberAndIdNot(
+            String trackingNumber,
+            Long id
+    );
 }

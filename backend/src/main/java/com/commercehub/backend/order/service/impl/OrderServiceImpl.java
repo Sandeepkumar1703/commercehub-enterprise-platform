@@ -21,11 +21,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.commercehub.backend.inventory.service.InventoryService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import com.commercehub.backend.common.exception.BusinessException;
+import com.commercehub.backend.common.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +43,8 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
 
     private final UserRepository userRepository;
+
+    private final InventoryService inventoryService;
 
     @Override
     public OrderResponse createOrder(OrderRequest request) {
@@ -144,25 +148,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void cancelOrder(Long id) {
+@Transactional
+public void cancelOrder(Long id) {
 
-        Order order
-                = orderRepository.findById(id)
-                        .orElseThrow(
-                                () -> new RuntimeException(
-                                        "Order not found"
-                                )
-                        );
+    Order order =
+            orderRepository.findById(id)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Order not found with id: " + id
+                            )
+                    );
 
-        if (order.getStatus() != OrderStatus.PLACED) {
 
-            throw new RuntimeException(
-                    "Order cannot be cancelled"
-            );
-        }
+    if (order.getStatus() != OrderStatus.PLACED
+            && order.getStatus() != OrderStatus.CONFIRMED) {
 
-        order.setStatus(OrderStatus.CANCELLED);
+        throw new BusinessException(
+                "Order cannot be cancelled in current status: "
+                        + order.getStatus()
+        );
     }
+
+
+    inventoryService.releaseInventory(order);
+
+
+    order.setStatus(
+            OrderStatus.CANCELLED
+    );
+
+
+    orderRepository.save(order);
+}
 
     private User getCurrentUser() {
 

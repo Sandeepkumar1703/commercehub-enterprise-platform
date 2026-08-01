@@ -18,7 +18,7 @@ import com.commercehub.backend.shipping.util.TrackingNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.commercehub.backend.inventory.service.InventoryService;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +31,7 @@ public class ShippingServiceImpl implements ShippingService {
     private final OrderRepository orderRepository;
     private final ShippingMapper shippingMapper;
     private final TrackingNumberGenerator trackingNumberGenerator;
+    private final InventoryService inventoryService;
 
     @Override
 public ShippingResponse createShipment(CreateShippingRequest request) {
@@ -163,7 +164,10 @@ public ShippingResponse markShipped(
     if (request.getTrackingNumber() != null &&
             !request.getTrackingNumber().isBlank()) {
 
-        if (shippingRepository.existsByTrackingNumber(request.getTrackingNumber())) {
+        if (shippingRepository.existsByTrackingNumberAndIdNot(
+        request.getTrackingNumber(),
+        shippingId
+)) {
             throw new BusinessException(
                     "Tracking number already exists."
             );
@@ -206,30 +210,37 @@ public ShippingResponse markOutForDelivery(Long shippingId) {
 }
 
 @Override
-public ShippingResponse markDelivered(Long shippingId) {
+@Transactional
+        public ShippingResponse markDelivered(Long shippingId) {
 
-    Shipping shipping = shippingRepository.findById(shippingId)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException(
-                            "Shipment not found with id: " + shippingId
-                    ));
+        Shipping shipping = shippingRepository.findById(shippingId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Shipment not found with id: " + shippingId
+                        ));
 
-    if (shipping.getStatus() != ShippingStatus.OUT_FOR_DELIVERY) {
-        throw new BusinessException(
-                "Only shipments out for delivery can be marked delivered."
-        );
-    }
+        if (shipping.getStatus() != ShippingStatus.OUT_FOR_DELIVERY) {
+                throw new BusinessException(
+                        "Only shipments out for delivery can be marked delivered."
+                );
+        }
 
-    shipping.setStatus(ShippingStatus.DELIVERED);
+        shipping.setStatus(ShippingStatus.DELIVERED);
+        shipping.setActualDelivery(LocalDateTime.now());
 
-    shipping.setActualDelivery(
-            LocalDateTime.now()
-    );
+        Order order = shipping.getOrder();
 
-    return shippingMapper.toResponse(
-            shippingRepository.save(shipping)
-    );
-}
+        // Deduct inventory and clear reserved stock
+        inventoryService.deductInventory(order);
+
+        // Mark order as delivered
+        order.setStatus(OrderStatus.DELIVERED);
+        orderRepository.save(order);
+
+        Shipping savedShipping = shippingRepository.save(shipping);
+
+        return shippingMapper.toResponse(savedShipping);
+        }
 
 @Override
 public ShippingResponse cancelShipment(Long shippingId) {

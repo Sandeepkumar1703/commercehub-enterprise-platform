@@ -13,7 +13,7 @@ import com.commercehub.backend.payment.mapper.PaymentMapper;
 import com.commercehub.backend.payment.repository.PaymentRepository;
 import com.commercehub.backend.payment.service.PaymentService;
 import com.commercehub.backend.payment.util.TransactionIdGenerator;
-
+import com.commercehub.backend.inventory.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderRepository orderRepository;
     private final PaymentMapper paymentMapper;
     private final TransactionIdGenerator transactionIdGenerator;
+    private final InventoryService inventoryService;
 
 
 
@@ -246,11 +247,24 @@ public PaymentResponse markPaymentSuccess(
         payment.setStripeChargeId(gatewayReferenceId);
     }
 
-    order.setPaymentStatus(PaymentStatus.SUCCESS);
-    order.setStatus(OrderStatus.CONFIRMED);
-    orderRepository.save(order);
+    order.setPaymentStatus(
+        PaymentStatus.SUCCESS
+);
 
-    Payment updatedPayment = paymentRepository.save(payment);
+
+inventoryService.reserveInventory(order);
+
+
+order.setStatus(
+        OrderStatus.CONFIRMED
+);
+
+
+orderRepository.save(order);
+
+
+Payment updatedPayment =
+        paymentRepository.save(payment);
 
     return paymentMapper.toResponse(updatedPayment);
 }
@@ -381,73 +395,54 @@ public PaymentResponse cancelPayment(Long paymentId) {
      * Refund successful payment
      */
     @Override
-    public PaymentResponse refundPayment(Long paymentId) {
+public PaymentResponse refundPayment(Long paymentId) {
+
+    Payment payment =
+            paymentRepository.findById(paymentId)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    "Payment not found with id: " + paymentId
+                            ));
 
 
-        Payment payment =
-                paymentRepository.findById(paymentId)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Payment not found with id: "
-                                                + paymentId
-                                ));
+    if(payment.getStatus()
+            != PaymentStatus.SUCCESS){
 
-
-
-        if(payment.getStatus() != PaymentStatus.SUCCESS){
-
-    throw new BusinessException(
-            "Only successful payments can be refunded."
-    );
-}
-
-
-Order order = payment.getOrder();
-
-if(order.getStatus() == OrderStatus.CANCELLED
-        && payment.getStatus() == PaymentStatus.SUCCESS){
-
-    throw new BusinessException(
-            "Cancelled order payment requires refund processing."
-    );
-}
-
-
-
-        payment.setStatus(
-                PaymentStatus.REFUNDED
+        throw new BusinessException(
+                "Only successful payments can be refunded."
         );
-
-
-        payment.setRefundedAt(
-                LocalDateTime.now()
-        );
-
-
-        payment.setGatewayResponse(
-                "Payment refunded."
-        );
-
-
-
-        Order order =
-                payment.getOrder();
-
-
-        order.setPaymentStatus(
-                PaymentStatus.REFUNDED
-        );
-
-
-        orderRepository.save(order);
-
-
-
-        return paymentMapper.toResponse(
-                paymentRepository.save(payment)
-        );
-
     }
+
+
+    payment.setStatus(
+            PaymentStatus.REFUNDED
+    );
+
+
+    payment.setRefundedAt(
+            LocalDateTime.now()
+    );
+
+
+    payment.setGatewayResponse(
+            "Payment refunded."
+    );
+
+
+    Order order = payment.getOrder();
+
+order.setPaymentStatus(PaymentStatus.REFUNDED);
+
+if (order.getStatus() != OrderStatus.DELIVERED) {
+    inventoryService.releaseInventory(order);
+}
+
+orderRepository.save(order);
+
+return paymentMapper.toResponse(
+        paymentRepository.save(payment)
+);
+}
 
 
 
