@@ -4,9 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,14 +17,19 @@ import java.io.IOException;
 /**
  * JWT Authentication Filter.
  *
- * This filter executes once for every incoming HTTP request.
+ * <p>
+ * Executes once for every incoming HTTP request.
+ * </p>
  *
  * Responsibilities:
- * 1. Read JWT token from the Authorization header.
- * 2. Reject blacklisted (logged out) tokens.
- * 3. Validate the JWT.
- * 4. Load the authenticated user.
- * 5. Store the Authentication object inside the Security Context.
+ * <ul>
+ *     <li>Read JWT from Authorization header.</li>
+ *     <li>Ignore requests without JWT.</li>
+ *     <li>Reject blacklisted (logged out) tokens.</li>
+ *     <li>Validate JWT.</li>
+ *     <li>Load authenticated user.</li>
+ *     <li>Populate Spring SecurityContext.</li>
+ * </ul>
  */
 @Component
 @RequiredArgsConstructor
@@ -38,12 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * Loads user details from the database.
+     * Loads user details from database.
      */
     private final CustomUserDetailsService customUserDetailsService;
 
     /**
-     * Stores invalidated (logged out) JWT tokens.
+     * Stores invalidated JWT tokens.
      */
     private final TokenBlacklist tokenBlacklist;
 
@@ -54,82 +57,76 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        /*
-         * Read Authorization header.
-         *
-         * Expected format:
-         * Authorization: Bearer eyJhbGciOiJIUzUxMiJ9...
-         */
-        String authHeader = request.getHeader("Authorization");
-
-        String token = null;
-        String username = null;
+        String authorizationHeader = request.getHeader("Authorization");
 
         /*
-         * Extract JWT token.
+         * No Authorization header.
          */
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null ||
+                !authorizationHeader.startsWith("Bearer ")) {
 
-            token = authHeader.substring(7);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            /*
-             * If the token has been logged out,
-             * do not authenticate the request.
-             */
-            if (tokenBlacklist.isBlacklisted(token)) {
+        String token = authorizationHeader.substring(7);
 
-                filterChain.doFilter(request, response);
-                return;
-            }
+        /*
+         * Ignore logged-out tokens.
+         */
+        if (tokenBlacklist.isBlacklisted(token)) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        try {
 
             /*
              * Extract username from JWT.
              */
-            username = jwtTokenProvider.getUsername(token);
-        }
-
-        /*
-         * Authenticate only if:
-         * - Username exists.
-         * - User is not already authenticated.
-         */
-        if (username != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String username = jwtTokenProvider.getUsername(token);
 
             /*
-             * Load user from database.
+             * Authenticate only once per request.
              */
-            UserDetails userDetails =
-                    customUserDetailsService.loadUserByUsername(username);
+            if (username != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            /*
-             * Validate JWT.
-             */
-            if (jwtTokenProvider.validateToken(token)) {
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-
-                authentication.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request)
-                );
+                UserDetails userDetails =
+                        customUserDetailsService.loadUserByUsername(username);
 
                 /*
-                 * Store authenticated user in Security Context.
+                 * Validate JWT.
                  */
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authentication);
+                if (jwtTokenProvider.validateToken(token)) {
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authentication);
+                }
             }
+
+        } catch (Exception ex) {
+
+            /*
+             * Invalid or expired JWT.
+             * Continue request without authentication.
+             */
+            SecurityContextHolder.clearContext();
         }
 
-        /*
-         * Continue with the remaining filter chain.
-         */
         filterChain.doFilter(request, response);
     }
 }

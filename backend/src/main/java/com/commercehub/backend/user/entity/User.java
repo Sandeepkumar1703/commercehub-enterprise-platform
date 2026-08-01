@@ -3,6 +3,7 @@ package com.commercehub.backend.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,24 +23,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * User First Name
-     */
-    @Column(nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    /**
-     * User Last Name
-     */
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     /**
      * User Email
      */
     @Column(
-            unique = true,
-            nullable = false
+            nullable = false,
+            unique = true
     )
     private String email;
 
@@ -49,31 +44,57 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    /**
-     * Account activation status.
-     *
-     * false = Email not verified true = Email verified
-     */
+    @Column(length = 20)
+    private String phone;
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private boolean active = true;
+
     @Column(nullable = false)
     @Builder.Default
     private boolean enabled = false;
 
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     /**
-     * Roles assigned to the user.
+     * User Roles
      *
-     * Examples: ROLE_USER ROLE_ADMIN ROLE_SELLER
+     * users
+     *      |
+     * user_roles
+     *      |
+     * roles
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id"
-            ),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id"
-            )
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (createdAt == null) {
+            createdAt = now;
+        }
+
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

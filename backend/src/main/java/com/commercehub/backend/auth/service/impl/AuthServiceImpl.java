@@ -9,10 +9,11 @@ import com.commercehub.backend.auth.dto.response.RegisterResponse;
 
 import com.commercehub.backend.auth.entity.EmailVerificationToken;
 import com.commercehub.backend.auth.repository.EmailVerificationTokenRepository;
-
+import com.commercehub.backend.common.exception.BadRequestException;
 import com.commercehub.backend.auth.service.AuthService;
 import com.commercehub.backend.auth.service.EmailService;
-
+import com.commercehub.backend.common.exception.DuplicateResourceException;
+import com.commercehub.backend.common.exception.InvalidTokenException;
 import com.commercehub.backend.common.exception.ResourceNotFoundException;
 
 import com.commercehub.backend.role.repository.RoleRepository;
@@ -79,7 +80,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (userRepository.existsByEmail(request.getEmail())) {
 
-            throw new RuntimeException(
+            throw new DuplicateResourceException(
                     "Email already registered"
             );
         }
@@ -87,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         Role userRole
                 = roleRepository.findByName("ROLE_USER")
                         .orElseThrow(()
-                                -> new RuntimeException(
+                                -> new ResourceNotFoundException(
                                 "ROLE_USER not found"
                         ));
 
@@ -111,10 +112,9 @@ public class AuthServiceImpl implements AuthService {
                         .enabled(false)
                         .build();
 
-        user.getRoles()
-                .add(userRole);
+        user.getRoles().add(userRole);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         /*
          * Create Email Verification Token
@@ -156,51 +156,43 @@ public class AuthServiceImpl implements AuthService {
      * Login user.
      */
     @Override
-    public AuthResponse login(LoginRequest request) {
+        @Transactional
+        public AuthResponse login(LoginRequest request) {
 
-        User user
-                = userRepository.findByEmail(
-                        request.getEmail()
-                )
-                        .orElseThrow(()
-                                -> new InvalidCredentialsException(
-                                "Invalid email or password"
-                        )
-                        );
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new InvalidCredentialsException("Invalid email or password"));
 
         if (!user.isEnabled()) {
-
-            throw new RuntimeException(
-                    "Please verify your email before login"
-            );
+                throw new BadRequestException("Please verify your email before login");
         }
+
+        Authentication authentication;
 
         try {
 
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+                authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
+                );
 
-        } catch (Exception e) {
+        } catch (Exception ex) {
 
-            throw new InvalidCredentialsException(
-                    "Invalid email or password"
-            );
+                throw new InvalidCredentialsException("Invalid email or password");
 
         }
 
-        Authentication authentication
-                = new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        null
-                );
+        // Update last login time
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+
+        // Store authenticated user in SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return generateTokenResponse(authentication);
-
-    }
+        }
 
     /**
      * Change password.
@@ -214,7 +206,7 @@ public class AuthServiceImpl implements AuthService {
                 request.getCurrentPassword(),
                 user.getPassword())) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Current password is incorrect"
             );
         }
@@ -222,7 +214,7 @@ public class AuthServiceImpl implements AuthService {
         if (request.getCurrentPassword()
                 .equals(request.getNewPassword())) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "New password cannot be same as old password"
             );
         }
@@ -230,7 +222,7 @@ public class AuthServiceImpl implements AuthService {
         if (!request.getNewPassword()
                 .equals(request.getConfirmPassword())) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Password confirmation does not match"
             );
         }
@@ -344,7 +336,7 @@ public class AuthServiceImpl implements AuthService {
                 = passwordResetTokenRepository
                         .findByToken(request.getToken())
                         .orElseThrow(()
-                                -> new RuntimeException(
+                                -> new InvalidTokenException(
                                 "Invalid password reset token"
                         )
                         );
@@ -352,7 +344,7 @@ public class AuthServiceImpl implements AuthService {
         // Check token already used
         if (resetToken.isUsed()) {
 
-            throw new RuntimeException(
+            throw new InvalidTokenException(
                     "Password reset token already used"
             );
         }
@@ -361,7 +353,7 @@ public class AuthServiceImpl implements AuthService {
         if (resetToken.getExpiryDate()
                 .isBefore(LocalDateTime.now())) {
 
-            throw new RuntimeException(
+            throw new InvalidTokenException(
                     "Password reset token expired"
             );
         }

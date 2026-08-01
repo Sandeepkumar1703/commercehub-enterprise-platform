@@ -1,33 +1,60 @@
 package com.commercehub.backend.security;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
+ * ============================================================
  * Spring Security Configuration
+ * ============================================================
  *
- * Responsibilities:
- * - Disable CSRF (REST API)
- * - Configure JWT Authentication
- * - Configure Exception Handling
- * - Allow Public Endpoints
- * - Secure Remaining Endpoints
- * - Enable Method Level Security
+ * Responsibilities
+ * ------------------------------------------------------------
+ * • Disable CSRF (REST APIs)
+ * • Enable CORS
+ * • Configure JWT Authentication
+ * • Configure Unauthorized (401) Handler
+ * • Configure Stateless Session Management
+ * • Allow Public APIs
+ * • Secure Remaining APIs
+ * • Enable Method-Level Security
  *
- * Method level annotations supported:
+ * Method Security Examples
+ * ------------------------------------------------------------
  *
- * @PreAuthorize(...)
- * @PostAuthorize(...)
- * @RolesAllowed(...)
- * @Secured(...)
+ * @PreAuthorize("hasRole('ADMIN')")
+ * @PreAuthorize("hasAuthority('ROLE_MANAGE')")
+ * @PreAuthorize("hasAuthority('USER_CREATE')")
+ *
+ * Authentication Flow
+ * ------------------------------------------------------------
+ *
+ * Request
+ *      │
+ *      ▼
+ * JwtAuthenticationFilter
+ *      │
+ *      ▼
+ * Validate JWT
+ *      │
+ *      ▼
+ * Load User + Roles + Permissions
+ *      │
+ *      ▼
+ * SecurityContext
+ *      │
+ *      ▼
+ * Controller
+ *
  */
 @Configuration
 @EnableMethodSecurity
@@ -40,12 +67,12 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
-     * Handles Unauthorized Requests (401)
+     * Handles Unauthorized (401) responses.
      */
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     /**
-     * Configure Spring Security Filter Chain
+     * Configure Spring Security Filter Chain.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -55,55 +82,74 @@ public class SecurityConfig {
         http
 
                 /*
-                 * Disable CSRF for Stateless REST APIs
+                 * Enable CORS
                  */
-                .cors(cors -> {})
+                .cors(Customizer.withDefaults())
+
+                /*
+                 * Disable CSRF because this application
+                 * uses JWT authentication.
+                 */
                 .csrf(csrf -> csrf.disable())
 
                 /*
-                 * Custom Authentication Entry Point
+                 * Stateless Session Management
+                 *
+                 * No HTTP Session will be created.
+                 * Every request must provide a JWT.
                  */
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
                 )
 
                 /*
-                 * Configure Endpoint Authorization
+                 * Handle Unauthorized Requests
+                 */
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(
+                                jwtAuthenticationEntryPoint
+                        )
+                )
+
+                /*
+                 * Configure API Authorization
                  */
                 .authorizeHttpRequests(auth -> auth
 
                         /*
-                         * Public APIs
+                         * Public Endpoints
                          */
                         .requestMatchers(
 
                                 "/api/auth/**",
 
-                                "/api/test/public",
-
                                 "/swagger-ui/**",
-
                                 "/swagger-ui.html",
 
                                 "/v3/api-docs/**",
-
                                 "/v3/api-docs",
 
                                 "/webjars/**",
 
-                                "/uploads/**"
+                                "/uploads/**",
+
+                                "/api/test/public"
 
                         ).permitAll()
 
                         /*
-                         * All other APIs require Authentication
+                         * All remaining endpoints
+                         * require authentication.
                          */
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
 
                 )
 
                 /*
-                 * JWT Authentication Filter
+                 * Register JWT Authentication Filter
                  */
                 .addFilterBefore(
 

@@ -4,60 +4,73 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
+import java.util.Map;
 
 /**
- * JWT Token Provider
+ * JWT Token Provider.
+ *
+ * <p>
+ * Acts as a wrapper around {@link JwtService}.
+ * Responsible for generating and validating JWT tokens.
+ * </p>
  *
  * Responsibilities:
- * - Generate Access Token
- * - Generate Refresh Token
- * - Validate JWT Token
- * - Extract Username from JWT Token
+ * <ul>
+ *     <li>Generate Access Token</li>
+ *     <li>Generate Refresh Token</li>
+ *     <li>Validate JWT</li>
+ *     <li>Extract username from JWT</li>
+ * </ul>
  */
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
     /**
-     * JWT Service
+     * Core JWT service.
      */
     private final JwtService jwtService;
 
     /**
-     * Generate Access Token
+     * Generates a JWT access token.
      *
      * @param authentication Authenticated user
-     * @return JWT Access Token
+     * @return Access token
      */
     public String generateAccessToken(Authentication authentication) {
 
-        String username = authentication.getName();
+        if (authentication == null || authentication.getName() == null) {
+            throw new IllegalArgumentException("Authentication cannot be null.");
+        }
 
         return jwtService.generateAccessToken(
-                username,
-                Collections.emptyMap()   // Never pass null
+                authentication.getName(),
+                Map.of()
         );
     }
 
     /**
-     * Generate Refresh Token
+     * Generates a JWT refresh token.
      *
      * @param authentication Authenticated user
-     * @return JWT Refresh Token
+     * @return Refresh token
      */
     public String generateRefreshToken(Authentication authentication) {
 
-        String username = authentication.getName();
+        if (authentication == null || authentication.getName() == null) {
+            throw new IllegalArgumentException("Authentication cannot be null.");
+        }
 
-        return jwtService.generateRefreshToken(username);
+        return jwtService.generateRefreshToken(
+                authentication.getName()
+        );
     }
 
     /**
-     * Validate JWT Token
+     * Validates a JWT.
      *
-     * @param token JWT Token
-     * @return true if token is valid
+     * @param token JWT token
+     * @return true if valid, otherwise false
      */
     public boolean validateToken(String token) {
 
@@ -67,7 +80,7 @@ public class JwtTokenProvider {
 
             return jwtService.validateToken(token, username);
 
-        } catch (Exception exception) {
+        } catch (Exception ex) {
 
             return false;
 
@@ -75,10 +88,10 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Extract Username From JWT Token
+     * Extracts username from a JWT.
      *
-     * @param token JWT Token
-     * @return Username or null if token is invalid
+     * @param token JWT token
+     * @return username or null if token is invalid
      */
     public String getUsername(String token) {
 
@@ -86,7 +99,7 @@ public class JwtTokenProvider {
 
             return jwtService.extractUsername(token);
 
-        } catch (Exception exception) {
+        } catch (Exception ex) {
 
             return null;
 
