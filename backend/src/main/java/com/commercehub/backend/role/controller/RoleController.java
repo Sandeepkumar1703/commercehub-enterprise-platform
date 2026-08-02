@@ -2,6 +2,7 @@ package com.commercehub.backend.role.controller;
 
 import com.commercehub.backend.role.dto.request.AssignRoleRequest;
 import com.commercehub.backend.role.dto.request.CreateRoleRequest;
+import com.commercehub.backend.role.dto.response.RolePermissionResponse;
 import com.commercehub.backend.role.dto.response.RoleResponse;
 import com.commercehub.backend.role.service.RoleService;
 import jakarta.validation.Valid;
@@ -18,27 +19,39 @@ import java.util.List;
  * Role Management Controller
  * ============================================================
  *
- * Provides APIs for:
- * - Creating roles
- * - Retrieving roles
- * - Assigning roles to users
- * - Removing roles from users
+ * Provides REST APIs for:
  *
- * Access to these APIs is protected using permission-based
- * authorization through Spring Security.
+ * • Role Management
+ * • User Role Assignment
+ * • Role Permission Management
+ *
+ * All endpoints are protected using Spring Security
+ * permission-based authorization.
  */
 @RestController
 @RequestMapping("/api/roles")
 @RequiredArgsConstructor
 public class RoleController {
 
+    /**
+     * Role Service
+     */
     private final RoleService roleService;
 
     /**
-     * Create a new role.
+     * ============================================================
+     * Role Management
+     * ============================================================
+     */
+
+    /**
+     * Creates a new role.
      *
      * Required Permission:
      * ROLE_MANAGE
+     *
+     * @param request role details
+     * @return created role
      */
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_MANAGE')")
@@ -48,7 +61,8 @@ public class RoleController {
             CreateRoleRequest request
     ) {
 
-        RoleResponse response = roleService.createRole(request);
+        RoleResponse response =
+                roleService.createRole(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -56,10 +70,12 @@ public class RoleController {
     }
 
     /**
-     * Retrieve all available roles.
+     * Retrieves all roles.
      *
      * Required Permission:
      * ROLE_MANAGE
+     *
+     * @return list of roles
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_MANAGE')")
@@ -71,10 +87,19 @@ public class RoleController {
     }
 
     /**
-     * Assign a role to a user.
+     * ============================================================
+     * User Role Management
+     * ============================================================
+     */
+
+    /**
+     * Assigns a role to a user.
      *
      * Required Permission:
      * ROLE_MANAGE
+     *
+     * @param request user role assignment request
+     * @return success message
      */
     @PostMapping("/assign")
     @PreAuthorize("hasAuthority('ROLE_MANAGE')")
@@ -96,18 +121,24 @@ public class RoleController {
     }
 
     /**
-     * Remove a role from a user.
+     * Removes a role from a user.
      *
      * Required Permission:
      * ROLE_MANAGE
+     *
+     * @param userId user id
+     * @param roleId role id
+     * @return success message
      */
     @DeleteMapping("/remove")
     @PreAuthorize("hasAuthority('ROLE_MANAGE')")
     public ResponseEntity<String> removeRole(
 
-            @RequestParam Long userId,
+            @RequestParam
+            Long userId,
 
-            @RequestParam Long roleId
+            @RequestParam
+            Long roleId
     ) {
 
         roleService.removeRole(
@@ -120,4 +151,93 @@ public class RoleController {
         );
     }
 
+    /**
+     * ============================================================
+     * Role Permission Management
+     * ============================================================
+     */
+
+    /**
+     * Retrieves all permissions assigned to a role.
+     *
+     * Required Permission:
+     * ROLE_MANAGE
+     *
+     * @param roleId role id
+     * @return role with permissions
+     */
+    @GetMapping("/{roleId}/permissions")
+    @PreAuthorize("hasAuthority('ROLE_MANAGE')")
+    public ResponseEntity<RolePermissionResponse> getRolePermissions(
+
+            @PathVariable
+            Long roleId
+    ) {
+
+        return ResponseEntity.ok(
+                roleService.getRolePermissions(roleId)
+        );
+    }
+
+    /**
+     * Assigns a permission to a role.
+     *
+     * Required Permission:
+     * ROLE_MANAGE
+     *
+     * @param roleId role id
+     * @param permissionId permission id
+     * @return success message
+     */
+    @PostMapping("/{roleId}/permissions/{permissionId}")
+    @PreAuthorize("hasAuthority('ROLE_MANAGE')")
+    public ResponseEntity<String> assignPermission(
+
+            @PathVariable
+            Long roleId,
+
+            @PathVariable
+            Long permissionId
+    ) {
+
+        roleService.assignPermission(
+                roleId,
+                permissionId
+        );
+
+        return ResponseEntity.ok(
+                "Permission assigned successfully."
+        );
+    }
+
+    /**
+     * Removes a permission from a role.
+     *
+     * Required Permission:
+     * ROLE_MANAGE
+     *
+     * @param roleId role id
+     * @param permissionId permission id
+     * @return success message
+     */
+    @DeleteMapping("/{roleId}/permissions/{permissionId}")
+    @PreAuthorize("hasAuthority('ROLE_MANAGE')")
+    public ResponseEntity<String> removePermission(
+
+            @PathVariable
+            Long roleId,
+
+            @PathVariable
+            Long permissionId
+    ) {
+
+        roleService.removePermission(
+                roleId,
+                permissionId
+        );
+
+        return ResponseEntity.ok(
+                "Permission removed successfully."
+        );
+    }
 }
