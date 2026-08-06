@@ -1,261 +1,296 @@
-# CommerceHub Backend - Spring Boot Application
+# 🚀 Vynk Backend — Enterprise E-Commerce REST API
 
-Enterprise-grade REST API for the CommerceHub E-Commerce Platform built with Spring Boot 3.3.2, Java 21, and PostgreSQL.
+[![Java](https://img.shields.io/badge/Java-17_LTS-007396?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring_Security-6.x-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Flyway](https://img.shields.io/badge/Flyway-Database_Migrations-CC0200?style=for-the-badge&logo=flyway&logoColor=white)](https://flywaydb.org/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
----
+Enterprise-grade backend application powering **Vynk**, a modern e-commerce platform built with **Java 17**, **Spring Boot**, **Spring Security**, **Hibernate**, **PostgreSQL**, **JWT Authentication**, and **Docker**.
 
-## 📋 Quick Start
+The project follows enterprise software engineering practices including layered architecture, RESTful API design, role-based access control (RBAC), DTO mapping, centralized exception handling, Flyway database versioning, and secure authentication.
 
-### Prerequisites
-- Java 21 JDK
-- Maven 3.8.1+
-- PostgreSQL 16+
-
-### Run Application
-
-```bash
-# Install dependencies
-mvn clean install
-
-# Run with development profile
-mvn spring-boot:run -Dspring.profiles.active=dev
-
-# Build executable JAR
-mvn clean package
-
-# Run JAR
-java -jar target/commercehub-backend-1.0.0-SNAPSHOT.jar --spring.profiles.active=dev
-```
-
-### Access Points
-- **API Base URL**: `http://localhost:8080/api`
-- **Swagger UI**: `http://localhost:8080/api/swagger-ui.html`
-- **Health Check**: `http://localhost:8080/api/actuator/health`
-- **Metrics**: `http://localhost:8080/api/actuator/metrics`
+> **Repository Name:** `commercehub-enterprise-platform`  
+> **Product Brand:** **Vynk – Seamlessly Connected Shopping**  
+> **Status:** 🚧 Actively Under Development
 
 ---
 
-## 🏗️ Architecture Overview
+# 📖 Overview
 
-### Layered Architecture
+Vynk Backend is a modular Spring Boot application designed to simulate the architecture of a real-world enterprise e-commerce platform.
+
+The project focuses on writing clean, scalable, and maintainable backend code while following industry best practices commonly used in Java enterprise applications.
+
+Current implementation includes secure authentication, user management, product catalog APIs, role-based authorization, localization support, database migrations, API documentation, and reusable backend components.
+
+The application continues to evolve as additional commerce modules are implemented.
+
+---
+
+# ✨ Current Features
+
+### 🔐 Authentication & Security
+
+- JWT Authentication
+- User Registration
+- Secure Login
+- Password Encryption (BCrypt)
+- Email Verification
+- Password Reset
+- Spring Security
+- Role-Based Access Control (RBAC)
+
+---
+
+### 👤 User Management
+
+- User Profile
+- Role Management
+- Admin User Operations
+- Permission Validation
+- Secure Profile Updates
+
+---
+
+### 📦 Product Management
+
+- Product CRUD APIs
+- Category Management
+- Product Search
+- Filtering
+- Pagination
+- Inventory Foundation
+
+---
+
+### 🌍 Localization
+
+- Multi-language Architecture
+- Translation APIs
+- Language Context
+- RTL Ready Design Support
+
+---
+
+### 📄 API Documentation
+
+- Swagger UI
+- OpenAPI Specification
+- DTO Validation
+- Standard API Responses
+
+---
+
+# 📊 Project Status
+
+| Module | Status |
+|---------|:------:|
+| Authentication | ✅ Complete |
+| User Management | ✅ Complete |
+| Product Catalog | ✅ Complete |
+| Category Management | ✅ Complete |
+| Role Management | ✅ Complete |
+| Localization | ✅ Complete |
+| Shopping Cart | ✅ Complete |
+| Orders | ✅ Complete |
+| Payments | ✅ Complete |
+| Notifications | 📋 In Progress |
+| Product Recommendations | 📋 Planned |
+
+---
+
+# 🏗️ Architecture Overview
+
+The backend follows a layered enterprise architecture to ensure maintainability, scalability, and clear separation of responsibilities.
 
 ```
-┌─────────────────────────────────────┐
-│   REST Controller Layer             │ ← HTTP Requests
-├─────────────────────────────────────┤
-│   DTO / Mapper Layer                │ ← Data Transformation
-├─────────────────────────────────────┤
-│   Service Layer (Business Logic)    │ ← Core Business Rules
-├─────────────────────────────────────┤
-│   Repository Layer (Data Access)    │ ← JPA/Hibernate
-├─────────────────────────────────────┤
-│   Entity Layer (Persistence)        │ ← JPA Entities
-├─────────────────────────────────────┤
-│   Database Layer                    │ ← PostgreSQL
-└─────────────────────────────────────┘
-```
-
-### Cross-Cutting Concerns
-
-```
-Security Layer
-  ├── JWT Authentication
-  ├── Role-Based Authorization
-  └── Spring Security Filters
-
-Exception Handling Layer
-  ├── Global Exception Handler
-  └── Custom Exceptions
-
-Logging & Monitoring
-  ├── SLF4J Logging
-  ├── AOP Aspects
-  └── Actuator Metrics
+Client (React / Frontend)
+          │
+          ▼
+Spring Security Filter Chain
+          │
+          ▼
+REST Controllers
+          │
+          ▼
+DTO Validation & Mapping
+          │
+          ▼
+Service Layer
+(Business Logic)
+          │
+          ▼
+Repository Layer
+(Spring Data JPA)
+          │
+          ▼
+Hibernate ORM
+          │
+          ▼
+PostgreSQL Database
 ```
 
 ---
 
-## 📂 Project Structure
+## Cross-Cutting Components
 
-Detailed structure and explanation in [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+```
+Authentication
+├── JWT Authentication
+├── Spring Security
+└── RBAC Authorization
+
+Infrastructure
+├── Global Exception Handling
+├── Request Validation
+├── API Response Standardization
+├── Logging
+└── Flyway Database Migration
+```
+
+---
+
+# 📂 Project Structure
 
 ```
 backend/
-├── src/main/java/com/commercehub/backend/
-│   ├── config/              # Spring configuration beans
-│   ├── controller/          # REST endpoints
-│   ├── service/             # Business logic
-│   ├── repository/          # Data access objects
-│   ├── entity/              # JPA entities
-│   ├── dto/                 # Data transfer objects
-│   ├── mapper/              # MapStruct mappers
-│   ├── security/            # JWT & authentication
-│   ├── exception/           # Error handling
-│   ├── validation/          # Custom validators
-│   ├── filter/              # HTTP filters
-│   ├── util/                # Utility classes
-│   ├── constant/            # Constants
-│   └── CommerceHubApplication.java
 │
-├── src/main/resources/
-│   ├── application.yml      # Base configuration
-│   ├── application-dev.yml  # Development profile
-│   ├── application-prod.yml # Production profile
-│   └── db/migration/        # Flyway database migrations
-│
-├── src/test/
-│   ├── java/                # Unit & integration tests
-│   └── resources/           # Test configuration
-│
-├── pom.xml                  # Maven configuration
-├── PROJECT_STRUCTURE.md     # Detailed structure explanation
-├── POM_DOCUMENTATION.md     # Dependencies explanation
-└── README.md                # This file
+├── config/              # Spring configuration
+├── controller/          # REST APIs
+├── service/             # Business logic
+├── repository/          # Data access layer
+├── entity/              # JPA entities
+├── dto/                 # Request & Response DTOs
+├── mapper/              # MapStruct mappers
+├── security/            # JWT & Spring Security
+├── validation/          # Validation logic
+├── exception/           # Global exception handling
+├── filter/              # Request filters
+├── util/                # Utility classes
+└── resources/
+    ├── application.yml
+    ├── application-dev.yml
+    ├── application-prod.yml
+    └── db/migration/
 ```
+
+Detailed architecture documentation is available in **PROJECT_STRUCTURE.md**.
 
 ---
 
-## 🔧 Configuration Management
+# 🛠️ Technology Stack
 
-### Application Profiles
-
-#### Development (`application-dev.yml`)
-```yml
-- Local PostgreSQL on localhost:5432
-- Debug logging enabled
-- Hot reload enabled
-- CORS allows localhost:3000, localhost:4200
-```
-
-**Run**: `mvn spring-boot:run -Dspring.profiles.active=dev`
-
-#### Production (`application-prod.yml`)
-```yml
-- Database via environment variables
-- Minimal logging (WARN level)
-- Performance optimizations enabled
-- Specific CORS origins
-```
-
-**Run**: `java -jar app.jar --spring.profiles.active=prod`
-
-### Key Configuration Properties
-
-```yaml
-spring:
-  jpa.hibernate.ddl-auto: validate  # validate, update, create, create-drop
-  datasource:
-    url: jdbc:postgresql://localhost:5432/commercehub
-    username: postgres
-    password: postgres
-  redis:
-    host: localhost
-    port: 6379
-  kafka:
-    bootstrap-servers: localhost:9092
-
-jwt:
-  secret: ${JWT_SECRET:dev-secret-key}
-  expiration: 86400000  # 24 hours
-
-server:
-  port: 8080
-  servlet.context-path: /api
-
-logging:
-  level:
-    root: INFO
-    com.commercehub: DEBUG
-```
-
-See `application.yml` for complete configuration.
+| Category | Technologies |
+|------------|----------------|
+| Language | Java 17 |
+| Framework | Spring Boot 3.3.2 |
+| Security | Spring Security, JWT |
+| ORM | Hibernate, Spring Data JPA |
+| Database | PostgreSQL 16, Flyway |
+| Mapping | MapStruct |
+| Documentation | Swagger / OpenAPI |
+| Build Tool | Maven |
+| Containerization | Docker |
+| Testing | JUnit 5, Mockito |
 
 ---
 
-## 📚 Key Technologies
+# ⚙️ Configuration
 
-| Technology | Version | Purpose |
-|-----------|---------|---------|
-| Java | 21 | Programming language |
-| Spring Boot | 3.3.2 | Application framework |
-| Spring Security | 6.2.2 | Authentication & authorization |
-| Spring Data JPA | 3.3.2 | Data access abstraction |
-| Hibernate | 6.4.4 | ORM framework |
-| PostgreSQL | 16+ | Relational database |
-| Redis | 7+ | Caching & sessions |
-| Kafka | 3.8+ | Event streaming |
-| JWT (JJWT) | 0.12.3 | Token-based authentication |
-| MapStruct | 1.5.5 | DTO mapping |
-| Lombok | 1.18.30 | Boilerplate reduction |
-| SpringDoc OpenAPI | 2.3.0 | API documentation |
-| Flyway | 9.22.3 | Database migrations |
-| JUnit 5 | 5.9.2 | Unit testing |
-| Mockito | 5.3.1 | Mocking framework |
-| TestContainers | 1.19.8 | Integration testing |
+The application supports multiple Spring profiles for different environments.
 
-See [POM_DOCUMENTATION.md](POM_DOCUMENTATION.md) for detailed explanation of each dependency.
+## Development
 
----
-
-## 🚀 Running the Application
-
-### Option 1: Maven Spring Boot Plugin (Development)
+- Local PostgreSQL Database
+- Debug Logging
+- Hot Reload
+- Development CORS Configuration
 
 ```bash
-cd backend
-mvn clean spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
+mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
-**Advantages**:
-- Hot reload enabled
-- Instant startup
-- Perfect for development
+---
 
-### Option 2: Executable JAR (Any Environment)
+## Production
+
+- Environment Variables
+- Optimized Logging
+- Production Database
+- Secure Configuration
 
 ```bash
-# Build
+java -jar target/commercehub-backend.jar --spring.profiles.active=prod
+```
+
+Configuration files:
+
+```
+application.yml
+application-dev.yml
+application-prod.yml
+```
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
+
+- Java 17 LTS
+- Maven 3.8+
+- PostgreSQL 16+
+
+---
+
+## Install Dependencies
+
+```bash
+mvn clean install
+```
+
+---
+
+## Run Development Server
+
+```bash
+mvn spring-boot:run -Dspring.profiles.active=dev
+```
+
+---
+
+## Build Application
+
+```bash
 mvn clean package
-
-# Run
-java -jar target/commercehub-backend-1.0.0-SNAPSHOT.jar
-
-# With specific profile
-java -jar target/commercehub-backend-1.0.0-SNAPSHOT.jar --spring.profiles.active=prod
-```
-
-### Option 3: Docker Container
-
-```bash
-# Build image
-docker build -t commercehub-backend:latest -f infrastructure/docker/Dockerfile .
-
-# Run container
-docker run -p 8080:8080 \
-  -e DATABASE_URL=jdbc:postgresql://postgres:5432/commercehub \
-  -e DATABASE_USERNAME=postgres \
-  -e DATABASE_PASSWORD=postgres \
-  commercehub-backend:latest
-```
-
-### Option 4: Docker Compose (Full Stack)
-
-```bash
-# Start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f backend
-
-# Stop services
-docker-compose down
 ```
 
 ---
 
-## 🧪 Testing
+## Run Executable JAR
 
-### Run All Tests
+```bash
+java -jar target/commercehub-backend.jar --spring.profiles.active=dev
+```
+
+---
+
+# 🌐 Application URLs
+
+| Service | URL |
+|----------|-----|
+| REST API | http://localhost:8080/api |
+| Swagger UI | http://localhost:8080/swagger-ui/index.html |
+| OpenAPI Docs | http://localhost:8080/v3/api-docs |
+
+---
+# 🧪 Testing
+
+The project includes unit and integration testing to validate business logic, service layers, and REST APIs.
+
+### Execute All Tests
 
 ```bash
 mvn test
@@ -267,439 +302,305 @@ mvn test
 mvn verify
 ```
 
-### Generate Code Coverage Report
+### Generate Coverage Report
 
 ```bash
 mvn jacoco:report
-open target/site/jacoco/index.html
 ```
 
-### Run Specific Test
+Coverage reports are generated under:
 
-```bash
-mvn test -Dtest=UserServiceImplTest
 ```
-
-### Enable Debug Mode
-
-```bash
-mvn test -X
+target/site/jacoco/index.html
 ```
 
 ---
 
-## 🛢️ Database Management
+# 🗄️ Database
 
-### Database Setup
+The application uses **PostgreSQL** as the primary relational database with **Flyway** managing schema versioning and database migrations.
+
+## Create Database
 
 ```bash
-# Create database
 createdb -U postgres commercehub
+```
 
-# Or using psql
+or
+
+```bash
 psql -U postgres -c "CREATE DATABASE commercehub;"
 ```
 
-### Run Migrations
-
-Migrations run automatically on application startup (Flyway).
-
-Migration files location: `src/main/resources/db/migration/`
-
-```bash
-# Manual migration
-mvn flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/commercehub
-```
-
-### Database Tools
-
-- **pgAdmin**: Web-based PostgreSQL management
-- **DBeaver**: Universal database tool
-- **DataGrip**: IntelliJ JDBC tool
-- **psql**: Command-line client
-
 ---
 
-## 📊 Monitoring & Health
+## Flyway Migrations
 
-### Health Check
+Database migrations execute automatically during application startup.
 
-```bash
-curl http://localhost:8080/api/actuator/health
+Migration scripts are located in:
+
+```
+src/main/resources/db/migration/
 ```
 
-Response:
-```json
-{
-  "status": "UP",
-  "components": {
-    "db": { "status": "UP" },
-    "redis": { "status": "UP" },
-    "diskSpace": { "status": "UP" }
-  }
-}
-```
-
-### Application Metrics
+To execute migrations manually:
 
 ```bash
-curl http://localhost:8080/api/actuator/metrics
-```
-
-### Prometheus Metrics
-
-```bash
-curl http://localhost:8080/api/actuator/prometheus
+mvn flyway:migrate
 ```
 
 ---
 
-## 🔐 Security Features
+## Database Stack
 
-### JWT Authentication
+| Technology | Purpose |
+|------------|----------|
+| PostgreSQL | Primary Relational Database |
+| Hibernate | ORM Framework |
+| Spring Data JPA | Repository Layer |
+| Flyway | Database Version Control |
 
-1. **User Login** → Token Generated
-2. **Token Sent** in `Authorization: Bearer <token>` header
-3. **Token Validated** on each request
-4. **Access Granted/Denied** based on roles
+---
 
-### Security Chain
+# 🔐 Security
+
+Security is implemented using **Spring Security** with **JWT-based authentication** and **Role-Based Access Control (RBAC)**.
+
+## Authentication Flow
 
 ```
-HTTP Request
-    ↓
-CORS Filter
-    ↓
-JWT Authentication Filter
-    ↓
-Spring Security Filter Chain
-    ↓
-@PreAuthorize checks
-    ↓
-Controller
-```
-
-### Test Authenticated Endpoint
-
-```bash
-# 1. Login and get token
-TOKEN=$(curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"password"}' \
-  | jq -r '.data.token')
-
-# 2. Use token
-curl -H "Authorization: Bearer $TOKEN" \
-  http://localhost:8080/api/users
+Client Login
+      │
+      ▼
+Authentication API
+      │
+      ▼
+JWT Token Generation
+      │
+      ▼
+Bearer Token
+      │
+      ▼
+Spring Security Filter
+      │
+      ▼
+Authorization
+      │
+      ▼
+Protected REST APIs
 ```
 
 ---
 
-## 🛠️ Development Tips
+## Security Features
 
-### Hot Reload
-
-Spring Boot DevTools automatically restarts the application when:
-- Java source files change
-- Resource files change
-- Templates change
-
-No manual restart needed!
-
-### Enable Debug Logging
-
-In `application-dev.yml`:
-```yaml
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.security: DEBUG
-```
-
-### Query Performance
-
-Enable Hibernate statistics:
-```yaml
-spring:
-  jpa:
-    properties:
-      hibernate:
-        generate_statistics: true
-        use_sql_comments: true
-```
-
-View statistics in logs.
-
-### REST Client
-
-Use the `rest-client` or REST extensions in VS Code:
-
-```rest
-### Get all users
-GET http://localhost:8080/api/users
-Authorization: Bearer YOUR_TOKEN_HERE
-
-### Create user
-POST http://localhost:8080/api/users
-Content-Type: application/json
-
-{
-  "email": "newuser@example.com",
-  "password": "securepassword",
-  "firstName": "John",
-  "lastName": "Doe"
-}
-```
+- JWT Authentication
+- BCrypt Password Encryption
+- Spring Security
+- Role-Based Access Control (RBAC)
+- Stateless Authentication
+- Protected REST Endpoints
+- Secure API Access
 
 ---
 
-## 🐛 Troubleshooting
+# 📡 API Documentation
 
-### Port Already in Use
+Interactive API documentation is available using **Swagger UI**.
 
-```bash
-# Kill process on port 8080 (Linux/Mac)
-lsof -ti:8080 | xargs kill -9
+| Service | URL |
+|----------|-----|
+| Swagger UI | http://localhost:8080/swagger-ui/index.html |
+| OpenAPI Specification | http://localhost:8080/v3/api-docs |
 
-# (Windows)
-netstat -ano | findstr :8080
-taskkill /PID <PID> /F
-```
+Swagger provides:
 
-### Database Connection Error
-
-```
-ERROR: org.postgresql.util.PSQLException: Connection to localhost:5432 refused
-```
-
-**Solutions**:
-1. Ensure PostgreSQL is running
-2. Check connection string in `application-dev.yml`
-3. Verify credentials
-
-```bash
-# Test connection
-psql -U postgres -d commercehub -c "SELECT 1"
-```
-
-### Out of Memory
-
-```bash
-# Increase heap size
-java -Xmx1024m -Xms512m -jar app.jar
-```
-
-### Tests Failing
-
-```bash
-# Clean and rebuild
-mvn clean test
-
-# Run specific test with debug
-mvn test -Dtest=UserServiceImplTest -X
-```
+- Interactive API Testing
+- Request / Response Models
+- Authentication Support
+- Endpoint Documentation
 
 ---
 
-## 📝 Code Style & Standards
+# 🛠️ Development
 
-### Java Coding Standards
+The backend follows enterprise software engineering practices to improve maintainability and scalability.
 
-- ✅ PascalCase for classes: `UserService`, `UserController`
-- ✅ camelCase for methods: `getUserById()`, `createUser()`
-- ✅ UPPER_SNAKE_CASE for constants: `MAX_PAGE_SIZE`, `JWT_EXPIRATION`
-- ✅ Prefer constructor injection over field injection
-- ✅ Use Lombok for boilerplate reduction
-- ✅ Comprehensive logging with SLF4J
+## Development Features
 
-### Proper Dependency Injection
-
-```java
-// ✅ CORRECT
-@Service
-@RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-}
-
-// ❌ WRONG
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-}
-```
-
-### Logging Example
-
-```java
-@Slf4j
-@Service
-public class UserService {
-    public UserResponse createUser(CreateUserRequest request) {
-        log.info("Creating user with email: {}", request.getEmail());
-        try {
-            // Business logic
-            log.debug("User created successfully with ID: {}", user.getId());
-            return response;
-        } catch (Exception e) {
-            log.error("Error creating user", e);
-            throw new UserCreationException(e.getMessage());
-        }
-    }
-}
-```
+- Spring Boot DevTools
+- Layered Architecture
+- DTO-Based API Design
+- Global Exception Handling
+- Bean Validation
+- Constructor Dependency Injection
+- MapStruct Mapping
+- Lombok
+- SLF4J Logging
 
 ---
 
-## 📦 Maven Commands Reference
+## Code Quality
+
+The project follows standard Java development conventions including:
+
+- Clean Architecture
+- SOLID Principles
+- Constructor Injection
+- Separation of Concerns
+- Reusable Service Layer
+- Repository Pattern
+- Standard API Response Model
+
+---
+
+# ⚡ Performance Considerations
+
+The backend is designed with scalability and performance in mind.
+
+Current optimizations include:
+
+- Pagination Support
+- Efficient Repository Queries
+- DTO Mapping
+- Validation Layer
+- Transaction Management
+- Lazy Entity Loading where applicable
+
+Future enhancements include:
+
+- Redis Caching
+- Asynchronous Processing
+- Distributed Event Handling
+
+---
+
+# 📦 Useful Maven Commands
 
 ```bash
-# Install dependencies
+# Install Dependencies
 mvn clean install
 
-# Compile only
+# Compile Project
 mvn clean compile
 
-# Run tests
-mvn test
-
-# Build JAR
-mvn clean package
-
-# Skip tests during build
-mvn clean package -DskipTests
-
-# Run application
+# Run Application
 mvn spring-boot:run
 
-# View dependency tree
-mvn dependency:tree
+# Execute Tests
+mvn test
 
-# Update dependencies
-mvn versions:display-dependency-updates
+# Build Executable JAR
+mvn clean package
 
-# Code coverage
-mvn jacoco:report
-
-# Format code
-mvn spotless:apply
+# Skip Tests
+mvn clean package -DskipTests
 ```
 
 ---
 
-## 🚀 Performance Optimization
+# 🔄 CI/CD
 
-### Database Query Optimization
+The repository includes GitHub Actions workflows for continuous integration.
 
-```java
-@Query("SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.id = ?1")
-Optional<User> findByIdWithRoles(Long id);
-```
+Current automation includes:
 
-### Caching Strategy
+- Build Verification
+- Maven Dependency Resolution
+- Unit Testing
+- Code Quality Checks
 
-```java
-@Cacheable(value = "users", key = "#id")
-public UserResponse getUserById(Long id) { }
+Future pipeline improvements include:
 
-@CacheEvict(value = "users", key = "#id")
-public void updateUser(Long id, UpdateUserRequest request) { }
-```
-
-### Pagination
-
-```java
-Page<UserResponse> getUsers(Pageable pageable) {
-    return userRepository.findAll(pageable)
-        .map(userMapper::toResponse);
-}
-```
+- Docker Image Publishing
+- Automated Deployment
+- Security Scanning
+- Release Automation
 
 ---
 
-## 📚 API Documentation
+# 📚 Documentation
 
-### Access Swagger UI
+Project documentation includes:
 
-```
-http://localhost:8080/api/swagger-ui.html
-```
+- System Architecture
+- Package Structure
+- Database Design
+- API Specifications
+- Swagger Documentation
 
-### OpenAPI Spec
-
-```
-http://localhost:8080/api/v3/api-docs
-```
-
-### Endpoint documentation
-
-Add annotations to controllers:
-
-```java
-@PostMapping
-@Operation(summary = "Create new user", description = "Register a new user account")
-@ApiResponse(responseCode = "201", description = "User created successfully")
-@ApiResponse(responseCode = "400", description = "Invalid input")
-public ApiResponse<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) { }
-```
+Additional documentation is available inside the **docs/** directory.
 
 ---
 
-## 🔄 CI/CD Integration
+# 🚀 Roadmap
 
-### GitHub Actions
+## Completed
 
-Workflows in `.github/workflows/`:
-- Build & Test on every push
-- Code coverage reporting
-- Docker image build
-- Automated deployment
-
-## 📞 Getting Help
-
-- **Documentation**: Check [docs/](../../docs/) folder
-- **Code Comments**: Each package has detailed documentation
-- **Swagger UI**: Interactive API exploration
-- **Logs**: Enable debug logging for troubleshooting
+- JWT Authentication
+- Spring Security
+- User Management
+- Product APIs
+- Category Management
+- Role Management
+- Flyway Integration
+- Swagger Documentation
 
 ---
 
-## ✅ Checklist for New Developers
+## In Progress
 
-- [ ] Java 21 installed and verified
-- [ ] Maven 3.8.1+ installed and verified
-- [ ] PostgreSQL installed and running
-- [ ] Repository cloned
-- [ ] Dependencies installed: `mvn clean install`
-- [ ] Database created: `createdb commercehub`
-- [ ] Application runs: `mvn spring-boot:run`
-- [ ] Swagger UI accessible: `http://localhost:8080/api/swagger-ui.html`
-- [ ] Tests pass: `mvn test`
+- Shopping Cart
+- Wishlist
+- Orders
+- Shipping
+- Reviews
 
 ---
 
-## 🎯 Next Steps
+## Planned
 
-1. ✅ Backend Setup Complete
-2. ⬜ Implement Database Schema & Entities
-3. ⬜ Implement JWT Authentication
-4. ⬜ Implement Product Module
-5. ⬜ Implement Order Module
-6. ⬜ Integrate Payment Gateway
-7. ⬜ Create Admin Dashboard APIs
-8. ⬜ Build Angular Frontend
-9. ⬜ Containerize with Docker
-10. ⬜ Deploy to Kubernetes
+- Payment Gateway Integration
+- Product Recommendation Engine
+- Notification Service
+- Analytics Dashboard
+- Redis Integration
+- Kubernetes Deployment
+- Cloud Deployment
+- Monitoring & Observability
+
+---
+
+# 👨‍💻 Author
+
+**Sandeep Kumar Prasad**
+
+Java Backend Developer
+
+Specializing in building scalable backend applications using Java, Spring Boot, Spring Security, PostgreSQL, REST APIs, and modern software engineering practices.
+
+### Connect
+
+- GitHub: https://github.com/Sandeepkumar1703
+- LinkedIn: https://linkedin.com/in/sandeep-kumar-prasad-1703
+
+---
+
+# ⭐ Project Philosophy
+
+Vynk is an actively evolving enterprise backend application created to demonstrate real-world Java backend engineering practices.
+
+The project emphasizes clean architecture, secure REST API development, maintainable code, and scalable software design while continuously expanding with new enterprise features.
 
 ---
 
 ## 📄 License
 
-Apache License 2.0 - See [LICENSE](../../LICENSE)
+This project is licensed under the Apache License 2.0.
+
+See the LICENSE file for additional details.
 
 ---
 
-**Happy Coding! 🚀**
+⭐ If you found this project useful, consider giving the repository a star.

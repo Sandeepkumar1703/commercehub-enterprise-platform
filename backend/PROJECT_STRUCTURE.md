@@ -1,792 +1,364 @@
-# 🗄️ Database Architecture & Entity Relationship Diagram (ERD)
+# 🗄️ Database Architecture
 
 ## Overview
 
-CommerceHub uses PostgreSQL as the primary relational database.
+Vynk uses **PostgreSQL** as its primary relational database, designed around a modular domain-driven architecture to support enterprise e-commerce workflows.
 
-The database follows an enterprise ecommerce architecture designed for:
+The database is normalized to reduce redundancy while maintaining high data integrity through foreign key constraints, transactional consistency, and clear domain boundaries.
 
-- Product catalog management
-- User authentication and authorization
-- Shopping cart management
-- Order lifecycle processing
-- Payment processing
-- Inventory reservation and deduction
-- Shipping workflow
-- Reviews and wishlist management
-- Notification and localization support
-- Database version control using Flyway
-
-
-## Database Design Principles
-
-### 1. Domain Separation
-
-Database entities are separated into business domains:
-
-```
-Identity Domain
-|
-├── users
-├── roles
-├── user_roles
-├── addresses
-├── email_verification_tokens
-└── password_reset_tokens
-
-
-Catalog Domain
-|
-├── categories
-├── products
-├── inventory
-├── media_files
-└── reviews
-
-
-Commerce Domain
-|
-├── cart
-├── cart_items
-├── orders
-├── order_items
-├── coupons
-├── payments
-└── shipping
-
-
-Platform Domain
-|
-├── notifications
-├── languages
-├── translation_keys
-└── translation_values
-```
-
+Database schema evolution is managed using **Flyway**, ensuring every structural change is version-controlled and repeatable across development, testing, and production environments.
 
 ---
 
-# Entity Relationship Diagram
+# 🎯 Design Goals
 
+The database is designed to support:
+
+- Secure User Authentication & Authorization
+- Product Catalog Management
+- Inventory Tracking
+- Shopping Cart Management
+- Order Processing
+- Payment Lifecycle
+- Shipping & Fulfillment
+- Product Reviews
+- Wishlist Management
+- Notification System
+- Multi-language Localization
+- Enterprise Data Integrity
+
+---
+
+# 🏛 Database Architecture
+
+The schema is organized into multiple business domains.
+
+```
+                     Vynk Database
+
+             ┌───────────────────────┐
+             │     Identity Domain   │
+             └───────────────────────┘
+                       │
+                       ▼
+             ┌───────────────────────┐
+             │     Catalog Domain    │
+             └───────────────────────┘
+                       │
+                       ▼
+             ┌───────────────────────┐
+             │    Commerce Domain    │
+             └───────────────────────┘
+                       │
+                       ▼
+             ┌───────────────────────┐
+             │     Platform Domain   │
+             └───────────────────────┘
+```
+
+Each domain owns a specific business responsibility, making the schema easier to maintain and extend.
+
+---
+
+# 📦 Domain Breakdown
+
+## 🔐 Identity Domain
+
+Responsible for authentication, authorization, and user profile management.
+
+### Tables
+
+```
+users
+roles
+user_roles
+addresses
+email_verification_tokens
+password_reset_tokens
+```
+
+### Responsibilities
+
+- User Accounts
+- Login Credentials
+- RBAC
+- Address Management
+- Email Verification
+- Password Recovery
+
+---
+
+## 📦 Catalog Domain
+
+Responsible for everything related to products.
+
+### Tables
+
+```
+categories
+products
+inventory
+media_files
+reviews
+wishlist
+```
+
+### Responsibilities
+
+- Product Catalog
+- Categories
+- Product Images
+- Inventory Tracking
+- Customer Reviews
+- Wishlist
+
+---
+
+## 🛒 Commerce Domain
+
+Responsible for the purchasing lifecycle.
+
+### Tables
+
+```
+cart
+cart_items
+orders
+order_items
+payments
+shipping
+coupons
+```
+
+### Responsibilities
+
+- Shopping Cart
+- Checkout
+- Orders
+- Payment Processing
+- Shipping
+- Coupon Management
+
+---
+
+## 🌍 Platform Domain
+
+Supports platform-wide capabilities.
+
+### Tables
+
+```
+notifications
+languages
+translation_keys
+translation_values
+```
+
+### Responsibilities
+
+- Notifications
+- Localization
+- Multi-language Support
+- Translation Management
+
+---
+
+# 🔗 Entity Relationships
+
+The following diagram illustrates how the primary business entities interact throughout the application.
 
 ```mermaid
 erDiagram
 
-
-%% =========================
-%% USER MANAGEMENT
-%% =========================
-
-
 USERS ||--o{ ADDRESSES : owns
-
-USERS ||--o{ ORDERS : places
-
 USERS ||--|| CART : owns
-
+USERS ||--o{ ORDERS : places
 USERS ||--o{ REVIEWS : writes
-
 USERS ||--o{ WISHLIST : creates
 
-
-USERS ||--o{ EMAIL_VERIFICATION_TOKENS : receives
-
-USERS ||--o{ PASSWORD_RESET_TOKENS : generates
-
-
-
 ROLES ||--o{ USER_ROLES : contains
-
 USERS ||--o{ USER_ROLES : assigned
-
-
-
-%% =========================
-%% PRODUCT CATALOG
-%% =========================
-
 
 CATEGORIES ||--o{ PRODUCTS : contains
 
-
 PRODUCTS ||--|| INVENTORY : maintains
-
-
 PRODUCTS ||--o{ MEDIA_FILES : contains
-
-
 PRODUCTS ||--o{ REVIEWS : receives
-
-
-PRODUCTS ||--o{ WISHLIST : saved
-
-
-
-%% =========================
-%% CART
-%% =========================
-
+PRODUCTS ||--o{ CART_ITEMS : added
+PRODUCTS ||--o{ ORDER_ITEMS : purchased
 
 CART ||--o{ CART_ITEMS : contains
 
-
-PRODUCTS ||--o{ CART_ITEMS : added
-
-
-
-%% =========================
-%% ORDER MANAGEMENT
-%% =========================
-
-
-USERS ||--o{ ORDERS : creates
-
-
 ORDERS ||--o{ ORDER_ITEMS : contains
-
-
-PRODUCTS ||--o{ ORDER_ITEMS : purchased
-
-
-
-ADDRESSES ||--o{ ORDERS : shipping_address
-
-
+ORDERS ||--o{ PAYMENTS : has
+ORDERS ||--o| SHIPPING : delivered_by
 
 COUPONS ||--o{ ORDERS : applied
 
-
-
-%% =========================
-%% PAYMENT
-%% =========================
-
-
-ORDERS ||--o{ PAYMENTS : has
-
-
-
-%% =========================
-%% SHIPPING
-%% =========================
-
-
-ORDERS ||--o| SHIPPING : has
-
-
-
-%% =========================
-%% NOTIFICATION
-%% =========================
-
-
-USERS ||--o{ NOTIFICATIONS : receives
-
-
-
-%% =========================
-%% LOCALIZATION
-%% =========================
-
-
 LANGUAGES ||--o{ TRANSLATION_VALUES : contains
-
 TRANSLATION_KEYS ||--o{ TRANSLATION_VALUES : maps
-
-
-
-%% =========================
-%% TABLE DEFINITIONS
-%% =========================
-
-
-
-USERS {
-
-bigint id PK
-
-varchar email
-
-varchar password
-
-varchar first_name
-
-varchar last_name
-
-boolean enabled
-
-timestamp created_at
-
-timestamp updated_at
-
-}
-
-
-
-ROLES {
-
-bigint id PK
-
-varchar name
-
-varchar description
-
-}
-
-
-
-USER_ROLES {
-
-bigint user_id FK
-
-bigint role_id FK
-
-}
-
-
-
-ADDRESSES {
-
-bigint id PK
-
-bigint user_id FK
-
-varchar address_line1
-
-varchar city
-
-varchar state
-
-varchar country
-
-varchar postal_code
-
-boolean is_default
-
-}
-
-
-
-CATEGORIES {
-
-bigint id PK
-
-varchar name
-
-varchar description
-
-}
-
-
-
-PRODUCTS {
-
-bigint id PK
-
-bigint category_id FK
-
-varchar name
-
-varchar description
-
-decimal price
-
-varchar image_url
-
-boolean active
-
-}
-
-
-
-INVENTORY {
-
-bigint id PK
-
-bigint product_id FK
-
-bigint quantity
-
-bigint reserved
-
-bigint reorder_level
-
-}
-
-
-
-MEDIA_FILES {
-
-bigint id PK
-
-bigint product_id FK
-
-varchar file_name
-
-varchar file_url
-
-varchar file_type
-
-}
-
-
-
-CART {
-
-bigint id PK
-
-bigint user_id FK
-
-timestamp created_at
-
-timestamp updated_at
-
-}
-
-
-
-CART_ITEMS {
-
-bigint id PK
-
-bigint cart_id FK
-
-bigint product_id FK
-
-bigint quantity
-
-}
-
-
-
-ORDERS {
-
-bigint id PK
-
-bigint user_id FK
-
-varchar order_number
-
-decimal total_amount
-
-decimal tax_amount
-
-decimal discount_amount
-
-varchar status
-
-varchar payment_status
-
-bigint shipping_address_id FK
-
-}
-
-
-
-ORDER_ITEMS {
-
-bigint id PK
-
-bigint order_id FK
-
-bigint product_id FK
-
-bigint quantity
-
-decimal price
-
-decimal subtotal
-
-decimal discount
-
-decimal tax
-
-decimal total
-
-}
-
-
-
-PAYMENTS {
-
-bigint id PK
-
-bigint order_id FK
-
-decimal amount
-
-varchar status
-
-varchar method
-
-varchar transaction_id
-
-varchar gateway_name
-
-}
-
-
-
-SHIPPING {
-
-bigint id PK
-
-bigint order_id FK
-
-varchar status
-
-varchar carrier
-
-varchar tracking_number
-
-timestamp estimated_delivery
-
-timestamp actual_delivery
-
-}
-
-
-
-COUPONS {
-
-bigint id PK
-
-varchar code
-
-decimal discount_value
-
-timestamp expiry_date
-
-}
-
-
-
-REVIEWS {
-
-bigint id PK
-
-bigint user_id FK
-
-bigint product_id FK
-
-integer rating
-
-text comment
-
-}
-
-
-
-WISHLIST {
-
-bigint id PK
-
-bigint user_id FK
-
-bigint product_id FK
-
-}
-
-
-
-EMAIL_VERIFICATION_TOKENS {
-
-bigint id PK
-
-bigint user_id FK
-
-varchar token
-
-timestamp expiry_date
-
-}
-
-
-
-PASSWORD_RESET_TOKENS {
-
-bigint id PK
-
-bigint user_id FK
-
-varchar token
-
-timestamp expiry_date
-
-}
-
-
-
-NOTIFICATIONS {
-
-bigint id PK
-
-bigint user_id FK
-
-varchar title
-
-varchar message
-
-boolean read
-
-}
-
-
-
-LANGUAGES {
-
-bigint id PK
-
-varchar code
-
-varchar name
-
-}
-
-
-
-TRANSLATION_KEYS {
-
-bigint id PK
-
-varchar key_name
-
-}
-
-
-
-TRANSLATION_VALUES {
-
-bigint id PK
-
-bigint language_id FK
-
-bigint translation_key_id FK
-
-text value
-
-}
-
 ```
-
 
 ---
 
-# 🔄 CommerceHub Business Flow Relationship
+# 🛍 Business Workflow
 
-
-## 1. Customer Registration Flow
-
+## Customer Registration
 
 ```
-USER
-
- |
-
- +---- ADDRESS
-
- |
-
- +---- ROLE
-
- |
-
- +---- CART
-
- |
-
- +---- WISHLIST
-
- |
-
- +---- REVIEWS
-
+User
+ │
+ ├── Address
+ ├── Roles
+ ├── Cart
+ ├── Wishlist
+ └── Reviews
 ```
 
+---
 
-
-## 2. Product Purchase Flow
-
-
-```
-CATEGORY
-
-   |
-
-   |
-
- PRODUCT
-
-   |
-
-   |
-
- INVENTORY
-
-
-Customer Cart
-
-   |
-
-   |
-
-ORDER
-
-   |
-
-   |
-
-ORDER_ITEMS
-
-   |
-
-   |
-
-PAYMENT
-
-   |
-
-   |
-
-SHIPPING
+## Shopping Workflow
 
 ```
+Category
+    │
+Product
+    │
+Inventory
+    │
+Cart
+    │
+Order
+    │
+Payment
+    │
+Shipping
+```
 
+---
 
-
-## 3. Inventory Lifecycle
-
+## Inventory Lifecycle
 
 ```
 Product Created
-
-        |
-
-        ↓
-
-Inventory Created
-
-
-        |
-
-        ↓
-
-Order Created
-
-        |
-
-        ↓
-
-Payment SUCCESS
-
-        |
-
-        ↓
-
-Inventory RESERVED
-
-
-        |
-
-        ↓
-
-Shipment DELIVERED
-
-
-        |
-
-        ↓
-
-Inventory Deducted
-
-
+        │
+        ▼
+Inventory Initialized
+        │
+        ▼
+Customer Places Order
+        │
+        ▼
+Payment Successful
+        │
+        ▼
+Inventory Reserved
+        │
+        ▼
+Order Delivered
+        │
+        ▼
+Inventory Updated
 ```
-
-
-Example:
-
-Before payment:
-
-```
-quantity = 50
-
-reserved = 0
-```
-
-
-After successful payment:
-
-```
-quantity = 50
-
-reserved = 2
-```
-
-
-After delivery:
-
-```
-quantity = 48
-
-reserved = 0
-```
-
-
 
 ---
 
-# 🏗 Database Technology Stack
+# 💳 Order Processing Lifecycle
 
+```
+Cart
+   │
+   ▼
+Checkout
+   │
+   ▼
+Order Created
+   │
+   ▼
+Payment Authorized
+   │
+   ▼
+Inventory Reserved
+   │
+   ▼
+Shipment Created
+   │
+   ▼
+Order Delivered
+   │
+   ▼
+Payment Completed
+```
+
+---
+
+# ⚙ Database Technology Stack
 
 | Component | Technology |
-|---|---|
-| Database | PostgreSQL |
-| ORM | Hibernate / Spring Data JPA |
-| Migration | Flyway |
-| Transaction Management | Spring @Transactional |
+|------------|-------------|
+| Database | PostgreSQL 16 |
+| ORM | Hibernate ORM |
+| Persistence | Spring Data JPA |
+| Schema Versioning | Flyway |
 | Connection Pool | HikariCP |
-| Query Language | JPQL + Native SQL |
-
-
-
----
-
-# Database Tables Count
-
-Current CommerceHub Database:
-
-```
-44 Tables
-
-Identity:
-9 tables
-
-Catalog:
-6 tables
-
-Commerce:
-9 tables
-
-Platform:
-5 tables
-
-Migration:
-1 table
-```
-
+| Transactions | Spring Transaction Management |
+| Query Language | JPQL & Native SQL |
 
 ---
 
-# Enterprise Features Supported
+# 🔒 Database Design Principles
 
+The database follows several enterprise design principles:
 
-✅ Normalized relational schema  
-✅ Foreign key integrity  
-✅ Transaction-safe order processing  
-✅ Inventory reservation system  
-✅ Payment lifecycle management  
-✅ Shipment tracking workflow  
-✅ RBAC authorization model  
-✅ Audit-ready structure  
-✅ Localization support  
-✅ Database version control
+- Third Normal Form (3NF)
+- Foreign Key Constraints
+- Transactional Consistency
+- Soft Delete Support (where applicable)
+- Optimized Relationships
+- UUID / Sequence-Based Primary Keys
+- Domain Separation
+- Audit-Friendly Structure
+- Flyway Version Control
+
+---
+
+# 🚀 Future Enhancements
+
+The database schema is designed for future scalability.
+
+Upcoming enhancements include:
+
+- Product Recommendations
+- Audit Logging
+- Event Outbox Pattern
+- Inventory Reservation Improvements
+- Analytics Tables
+- Reporting Views
+- Database Index Optimization
+- Read Replica Support
+
+---
+
+# 📈 Current Database Coverage
+
+| Module | Status |
+|----------|:------:|
+| Authentication | ✅ |
+| User Management | ✅ |
+| Product Catalog | ✅ |
+| Categories | ✅ |
+| Inventory | ✅ |
+| Shopping Cart | ✅ |
+| Orders | ✅ |
+| Payments | ✅ |
+| Shipping | ✅ |
+| Notifications | 📋 |
+| Localization | ✅ |
+
+---
+
+# 📌 Summary
+
+The Vynk database is designed using enterprise software engineering principles with clear domain separation, normalized relational modeling, transactional integrity, and extensibility in mind.
+
+The architecture provides a scalable foundation capable of supporting modern e-commerce workflows while remaining maintainable as new business capabilities are introduced.

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useLanguage } from '../../context/LanguageContext';
+import { Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+
+// import { useAuth } from '../../context/AuthContext';
+// import { useLanguage } from '../../context/LanguageContext';
 import { useAppConfig } from '../../context/ConfigContext';
 import { useRouter } from '../../core/router/Router';
 import { ROUTES } from '../../theme/routes';
-import { Lock, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+
 import { Button, Input, Card } from '../../theme/design-system';
+import { useLanguage } from '@/src/core/i18n/LanguageContext';
+import { useAuth } from '@/src/hooks/useAuth';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
@@ -13,75 +17,72 @@ export const LoginPage: React.FC = () => {
   const { config } = useAppConfig();
   const { navigate } = useRouter();
 
-  const [email, setEmail] = useState('sandeepkumarprasad01@gmail.com');
-  const [password, setPassword] = useState('Password123!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setErrorMsg('');
     setLoading(true);
 
-    const res = await login(email, password);
+    const res = await login(email.trim(), password);
+
     setLoading(false);
 
     if (res.success) {
       navigate(ROUTES.CUSTOMER_DASHBOARD);
     } else {
-      setErrorMsg(res.message);
+      setErrorMsg(
+        res.message || t('auth.login.errors.invalidCredentials')
+      );
     }
   };
 
   return (
     <div className="max-w-md mx-auto py-12">
       <Card className="space-y-6">
-        
-        {/* Auth Header */}
+
+        {/* Header */}
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-2xl bg-[#6A89A7] text-[#BDDDFC] mx-auto flex items-center justify-center shadow-lg border border-[#88BDF2]/30">
             <Lock className="w-6 h-6 text-[#BDDDFC]" />
           </div>
+
           <h1 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">
             {t('auth.login.title')}
           </h1>
+
           <p className="text-xs text-[var(--text-secondary)]">
             {t('auth.login.subtitle')}
           </p>
         </div>
 
-        {/* Demo Credentials Box */}
-        <div className="p-3.5 bg-[#6A89A7]/10 border border-[#6A89A7]/30 rounded-2xl text-xs space-y-1">
-          <p className="font-bold text-[#6A89A7] dark:text-[#88BDF2] flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-[#6A89A7] dark:text-[#88BDF2]" />
-            <span>Pre-filled Demo Credentials</span>
-          </p>
-          <p className="text-[var(--text-secondary)] font-mono text-[11px]">
-            Email: sandeepkumarprasad01@gmail.com
-          </p>
-          <p className="text-[var(--text-secondary)] font-mono text-[11px]">
-            Password: Password123!
-          </p>
-        </div>
-
-        {/* Form */}
+        {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          
+
           <Input
             label={t('auth.login.emailLabel')}
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={config?.placeholders?.email || 'name@company.com'}
+            placeholder={
+              config?.placeholders?.email ??
+              t('auth.login.emailPlaceholder')
+            }
             prefixIcon={<Mail className="w-4 h-4" />}
           />
 
           <div className="space-y-1.5">
             <div className="flex justify-between items-center">
+
               <label className="text-xs font-semibold text-[var(--text-primary)]">
                 {t('auth.login.passwordLabel')}
               </label>
+
               <button
                 type="button"
                 onClick={() => navigate(ROUTES.FORGOT_PASSWORD)}
@@ -89,13 +90,15 @@ export const LoginPage: React.FC = () => {
               >
                 {t('auth.login.forgotPasswordLink')}
               </button>
+
             </div>
+
             <Input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
+              placeholder={t('auth.login.passwordPlaceholder')}
               prefixIcon={<Lock className="w-4 h-4" />}
             />
           </div>
@@ -113,15 +116,19 @@ export const LoginPage: React.FC = () => {
             className="w-full py-3"
             rightIcon={<ArrowRight className="w-4 h-4" />}
           >
-            {loading ? t('status.loading') : t('auth.login.submitBtn')}
+            {loading
+              ? t('status.loading')
+              : t('auth.login.submitBtn')}
           </Button>
+
         </form>
 
-        {/* Footer Link to Register */}
+        {/* Register */}
         <div className="text-center pt-2 border-t border-[var(--border-default)]">
           <p className="text-xs text-[var(--text-secondary)]">
             {t('auth.login.noAccount')}{' '}
             <button
+              type="button"
               onClick={() => navigate(ROUTES.REGISTER)}
               className="font-bold text-[#6A89A7] dark:text-[#88BDF2] hover:underline cursor-pointer ml-1"
             >
@@ -133,7 +140,7 @@ export const LoginPage: React.FC = () => {
         {/* Security Badge */}
         <div className="flex items-center justify-center gap-1.5 text-[11px] text-[var(--text-secondary)] pt-2 font-mono">
           <ShieldCheck className="w-3.5 h-3.5 text-[#6A89A7] dark:text-[#88BDF2]" />
-          <span>Spring Security Stateless Dual-Token Authorization</span>
+          <span>{t('auth.login.securityBadge')}</span>
         </div>
 
       </Card>

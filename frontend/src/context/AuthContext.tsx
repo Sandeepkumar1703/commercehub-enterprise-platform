@@ -1,274 +1,237 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../core/api/authService';
-import { userService } from '../core/api/userService';
+import { User, UserRole } from '../types';
+import { authApi } from '../api/authApi';
+import { userApi } from '../api/userApi';
 
-export interface UserProfile {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roles: string[];
-  isVerified?: boolean;
-}
+export const ROLE_DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
+  SUPER_ADMIN: ['*'],
+  ADMIN: [
+    'PRODUCT_VIEW', 'PRODUCT_CREATE', 'PRODUCT_EDIT', 'PRODUCT_DELETE', 'PRODUCT_APPROVE',
+    'ORDER_VIEW', 'ORDER_UPDATE', 'ORDER_CANCEL', 'ORDER_SHIP',
+    'USER_VIEW', 'USER_CREATE', 'USER_MANAGE',
+    'SELLER_VIEW', 'SELLER_APPROVE', 'SELLER_REJECT', 'SELLER_SUSPEND',
+    'PAYMENT_VIEW', 'PAYMENT_MANAGE', 'PAYMENT_REFUND',
+    'SHIPPING_VIEW', 'SHIPPING_UPDATE',
+    'INVENTORY_VIEW', 'INVENTORY_MANAGE',
+    'MEDIA_UPLOAD', 'MEDIA_DELETE',
+    'COUPON_MANAGE', 'ANALYTICS_VIEW', 'REPORT_VIEW', 'REPORT_EXPORT'
+  ],
+  MODERATOR: [
+    'PRODUCT_VIEW', 'PRODUCT_APPROVE', 'PRODUCT_EDIT',
+    'REVIEW_VIEW', 'REVIEW_MODERATE', 'REVIEW_DELETE',
+    'USER_VIEW', 'USER_BLOCK',
+    'REPORT_VIEW', 'SELLER_VIEW'
+  ],
+  SELLER: [
+    'PRODUCT_VIEW', 'PRODUCT_CREATE', 'PRODUCT_EDIT', 'PRODUCT_DELETE',
+    'ORDER_VIEW', 'ORDER_UPDATE', 'ORDER_SHIP',
+    'INVENTORY_VIEW', 'INVENTORY_MANAGE',
+    'COUPON_MANAGE', 'ANALYTICS_VIEW',
+    'REVIEW_VIEW', 'REVIEW_REPLY', 'MEDIA_UPLOAD'
+  ],
+  CUSTOMER: [
+    'PRODUCT_VIEW',
+    'ORDER_VIEW', 'ORDER_CREATE',
+    'WISHLIST_MANAGE', 'CART_MANAGE',
+    'REVIEW_VIEW', 'REVIEW_CREATE'
+  ]
+};
 
 interface AuthContextType {
-  user: UserProfile | null;
-  token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  register: (firstName: string, lastName: string, email: string, password: string) => Promise<{ success: boolean; message: string; token?: string }>;
-  verifyEmail: (token: string) => Promise<{ success: boolean; message: string }>;
-  forgotPassword: (email: string) => Promise<{ success: boolean; message: string }>;
-  resetPassword: (token: string, newPassword: string) => Promise<{ success: boolean; message: string }>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message: string }>;
-  updateProfile: (firstName: string, lastName: string) => Promise<{ success: boolean; message: string }>;
-  logout: () => void;
+  loading: boolean;
+  login: (email?: string, password?: string, role?: UserRole) => Promise<void>;
+  register: (payload: { name: string; email: string; password?: string; role?: UserRole; storeName?: string }) => Promise<void>;
+  logout: () => Promise<void>;
+  hasPermission: (permissionCode: string) => boolean;
+  hasRole: (roles: UserRole | UserRole[]) => boolean;
+  refreshPermissions: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('auth_access_token'));
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('auth_user_profile');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const deriveRoleFromEmail = (emailStr: string, requestedRole?: UserRole): UserRole => {
+    if (requestedRole) return requestedRole;
+    const lower = (emailStr || '').toLowerCase();
+    if (lower.includes('superadmin')) return 'SUPER_ADMIN';
+    if (lower.includes('admin')) return 'ADMIN';
+    if (lower.includes('moderator')) return 'MODERATOR';
+    if (lower.includes('seller')) return 'SELLER';
+    return 'CUSTOMER';
+  };
+
+  const fetchProfileAndPermissions = async (preferredRole?: UserRole): Promise<User | null> => {
+    try {
+      const profRes = await userApi.getProfile();
+      const profile = (profRes as any).data || profRes;
+      if (!profile || !profile.email) {
         return null;
       }
-    }
-    return {
-      id: 1,
-      email: 'sandeepkumarprasad01@gmail.com',
-      firstName: 'Sandeep',
-      lastName: 'Prasad',
-      roles: ['ROLE_USER', 'ROLE_ADMIN'],
-      isVerified: true,
-    };
-  });
 
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem('auth_access_token', token);
-    } else {
-      localStorage.removeItem('auth_access_token');
-    }
-  }, [token]);
+      const assignedRole = deriveRoleFromEmail(profile.email, preferredRole || profile.role);
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('auth_user_profile', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('auth_user_profile');
-    }
-  }, [user]);
-
-  const login = async (email: string, password: string) => {
-    if (!email || !password) {
-      return { success: false, message: 'Email and password are required' };
-    }
-
-    try {
-      // Attempt real Spring Boot auth endpoint POST /api/auth/login
-      const res = await authService.login({ email, password });
-      if (res && res.accessToken) {
-        localStorage.setItem("auth_access_token", res.accessToken);
-        setToken(res.accessToken);
-        
-        // Try fetching user profile from GET /api/users/profile
-        try {
-          const profileRes = await userService.getProfile();
-          if (profileRes && profileRes.data) {
-            setUser({
-              id: profileRes.data.id || 1,
-              email: profileRes.data.email || email,
-              firstName: profileRes.data.firstName || 'User',
-              lastName: profileRes.data.lastName || '',
-              roles: profileRes.data.roles || ['ROLE_USER'],
-              isVerified: true,
-            });
-            return { success: true, message: 'Login successful' };
-          }
-        } catch (e) {
-          console.warn('Could not fetch user profile from /api/users/profile, using token payload', e);
+      let perms: string[] = [];
+      try {
+        const permRes = await userApi.getUserPermissions(profile.id);
+        const permData = (permRes as any).data || permRes;
+        if (permData && Array.isArray(permData.permissions)) {
+          perms = permData.permissions.map((p: any) => (typeof p === 'string' ? p : p.name));
+        } else if (Array.isArray(permData)) {
+          perms = permData.map((p: any) => (typeof p === 'string' ? p : p.name));
         }
-
-        const loggedUser: UserProfile = {
-          id: user?.id || 1,
-          email,
-          firstName: email.split('@')[0],
-          lastName: 'User',
-          roles: email.includes('admin') ? ['ROLE_ADMIN', 'ROLE_USER'] : ['ROLE_USER'],
-          isVerified: true,
-        };
-        setUser(loggedUser);
-        return { success: true, message: 'Login successful' };
+      } catch {
+        // Fallback to role-based default permissions
       }
-    } catch (err) {
-      console.info('Live backend unreachable. Proceeding with client state login.', err);
-    }
 
-    // Fallback client login if live backend is unreachable
-    const mockToken = `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI${btoa(email)}.${Date.now()}`;
-    const fallbackUser: UserProfile = {
-      id: user?.id || Math.floor(Math.random() * 1000) + 1,
-      email,
-      firstName: user?.firstName || email.split('@')[0],
-      lastName: user?.lastName || 'User',
-      roles: email.includes('admin') ? ['ROLE_ADMIN', 'ROLE_USER'] : ['ROLE_USER'],
-      isVerified: true,
-    };
-
-    setToken(mockToken);
-    setUser(fallbackUser);
-    return { success: true, message: 'Login successful (Offline Mode)' };
-  };
-
-  const register = async (firstName: string, lastName: string, email: string, password: string) => {
-    let verificationToken = `token_${Math.random().toString(36).substring(2, 10)}`;
-    try {
-      // Attempt real Spring Boot registration endpoint POST /api/auth/register
-      const res = await authService.register({ firstName, lastName, email, password });
-      if (res && res.verificationToken) {
-        verificationToken = res.verificationToken;
+      if (!perms || perms.length === 0) {
+        perms = ROLE_DEFAULT_PERMISSIONS[assignedRole] || [];
       }
-    } catch (err) {
-      console.info('Live backend unreachable. Using local registration state.', err);
+
+      const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ') || profile.email;
+      const fullUser: User = {
+        id: String(profile.id || 'usr_1'),
+        name: fullName,
+        email: profile.email,
+        role: assignedRole,
+        permissions: perms,
+        status: 'ACTIVE',
+      };
+
+      localStorage.setItem('user_session', JSON.stringify(fullUser));
+      setUser(fullUser);
+      return fullUser;
+    } catch {
+      return null;
     }
-
-    const newAccount: UserProfile = {
-      id: Math.floor(Math.random() * 1000) + 10,
-      email,
-      firstName,
-      lastName,
-      roles: ['ROLE_USER'],
-      isVerified: false,
-    };
-    setUser(newAccount);
-
-    return {
-      success: true,
-      message: 'Registration successful! Verification email sent.',
-      token: verificationToken,
-    };
   };
 
-  const verifyEmail = async (tokenParam: string) => {
-    if (!tokenParam) {
-      return { success: false, message: 'Invalid or missing verification token' };
-    }
-    try {
-      // GET /api/auth/verify-email?token={tokenParam}
-      await authService.verifyEmail(tokenParam);
-    } catch (err) {
-      console.info('Live backend verify-email endpoint unreachable. Updating local state.', err);
-    }
+  useEffect(() => {
+    const initAuth = async () => {
+      const savedToken = localStorage.getItem('jwt_token');
+      const savedUser = localStorage.getItem('user_session');
 
-    if (user) {
-      setUser({ ...user, isVerified: true });
-    }
-    return { success: true, message: 'Email verified successfully!' };
-  };
-
-  const forgotPassword = async (emailParam: string) => {
-    if (!emailParam) {
-      return { success: false, message: 'Please enter a valid email address' };
-    }
-    try {
-      // POST /api/auth/forgot-password
-      await authService.forgotPassword(emailParam);
-    } catch (err) {
-      console.info('Live backend forgot-password endpoint unreachable.', err);
-    }
-
-    return {
-      success: true,
-      message: `Password reset link has been dispatched to ${emailParam}`,
-    };
-  };
-
-  const resetPassword = async (tokenParam: string, newPassword: string) => {
-    if (!tokenParam || !newPassword) {
-      return { success: false, message: 'Token and new password are required' };
-    }
-    try {
-      // POST /api/auth/reset-password
-      await authService.resetPassword({ token: tokenParam, newPassword });
-    } catch (err) {
-      console.info('Live backend reset-password endpoint unreachable.', err);
-    }
-
-    return { success: true, message: 'Password reset successfully!' };
-  };
-
-  const changePassword = async (currentPassword: string, newPassword: string) => {
-    if (!currentPassword || !newPassword) {
-      return { success: false, message: 'Current and new password are required' };
-    }
-    try {
-      // PUT /api/auth/change-password
-      await authService.changePassword({ currentPassword, newPassword, confirmPassword: newPassword });
-    } catch (err) {
-      console.info('Live backend change-password endpoint unreachable.', err);
-    }
-
-    return { success: true, message: 'Password updated successfully!' };
-  };
-
-  const updateProfile = async (firstName: string, lastName: string) => {
-    try {
-      // PUT /api/users/profile
-      const res = await userService.updateProfile({ firstName, lastName });
-      if (res && res.data) {
-        setUser({
-          id: res.data.id || user?.id || 1,
-          email: res.data.email || user?.email || '',
-          firstName: res.data.firstName || firstName,
-          lastName: res.data.lastName || lastName,
-          roles: user?.roles || ['ROLE_USER'],
-          isVerified: true,
-        });
-        return { success: true, message: res.message || 'Profile updated successfully!' };
+      if (savedToken) {
+        if (savedUser) {
+          try {
+            setUser(JSON.parse(savedUser));
+          } catch {
+            // parse error
+          }
+        }
+        await fetchProfileAndPermissions();
+      } else {
+        setUser(null);
       }
-    } catch (err) {
-      console.info('Live backend updateProfile endpoint unreachable.', err);
-    }
+      setLoading(false);
+    };
 
-    if (user) {
-      const updated = { ...user, firstName, lastName };
-      setUser(updated);
+    initAuth();
+  }, []);
+
+  const login = async (email?: string, password?: string, role?: UserRole) => {
+    setLoading(true);
+    try {
+      const response = await authApi.login({ email, password });
+      const res = (response as any).data || response;
+      const token = res?.accessToken || res?.token;
+      if (token) {
+        localStorage.setItem('jwt_token', token);
+        if (res?.refreshToken) {
+          localStorage.setItem('refresh_token', res.refreshToken);
+        }
+        const loggedUser = await fetchProfileAndPermissions(role);
+        if (!loggedUser) {
+          throw new Error('Failed to retrieve user profile after login');
+        }
+      } else {
+        throw new Error('Invalid authentication credentials');
+      }
+    } finally {
+      setLoading(false);
     }
-    return { success: true, message: 'Profile details updated successfully!' };
   };
 
-  const logout = () => {
+  const register = async (payload: { name: string; email: string; password?: string; role?: UserRole; storeName?: string }) => {
+    setLoading(true);
     try {
-      // POST /api/auth/logout
-      authService.logout();
-    } catch (err) {
-      console.info('Logout API request attempted', err);
+      const nameParts = (payload.name || '').trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      await authApi.register({
+        firstName,
+        lastName,
+        email: payload.email,
+        password: payload.password,
+      });
+
+      // Auto login after successful registration
+      if (payload.password) {
+        await login(payload.email, payload.password, payload.role);
+      }
+    } finally {
+      setLoading(false);
     }
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('auth_access_token');
-    localStorage.removeItem('auth_user_profile');
+  };
+
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // Ignore API failure during logout
+    } finally {
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user_session');
+      setUser(null);
+    }
+  };
+
+  const hasPermission = (permissionCode: string): boolean => {
+    if (!user) return false;
+    if (user.role === 'SUPER_ADMIN') return true;
+    if (user.permissions && user.permissions.includes('*')) return true;
+    return user.permissions ? user.permissions.includes(permissionCode) : false;
+  };
+
+  const hasRole = (roles: UserRole | UserRole[]): boolean => {
+    if (!user) return false;
+    if (user.role === 'SUPER_ADMIN') return true;
+    const roleList = Array.isArray(roles) ? roles : [roles];
+    return roleList.includes(user.role);
+  };
+
+  const refreshPermissions = async () => {
+    if (!user) return;
+    try {
+      const permRes = await userApi.getUserPermissions(user.id);
+      const permData = (permRes as any).data || permRes;
+      if (permData && Array.isArray(permData.permissions)) {
+        const perms = permData.permissions.map((p: any) => (typeof p === 'string' ? p : p.name));
+        setUser((prev) => (prev ? { ...prev, permissions: perms } : prev));
+      }
+    } catch {
+      // Keep existing permissions
+    }
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated: !!user,
+        loading,
         login,
         register,
-        verifyEmail,
-        forgotPassword,
-        resetPassword,
-        changePassword,
-        updateProfile,
         logout,
+        hasPermission,
+        hasRole,
+        refreshPermissions,
       }}
     >
       {children}
@@ -276,10 +239,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+export const useAuthContext = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuthContext must be used within AuthProvider');
+  return ctx;
 };
+

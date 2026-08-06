@@ -1,0 +1,225 @@
+/* Custom Color Token Design System & Theme Overrides - Vynk Design Tokens */
+
+:root {
+  color-scheme: light;
+
+  /* Brand Accent */
+  --vynk-brand: #D97746;
+  --vynk-brand-hover: #C26233;
+
+  /* Application Background & Surfaces */
+  --vynk-bg-canvas: #FAFAFA;
+  --vynk-bg-surface: #FFFFFF;
+  --vynk-bg-elevated: #F8F8F7;
+
+  /* Typography */
+  --vynk-text-primary: #111317;
+  --vynk-text-secondary: #5A626A;
+  --vynk-text-muted: #8A929A;
+
+  /* Structure & Borders */
+  --vynk-border: #E9ECEF;
+  --vynk-shadow: rgba(17, 19, 23, 0.08);
+
+  /* Status Colors */
+  --vynk-success: #2E7D32;
+  --vynk-warning: #ED6C02;
+  --vynk-error: #C62828;
+  --vynk-info: #1565C0;
+
+  /* Interoperability Aliases & Legacy System Mapping */
+  --bg-app-background: var(--vynk-bg-canvas);
+  --surface: var(--vynk-bg-surface);
+  --card-background: var(--vynk-bg-surface);
+  --text-primary: var(--vynk-text-primary);
+  --text-secondary: var(--vynk-text-secondary);
+  --text-muted: var(--vynk-text-muted);
+  --border-color: var(--vynk-border);
+
+  /* Accent & E-Commerce Mappings */
+  --color-primary: var(--vynk-brand);
+  --color-primary-hover: var(--vynk-brand-hover);
+  --color-secondary: var(--vynk-text-secondary);
+  --color-success: var(--vynk-success);
+
+  --price-color: var(--vynk-brand);
+  --discount-color: var(--vynk-error);
+  --rating-color: #D97706;
+  --stock-color: var(--vynk-success);
+  --out-stock-color: var(--vynk-text-muted);
+  --sale-badge: var(--vynk-brand);
+
+  --background: var(--bg-app-background);
+  --border: var(--border-color);
+  --text-color: var(--text-primary);
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+}
+
+[data-theme="dark"], .dark {
+  color-scheme: dark;
+
+  /* Brand Accent */
+  --vynk-brand: #E08253;
+  --vynk-brand-hover: #F0986C;
+
+  /* Application Background & Surfaces */
+  --vynk-bg-canvas: #0E1116;
+  --vynk-bg-surface: #1A1F26;
+  --vynk-bg-elevated: #222831;
+
+  /* Typography */
+  --vynk-text-primary: #F3F4F6;
+  --vynk-text-secondary: #9CA3AF;
+  --vynk-text-muted: #6B7280;
+
+  /* Structure & Borders */
+  --vynk-border: #2D3540;
+  --vynk-shadow: rgba(0, 0, 0, 0.35);
+
+  /* Status Colors */
+  --vynk-success: #4CAF50;
+  --vynk-warning: #F59E0B;
+  --vynk-error: #EF5350;
+  --vynk-info: #3B82F6;
+
+  /* Interoperability Aliases & Legacy System Mapping */
+  --bg-app-background: var(--vynk-bg-canvas);
+  --surface: var(--vynk-bg-surface);
+  --card-background: var(--vynk-bg-surface);
+  --text-primary: var(--vynk-text-primary);
+  --text-secondary: var(--vynk-text-secondary);
+  --text-muted: var(--vynk-text-muted);
+  --border-color: var(--vynk-border);
+
+  /* Accent & E-Commerce Mappings */
+  --color-primary: var(--vynk-brand);
+  --color-primary-hover: var(--vynk-brand-hover);
+  --color-secondary: var(--vynk-text-secondary);
+  --color-success: var(--vynk-success);
+
+  --price-color: var(--vynk-brand);
+  --discount-color: var(--vynk-error);
+  --rating-color: #F59E0B;
+  --stock-color: var(--vynk-success);
+  --out-stock-color: var(--vynk-text-muted);
+  --sale-badge: var(--vynk-brand);
+
+  --background: var(--bg-app-background);
+  --border: var(--border-color);
+  --text-color: var(--text-primary);
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+}
+
+/* Base Utility Theme Classes for Direct Token Consumption */
+.bg-app-background,
+.bg-vynk-canvas {
+  background-color: var(--vynk-bg-canvas);
+}
+
+.bg-app-surface,
+.bg-vynk-surface {
+  background-color: var(--vynk-bg-surface);
+}
+
+.bg-app-card,
+.bg-vynk-elevated {
+  background-color: var(--vynk-bg-elevated);
+}
+
+.text-app-primary,
+.text-vynk-primary {
+  color: var(--vynk-text-primary);
+}
+
+.text-app-secondary,
+.text-vynk-secondary {
+  color: var(--vynk-text-secondary);
+}
+
+.text-app-muted,
+.text-vynk-muted {
+  color: var(--vynk-text-muted);
+}
+
+.border-app,
+.border-vynk {
+  border-color: var(--vynk-border);
+}
+
+/* Universal Button Styles */
+.btn-primary-luxury,
+.btn-vynk-primary {
+  background-color: var(--vynk-brand);
+  color: #FFFFFF !important;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary-luxury:hover,
+.btn-vynk-primary:hover {
+  background-color: var(--vynk-brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 70, 0.25);
+}
+
+.btn-secondary-luxury,
+.btn-vynk-secondary {
+  background-color: transparent;
+  border: 1px solid var(--vynk-border);
+  color: var(--vynk-text-primary);
+  border-radius: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-secondary-luxury:hover,
+.btn-vynk-secondary:hover {
+  background-color: var(--vynk-bg-elevated);
+}
+
+/* Universal Input System Overrides */
+input, select, textarea {
+  background-color: var(--vynk-bg-surface);
+  color: var(--vynk-text-primary);
+  border-color: var(--vynk-border);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--vynk-text-muted);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--vynk-brand);
+}
+
+/* Dark Mode Fallbacks for Unmigrated Slate/Gray Classes */
+[data-theme="dark"], .dark {
+  .bg-white {
+    background-color: var(--vynk-bg-surface) !important;
+  }
+  .bg-gray-50, .bg-slate-50 {
+    background-color: var(--vynk-bg-canvas) !important;
+  }
+  .bg-gray-100, .bg-slate-100 {
+    background-color: var(--vynk-bg-surface) !important;
+  }
+  .bg-gray-800, .bg-slate-800, .bg-gray-900, .bg-slate-900 {
+    background-color: var(--vynk-bg-elevated) !important;
+  }
+  .text-gray-900, .text-slate-900, .text-black {
+    color: var(--vynk-text-primary) !important;
+  }
+  .text-gray-700, .text-slate-700, .text-gray-600, .text-slate-600 {
+    color: var(--vynk-text-secondary) !important;
+  }
+  .text-gray-500, .text-slate-500, .text-gray-400, .text-slate-400 {
+    color: var(--vynk-text-muted) !important;
+  }
+  .border-gray-200, .border-slate-200, .border-gray-300, .border-slate-300, .border-gray-700, .border-slate-700, .border-gray-800, .border-slate-800 {
+    border-color: var(--vynk-border) !important;
+  }
+}
+

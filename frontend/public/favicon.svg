@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="100%" height="100%">
+  <!-- Background circle or rounded box for crisp icon -->
+  <rect width="40" height="40" rx="10" fill="#111317"/>
+  <!-- Saffron V-Loop Icon -->
+  <path d="M7 12 L18 34 L22 34 L33 12 L27 12 L20 27 L13 12 Z" fill="#D97746" />
+  <!-- Shopping Bag Handle Accent -->
+  <path d="M13 12 C13 7 16 4 20.5 4 C25 4 28 7 28 12" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" />
+</svg>

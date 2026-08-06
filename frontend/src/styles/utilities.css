@@ -1,34 +1,58 @@
-@layer utilities {
-  .glass-card {
-    background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.6);
-  }
+/* E-commerce Utility Badges & Text Helpers */
 
-  .dark .glass-card {
-    background-color: rgba(34, 34, 59, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border) / 0.3);
-  }
+.price-text {
+  color: var(--price-color);
+  font-weight: 700;
+}
 
-  .card-hover-elevation {
-    transition: transform 200ms ease, box-shadow 200ms ease;
-  }
+.discount-text {
+  color: var(--discount-color);
+  font-weight: 700;
+}
 
-  .card-hover-elevation:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  }
+.badge-sale {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: var(--sale-badge);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
 
-  .focus-ring {
-    outline: none;
-  }
+.badge-new {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: var(--new-badge);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
 
-  .focus-ring:focus-visible {
-    ring: 2px;
-    ring-color: hsl(var(--ring));
-    ring-offset: 2px;
-  }
+.badge-success {
+  background-color: rgba(22, 163, 74, 0.12);
+  color: var(--success);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-error {
+  background-color: rgba(220, 38, 38, 0.12);
+  color: var(--danger);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }

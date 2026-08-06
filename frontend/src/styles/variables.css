@@ -1,28 +1,101 @@
-@layer base {
-  :root {
-    /* Color Tokens (HSL values for opacity support) */
-    --color-seashell: 20 33% 92%;
-    --color-space-indigo: 240 27% 18%;
-    --color-dusty-grape: 231 18% 35%;
-    --color-almond-silk: 10 24% 72%;
-    --color-lilac-ash: 310 7% 57%;
-    
-    /* Status Colors */
-    --color-success: 160 84% 39%;
-    --color-warning: 38 92% 50%;
-    --color-danger: 346 84% 61%;
+:root {
+  /* Delegate to Vynk Brand Token System */
+  --bg-app-background: var(--vynk-bg-canvas, #FAFAFA);
+  --surface: var(--vynk-bg-surface, #FFFFFF);
+  --card-background: var(--vynk-bg-surface, #FFFFFF);
+  --text-primary: var(--vynk-text-primary, #111317);
+  --text-secondary: var(--vynk-text-secondary, #5A626A);
+  --text-muted: var(--vynk-text-muted, #8A929A);
+  --border-color: var(--vynk-border, #E9ECEF);
 
-    /* Radius Tokens */
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.5rem;
-    --radius-full: 9999px;
+  --color-primary: var(--vynk-brand, #D97746);
+  --color-primary-hover: var(--vynk-brand-hover, #C26233);
+  --color-secondary: var(--vynk-text-secondary, #5A626A);
+  --color-success: var(--vynk-success, #2E7D32);
 
-    /* Transition Speeds */
-    --transition-fast: 150ms ease-in-out;
-    --transition-normal: 250ms ease-in-out;
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  /* E-Commerce Specific Semantic Tokens */
+  --price-color: var(--vynk-brand, #D97746);
+  --discount-color: var(--vynk-error, #C62828);
+  --rating-color: #D97706;
+  --stock-color: var(--vynk-success, #2E7D32);
+  --out-stock-color: var(--vynk-text-muted, #8A929A);
+  --sale-badge: var(--vynk-brand, #D97746);
+  --new-badge: var(--vynk-brand, #D97746);
+
+  /* Compatibility Fallback Aliases */
+  --background: var(--bg-app-background);
+  --background-color: var(--bg-app-background);
+  --surface-color: var(--surface);
+  --text-color: var(--text-primary);
+  --border: var(--border-color);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-color: var(--color-primary);
+  --primary-light: rgba(217, 119, 70, 0.1);
+
+  --accent: var(--color-primary);
+  --accent-hover: var(--color-primary-hover);
+  --accent-light: rgba(217, 119, 70, 0.1);
+
+  --success: var(--vynk-success);
+  --success-color: var(--vynk-success);
+  --warning: var(--vynk-warning);
+  --warning-color: var(--vynk-warning);
+  --danger: var(--vynk-error);
+  --error-color: var(--vynk-error);
+
+  /* Radius & Elevation */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: var(--vynk-shadow, rgba(17, 19, 23, 0.08));
+  --shadow-card-hover: 0 12px 30px rgba(17, 19, 23, 0.12);
 }
+
+[data-theme="dark"], .dark {
+  /* Dark Theme System Delegate */
+  --bg-app-background: var(--vynk-bg-canvas, #0E1116);
+  --surface: var(--vynk-bg-surface, #1A1F26);
+  --card-background: var(--vynk-bg-surface, #1A1F26);
+  --text-primary: var(--vynk-text-primary, #F3F4F6);
+  --text-secondary: var(--vynk-text-secondary, #9CA3AF);
+  --text-muted: var(--vynk-text-muted, #6B7280);
+  --border-color: var(--vynk-border, #2D3540);
+
+  --color-primary: var(--vynk-brand, #E08253);
+  --color-primary-hover: var(--vynk-brand-hover, #F0986C);
+  --color-secondary: var(--vynk-text-secondary, #9CA3AF);
+  --color-success: var(--vynk-success, #4CAF50);
+
+  --price-color: var(--vynk-brand, #E08253);
+  --discount-color: var(--vynk-error, #EF5350);
+  --rating-color: #F59E0B;
+  --stock-color: var(--vynk-success, #4CAF50);
+  --out-stock-color: var(--vynk-text-muted, #6B7280);
+  --sale-badge: var(--vynk-brand, #E08253);
+  --new-badge: var(--vynk-brand, #E08253);
+
+  /* Compatibility Fallback Aliases */
+  --background: var(--bg-app-background);
+  --background-color: var(--bg-app-background);
+  --surface-color: var(--surface);
+  --text-color: var(--text-primary);
+  --border: var(--border-color);
+
+  --primary: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
+  --primary-color: var(--color-primary);
+  --primary-light: rgba(224, 130, 83, 0.15);
+
+  --accent: var(--color-primary);
+  --accent-hover: var(--color-primary-hover);
+  --accent-light: rgba(224, 130, 83, 0.15);
+
+  --success: var(--vynk-success);
+  --success-color: var(--vynk-success);
+
+  --shadow-card: var(--vynk-shadow, rgba(0, 0, 0, 0.35));
+  --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+

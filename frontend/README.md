@@ -1,111 +1,334 @@
-# CommerceHub Enterprise Platform
+# 🚀 Vynk – Enterprise E-Commerce Frontend
 
-CommerceHub Enterprise is a high-performance, multi-tenant e-commerce platform built with React 18, TypeScript, Redux Toolkit, and Tailwind CSS. It connects seamlessly to backend microservices for authentic, API-driven retail management.
+> Modern enterprise e-commerce frontend built with React 18, TypeScript, Vite, Tailwind CSS, and Spring Boot REST APIs.
 
----
-
-## Architecture Overview
-
-```
-+-----------------------------------------------------------------------+
-|                      CommerceHub Frontend App                         |
-|                                                                       |
-|   +-----------------------+     +-------------------------------+     |
-|   |   React UI Components | <-> | Redux Toolkit / Context State |     |
-|   +-----------------------+     +-------------------------------+     |
-|               |                                 |                     |
-|               v                                 v                     |
-|   +-------------------------------------------------------------+     |
-|   |                    Service Layer Module                     |     |
-|   +-------------------------------------------------------------+     |
-|                                   |                                   |
-|                                   v                                   |
-|   +-------------------------------------------------------------+     |
-|   |                    Axios HTTP Client                        |     |
-|   |   (JWT Auto-injection, Refresh Interceptor, Error Handler)  |     |
-|   +-------------------------------------------------------------+     |
-+-----------------------------------|-----------------------------------+
-                                    |
-                                    v API Gateway / Proxy (/api)
-+-----------------------------------------------------------------------+
-|                       CommerceHub Backend Services                    |
-+-----------------------------------------------------------------------+
-```
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Spring Boot API](https://img.shields.io/badge/Backend-Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 
 ---
 
-## Directory Structure
+# ⚠️ Project Status
+
+**Actively Under Development**
+
+Vynk is the frontend application for the CommerceHub Enterprise Platform. It is designed to provide a modern, responsive, and scalable shopping experience while integrating seamlessly with a Java Spring Boot backend.
+
+The application is being continuously enhanced with new enterprise features, improved user experience, and backend integrations.
+
+---
+
+# 📖 Overview
+
+Vynk demonstrates modern frontend engineering practices using React, TypeScript, and Vite while consuming secure REST APIs developed with Spring Boot.
+
+The application follows a modular component architecture with reusable UI components, centralized state management, responsive layouts, role-based navigation, and multilingual support.
+
+The primary objective of this project is to showcase enterprise frontend development integrated with a secure backend architecture.
+
+---
+
+# ✨ Current Features
+
+## Authentication
+
+- User Registration
+- Login
+- Forgot Password
+- Reset Password
+- Email Verification
+- JWT Authentication
+- Protected Routes
+
+---
+
+## User Experience
+
+- Responsive Design
+- Dark & Light Theme
+- Global Loading Screens
+- Skeleton Loaders
+- Toast Notifications
+- Modern UI Components
+
+---
+
+## Shopping Features
+
+- Product Catalog
+- Product Search
+- Category Filtering
+- Shopping Cart
+- Wishlist
+- Order Tracking
+- Checkout Flow
+
+---
+
+## Administration
+
+- Admin Dashboard
+- Product Management
+- Category Management
+- User Management
+- Role-Based Navigation
+
+---
+
+## Internationalization
+
+Currently supports:
+
+- English
+- Hindi
+- Arabic (RTL)
+- French
+- German
+- Spanish
+- Russian
+
+---
+
+# 🛠 Technology Stack
+
+## Frontend
+
+- React 18
+- TypeScript
+- Vite
+- React Router
+- Axios
+- Tailwind CSS
+- Lucide React
+
+---
+
+## Backend Integration
+
+- Spring Boot REST APIs
+- JWT Authentication
+- Spring Security
+
+---
+
+## Development Tools
+
+- Git
+- GitHub
+- Docker
+- GitHub Actions
+- Postman
+
+---
+
+# 🏗 Application Architecture
+
+```
+React Application
+
+↓
+
+React Router
+
+↓
+
+Context Providers
+
+↓
+
+Pages
+
+↓
+
+Reusable Components
+
+↓
+
+Axios Client
+
+↓
+
+Spring Boot REST APIs
+
+↓
+
+PostgreSQL
+```
+
+---
+
+# 📂 Project Structure
 
 ```
 src/
-├── app/
-│   ├── providers/          # Global theme and layout providers
-│   ├── router/             # React Router 6 configuration & Security guards
-│   └── store/              # Redux store definition, slices, and custom hooks
-├── core/
-│   ├── api/                # Axios client setup, interceptors, and constants
-│   └── i18n/               # i18n Context, translation keys, and locale maps
-├── features/
-│   ├── admin/              # Admin Suite: Dashboard, Products, Orders, Roles, etc.
-│   ├── auth/               # Auth Pages: Login, Register, Verify Email, Password Reset
-│   ├── cart/               # Shopping Cart state & API hooks
-│   ├── order/              # Checkout flow & Order history tracking
-│   ├── payment/            # Payment transaction status & Retry/Refund flows
-│   ├── product/            # Catalog, Search, Filtering, Categories, Compare
-│   ├── profile/            # User profile management & Address book
-│   ├── shipping/           # Shipment tracking & carrier events
-│   ├── support/            # AI-powered Customer Support Chat drawer
-│   └── wishlist/           # Saved favorites & Wishlist sync
-├── services/               # Modular API services (1:1 mapped to backend)
-├── shared/
-│   ├── components/         # Reusable UI library (Button, Card, Table, Modal, Toast)
-│   └── layouts/            # MainLayout, AdminLayout, CustomerLayout, Footer, Header
-├── types/                  # Strict TypeScript interfaces for domain entities
-├── App.tsx                 # Root application component with ErrorBoundary
-└── main.tsx                # Application entry point
+
+├── api/
+├── assets/
+├── components/
+│   ├── admin/
+│   ├── auth/
+│   ├── common/
+│   ├── customer/
+│   └── ui/
+│
+├── config/
+├── constants/
+├── context/
+├── hooks/
+├── i18n/
+├── layouts/
+├── pages/
+├── routes/
+├── services/
+├── styles/
+├── theme/
+├── types/
+├── utils/
+
+App.tsx
+main.tsx
 ```
 
 ---
 
-## Environment Setup
+# 🔐 Security
 
-Declare required environment variables in `.env`:
-
-```env
-# Server API Base URL
-VITE_API_BASE_URL="/api"
-
-# AI Studio Gemini Integration
-GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-```
+- JWT Authentication
+- Protected Routes
+- Role-Based Access Control
+- Route Guards
+- Secure API Communication
+- Input Validation
 
 ---
 
-## Installation & Running
+# 🎨 UI Features
 
-### 1. Install Dependencies
+- Responsive Layout
+- Modern Design System
+- Theme Switching
+- Reusable Components
+- Global Notification System
+- Error Pages
+- Loading States
+
+---
+
+# 🌐 Localization
+
+The application includes a centralized localization framework supporting:
+
+- English
+- Hindi
+- Arabic
+- French
+- German
+- Spanish
+- Russian
+
+RTL layouts are supported where applicable.
+
+---
+
+# 🔄 Backend Integration
+
+Frontend communicates with the backend using a centralized Axios client.
+
+Features include:
+
+- JWT Authorization Header
+- Request Interceptors
+- Response Interceptors
+- Global Error Handling
+- API Configuration
+- Authentication Management
+
+---
+
+# 🚀 Getting Started
+
+## Install
+
 ```bash
 npm install
 ```
 
-### 2. Run Development Server
+---
+
+## Start Development Server
+
 ```bash
 npm run dev
 ```
-The application will launch on `http://localhost:3000`.
 
-### 3. Production Build & Linter Verification
-```bash
-npm run lint
-npm run build
+Runs at:
+
+```
+http://localhost:3000
+```
+
+Backend API:
+
+```
+http://localhost:8080/api
 ```
 
 ---
 
-## Key Features & Enterprise Capabilities
+# ⚙ Environment Variables
 
-- **100% Real API Driven**: No hardcoded dummy business data or mock responses. All screens consume official service modules.
-- **Strict Security & JWT Lifecycle**: Automatic token refresh handling via Axios interceptors, role-based admin route guards, and email verification.
-- **Dynamic i18n Engine**: Dynamic language switching with backend translation key fallback, locale URL routing (`/:lang/...`), and RTL support for Arabic.
-- **Enterprise Admin Suite**: Comprehensive administration tools for product catalogs, inventory, role management, payments, user access control, categories, languages, translations, and media library.
-- **Responsive & Accessible**: Desktop-first precision with mobile-first code, complete touch target sizing, dark mode theme support, and WCAG compliance.
+```
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+---
+
+# 🚧 Roadmap
+
+Upcoming improvements include:
+
+- Payment Gateway Integration
+- Advanced Search
+- Product Recommendations
+- Push Notifications
+- Dashboard Analytics
+- Progressive Web App (PWA)
+- Accessibility Improvements
+- Performance Optimization
+
+---
+
+# 📚 Learning Objectives
+
+This project demonstrates practical experience with:
+
+- React 18
+- TypeScript
+- Component-Based Architecture
+- REST API Integration
+- JWT Authentication
+- Role-Based Access Control
+- Responsive UI Development
+- State Management
+- Localization
+- Modern Frontend Engineering
+
+---
+
+# 👨‍💻 Author
+
+**Sandeep Kumar Prasad**
+
+Java Backend & Full Stack Developer
+
+- GitHub: https://github.com/Sandeepkumar1703
+- LinkedIn: https://www.linkedin.com/in/sandeep-kumar-prasad-1703
+- Email: sandeepkumarprasad01@gmail.com
+
+---
+
+# ⭐ Project Status
+
+Vynk is an actively evolving enterprise frontend application developed to complement the CommerceHub backend platform. The project is continuously enhanced with new features, improved architecture, and modern frontend engineering practices.
