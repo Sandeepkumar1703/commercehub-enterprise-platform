@@ -188,4 +188,33 @@ public class JwtService {
 
     }
 
+    public String extractTokenType(String token) {
+
+        return extractClaim(
+                token,
+                claims -> claims.get("type", String.class)
+        );
+
+        }
+
+        public boolean isRefreshToken(String token) {
+
+        return "refresh".equals(
+                extractTokenType(token)
+        );
+
+        }
+
+        public boolean isAccessToken(String token) {
+
+        String type = extractTokenType(token);
+
+        return type == null || "access".equals(type);
+
+        }
+
+        public long getAccessTokenExpiration() {
+    return accessTokenExpiration;
+}
+
 }

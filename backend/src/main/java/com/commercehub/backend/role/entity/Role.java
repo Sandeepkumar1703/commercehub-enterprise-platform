@@ -1,4 +1,4 @@
-package com.commercehub.backend.user.entity;
+package com.commercehub.backend.role.entity;
 
 
 import com.commercehub.backend.permission.entity.Permission;

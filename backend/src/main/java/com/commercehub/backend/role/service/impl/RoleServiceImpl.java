@@ -10,7 +10,7 @@ import com.commercehub.backend.role.dto.response.RolePermissionResponse;
 import com.commercehub.backend.role.dto.response.RoleResponse;
 import com.commercehub.backend.role.repository.RoleRepository;
 import com.commercehub.backend.role.service.RoleService;
-import com.commercehub.backend.user.entity.Role;
+import com.commercehub.backend.role.entity.Role;
 import com.commercehub.backend.user.entity.User;
 import com.commercehub.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

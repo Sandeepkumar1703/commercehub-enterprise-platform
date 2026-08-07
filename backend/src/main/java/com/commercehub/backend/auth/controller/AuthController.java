@@ -23,6 +23,8 @@ import com.commercehub.backend.auth.dto.request.ResendVerificationRequest;
 import com.commercehub.backend.auth.dto.response.VerifyEmailResponse;
 import com.commercehub.backend.user.dto.request.ForgotPasswordRequest;
 import com.commercehub.backend.user.dto.request.ResetPasswordRequest;
+import com.commercehub.backend.auth.dto.request.RefreshTokenRequest;
+import com.commercehub.backend.auth.dto.response.RefreshTokenResponse;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -158,4 +160,16 @@ public class AuthController {
         );
     }
 
+    
+     @PostMapping("/refresh-token")
+        public ResponseEntity<RefreshTokenResponse> refreshToken(
+                @Valid
+                @RequestBody RefreshTokenRequest request
+        ) {
+
+        return ResponseEntity.ok(
+                authService.refreshToken(request)
+        );
+
+        }
 }

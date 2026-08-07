@@ -1,6 +1,6 @@
 package com.commercehub.backend.security;
 
-import com.commercehub.backend.user.entity.Role;
+import com.commercehub.backend.role.entity.Role;
 import com.commercehub.backend.user.entity.User;
 import com.commercehub.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

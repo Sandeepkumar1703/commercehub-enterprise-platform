@@ -1,7 +1,7 @@
 package com.commercehub.backend.permission.entity;
 
 
-import com.commercehub.backend.user.entity.Role;
+import com.commercehub.backend.role.entity.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

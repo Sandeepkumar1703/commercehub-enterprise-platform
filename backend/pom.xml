@@ -263,6 +263,37 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Mockito Inline -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Awaitility -->
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Instancio -->
+        <dependency>
+            <groupId>org.instancio</groupId>
+            <artifactId>instancio-junit</artifactId>
+            <version>5.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- JSONAssert -->
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Spring Security Test: Security-specific test utilities -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -355,25 +386,90 @@
                 </configuration>
             </plugin>
 
-            <!-- JaCoCo Plugin: Code coverage analysis -->
+            <!-- JaCoCo Plugin: Code Coverage Analysis -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.12</version>
+
                 <executions>
+
+                    <!-- Attach JaCoCo Agent -->
                     <execution>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+
+                    <!-- Generate Coverage Report -->
                     <execution>
                         <id>report</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
+
+                    <!-- Fail Build if Coverage is Below Threshold -->
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+
+                        <configuration>
+
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+
+                                </rule>
+                            </rules>
+
+                            <excludes>
+
+                                <!-- Spring Boot Main -->
+                                <exclude>**/*Application.class</exclude>
+
+                                <!-- DTOs -->
+                                <exclude>**/dto/**</exclude>
+
+                                <!-- Configuration -->
+                                <exclude>**/config/**</exclude>
+
+                                <!-- Constants -->
+                                <exclude>**/constant/**</exclude>
+
+                                <!-- Enums -->
+                                <exclude>**/enums/**</exclude>
+
+                                <!-- Mapper Implementations -->
+                                <exclude>**/*MapperImpl.class</exclude>
+
+                                <!-- Exceptions -->
+                                <exclude>**/exception/**</exclude>
+
+                                <!-- Generated -->
+                                <exclude>**/generated/**</exclude>
+
+                            </excludes>
+
+                        </configuration>
+
+                    </execution>
+
                 </executions>
+
             </plugin>
 
         </plugins>

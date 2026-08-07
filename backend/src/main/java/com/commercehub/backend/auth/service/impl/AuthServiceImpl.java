@@ -21,7 +21,7 @@ import com.commercehub.backend.role.repository.RoleRepository;
 import com.commercehub.backend.security.JwtTokenProvider;
 import com.commercehub.backend.security.TokenBlacklist;
 
-import com.commercehub.backend.user.entity.Role;
+import com.commercehub.backend.role.entity.Role;
 import com.commercehub.backend.user.entity.User;
 import com.commercehub.backend.user.repository.UserRepository;
 
@@ -48,6 +48,9 @@ import com.commercehub.backend.user.repository.PasswordResetTokenRepository;
 
 import com.commercehub.backend.user.dto.request.ForgotPasswordRequest;
 import com.commercehub.backend.user.dto.request.ResetPasswordRequest;
+
+import com.commercehub.backend.auth.dto.request.RefreshTokenRequest;
+import com.commercehub.backend.auth.dto.response.RefreshTokenResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -375,5 +378,35 @@ public class AuthServiceImpl implements AuthService {
         passwordResetTokenRepository.save(resetToken);
 
     }
+
+    @Override
+        public RefreshTokenResponse refreshToken(
+                RefreshTokenRequest request
+        ) {
+
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtTokenProvider.validateRefreshToken(refreshToken)) {
+
+                throw new InvalidTokenException(
+                        "Invalid refresh token"
+                );
+
+        }
+
+        String username =
+                jwtTokenProvider.extractUsername(refreshToken);
+
+        String newAccessToken =
+                jwtTokenProvider.generateAccessToken(username);
+
+        return RefreshTokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(86400000)
+                .build();
+
+        }
 
 }

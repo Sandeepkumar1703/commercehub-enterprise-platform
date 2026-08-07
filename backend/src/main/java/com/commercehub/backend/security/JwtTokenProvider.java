@@ -106,4 +106,38 @@ public class JwtTokenProvider {
         }
     }
 
+    public boolean validateRefreshToken(String token) {
+
+        try {
+
+            String username = jwtService.extractUsername(token);
+
+            return jwtService.validateToken(token, username)
+                    && jwtService.isRefreshToken(token);
+
+        } catch (Exception ex) {
+
+            return false;
+
+        }
+
+    }
+
+    public String extractUsername(String token) {
+
+        return jwtService.extractUsername(token);
+
+    }
+
+    public String generateAccessToken(String username) {
+
+    return jwtService.generateAccessToken(
+            username,
+            Map.of()
+    );
+}
+
+public long getAccessTokenExpiration() {
+    return jwtService.getAccessTokenExpiration();
+}
 }

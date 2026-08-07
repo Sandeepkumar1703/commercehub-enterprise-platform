@@ -1,6 +1,6 @@
 package com.commercehub.backend.role.repository;
 
-import com.commercehub.backend.user.entity.Role;
+import com.commercehub.backend.role.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

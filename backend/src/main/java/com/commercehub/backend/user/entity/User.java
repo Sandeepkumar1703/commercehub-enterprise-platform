@@ -2,7 +2,7 @@ package com.commercehub.backend.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.commercehub.backend.role.entity.Role;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
